@@ -1,0 +1,1 @@
+const String server = 'https://socket.coin98.services/';
