@@ -1,0 +1,40 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace AuraMobileSDK{
+    public class Promise<T> {
+        bool resultResolved = false, afterDefined = false, fulfilled = false;
+        Action<bool, T> after;
+        T result;
+        bool success;
+        public Promise(float timeout, bool timeoutSuccessValue, T timeoutResult){
+            CoroutineRunner.WaitFor(timeout, () => Resolve(timeoutSuccessValue, timeoutResult));
+        }
+        public Promise(){
+            //This promise will never time out and will run until a result is properly resolved
+        }
+        void TryInvoke(){
+            if (!fulfilled && resultResolved && afterDefined){
+                fulfilled = true;
+                after?.Invoke(success, result);
+            } 
+        }
+        public void Resolve(bool success, T result){
+            if (!fulfilled && !resultResolved){
+                resultResolved = true;
+                this.result = result;
+                this.success = success;
+                TryInvoke();
+            }
+        }
+        public void Then(Action<bool, T> action){
+            if (!fulfilled && !afterDefined){
+                afterDefined = true;
+                this.after = action;
+                TryInvoke();
+            }
+        }
+    }
+}
