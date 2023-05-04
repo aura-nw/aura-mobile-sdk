@@ -7,12 +7,20 @@ using System;
 
 namespace AuraMobileSDK{
     public class Logging : MonoBehaviour{
-        static Logging instance;
+        static Queue<string> logQueue = new Queue<string>();
         TMPro.TMP_Text logText;
         void Start(){
-            instance = this;
             logText = GetComponent<TMPro.TMP_Text>();
         }  
+        void Update(){
+            string buffer = logText.text;
+            while (logQueue.Count > 0){
+                buffer += "\n" + logQueue.Dequeue();
+            }
+            if (buffer.Length > 1200)
+                buffer = buffer.Substring(buffer.Length - 1200, 1200);
+            logText.text = buffer;
+        }
         void LogText(string text){
             if (logText != null)
                 logText.text += text + "\n";
@@ -54,25 +62,25 @@ namespace AuraMobileSDK{
         public static void Verbose(params object[] x){
             Debug.Log(ParamsToString(x));
             try{
-                instance?.LogText(ParamsToString(x));
+                logQueue.Enqueue(ParamsToString(x));
             } catch (Exception e){Debug.Log(e.Message);}
         }
         public static void Info(params object[] x){
             Debug.Log(ParamsToString(x));
             try{
-                instance?.LogText(ParamsToString(x));
+                logQueue.Enqueue(ParamsToString(x));
             } catch (Exception e){Debug.Log(e.Message);}
         }
         public static void Error(params object[] x){
             Debug.LogError(ParamsToString(x));
             try{
-                instance?.LogText(ParamsToString(x));
+                logQueue.Enqueue(ParamsToString(x));
             } catch (Exception e){Debug.Log(e.Message);}
         }
         public static void Warning(params object[] x){
             Debug.LogWarning(ParamsToString(x));
             try{
-                instance?.LogText(ParamsToString(x));
+                logQueue.Enqueue(ParamsToString(x));
             } catch (Exception e){Debug.Log(e.Message);}
         }
     }

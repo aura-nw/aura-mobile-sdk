@@ -4,6 +4,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AuraMobileSDK{
+    public class Promise{
+        bool resultResolved = false, afterDefined = false, fulfilled = false;
+        Action<bool> after;
+        bool success;
+        public Promise(float timeout, bool timeoutSuccessValue){
+            CoroutineRunner.WaitFor(timeout, () => Resolve(timeoutSuccessValue));
+        }
+        public Promise(){
+            //This promise will never time out and will run until a result is properly resolved
+        }
+        void TryInvoke(){
+            if (!fulfilled && resultResolved && afterDefined){
+                fulfilled = true;
+                after?.Invoke(success);
+            } 
+        }
+        public void Resolve(bool success){
+            if (!fulfilled && !resultResolved){
+                resultResolved = true;
+                this.success = success;
+                TryInvoke();
+            }
+        }
+        public void Then(Action<bool> action){
+            if (!fulfilled && !afterDefined){
+                afterDefined = true;
+                this.after = action;
+                TryInvoke();
+            }
+        }
+    }
     public class Promise<T> {
         bool resultResolved = false, afterDefined = false, fulfilled = false;
         Action<bool, T> after;

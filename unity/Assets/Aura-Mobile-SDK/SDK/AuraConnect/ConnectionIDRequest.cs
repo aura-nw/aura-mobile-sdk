@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace AuraMobileSDK{
-    public static partial class AuraConnect {
+    public partial class AuraConnect {
         const float CONNECTIONID_REQUEST_TIMEOUT = 20f;
         [Serializable]
         class ConnectionIDRequestParams{
@@ -26,14 +26,16 @@ namespace AuraMobileSDK{
                 this.connectionID = connectionID;
             }
         }
-        static Promise<string> RequestConnectionID(SocketIOUnity socket){
+        ///<summary>This function calls for promise in another thread; thus, do not try to invoke GameObjects and scene-related assets</summary>
+        Promise<string> RequestConnectionID(SocketIOUnity socket){
             ConnectionIDRequestParams requestParams = new ConnectionIDRequestParams {
                 type = "connection_request",
                 message = new ConnectionIDRequestParams.Message {
                     url = "app://open.my.app",
-                    id = Guid.NewGuid().ToString()
+                    id = Guid.NewGuid().ToString()//"109156be-c4fb-41ea-b1b4-efe1671c5836"
                 }
             };
+            Logging.Verbose("requestParams", requestParams);
             Promise<string> promise = new Promise<string>(CONNECTIONID_REQUEST_TIMEOUT, false, null);
             try{
                 socket.EmitAsync("coin98_connect", (response)=>{
