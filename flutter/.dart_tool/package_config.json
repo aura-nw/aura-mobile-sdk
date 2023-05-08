@@ -105,9 +105,9 @@
     },
     {
       "name": "crypto",
-      "rootUri": "file:///Users/toannv/.pub-cache/hosted/pub.dev/crypto-3.0.2",
+      "rootUri": "file:///Users/toannv/.pub-cache/hosted/pub.dev/crypto-3.0.3",
       "packageUri": "lib/",
-      "languageVersion": "2.14"
+      "languageVersion": "2.19"
     },
     {
       "name": "dart_style",
@@ -297,13 +297,13 @@
     },
     {
       "name": "socket_io_client",
-      "rootUri": "file:///Users/toannv/.pub-cache/hosted/pub.dev/socket_io_client-2.0.1",
+      "rootUri": "file:///Users/toannv/.pub-cache/hosted/pub.dev/socket_io_client-2.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
       "name": "socket_io_common",
-      "rootUri": "file:///Users/toannv/.pub-cache/hosted/pub.dev/socket_io_common-2.0.2",
+      "rootUri": "file:///Users/toannv/.pub-cache/hosted/pub.dev/socket_io_common-2.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -398,7 +398,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-05-08T04:48:59.435583Z",
+  "generated": "2023-05-08T06:27:01.568654Z",
   "generator": "pub",
   "generatorVersion": "2.19.6"
 }
