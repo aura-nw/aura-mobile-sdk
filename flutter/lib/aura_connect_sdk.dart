@@ -18,7 +18,7 @@ import 'src/core/in_app_core_data/in_app_core_data.dart';
 import 'src/in_app_wallet/aura_in_app_wallet_client.dart';
 
 export 'src/core/in_app_core_data/in_app_core_data.dart';
-export 'package:alan/alan.dart' show Fee, Tx;
+export 'package:alan/alan.dart' show Fee, Tx , Wallet;
 export 'package:alan/proto/cosmos/bank/v1beta1/tx.pb.dart' show MsgSend;
 
 /// region Aura connect sdk
