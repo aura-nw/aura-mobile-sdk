@@ -1,4 +1,4 @@
-package aura_connect_sdk
+package aura_mobile_sdk
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -22,7 +22,7 @@ class AuraConnectSdkPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   private var sender: Coin98ConnectSender = Coin98ConnectSender(null,null)
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "aura_connect_sdk_launcher_platform")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "aura_mobile_sdk_launcher_platform")
     channel.setMethodCallHandler(this)
 
     sender.setActivity(null)

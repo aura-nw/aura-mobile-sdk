@@ -1,15 +1,15 @@
-# aura_connect_sdk
+# aura_mobile_sdk
 
 ## Description
 A Flutter plugin support dApp connect to Aura from Coin98 Wallet.
 
 ## Installation
-Add [install](https://github.com/ToanBarcelona1998/aura_connect_sdk.git) to your pubspec.yaml
+Add [install](https://github.com/ToanBarcelona1998/aura_mobile_sdk.git) to your pubspec.yaml
 
 Example
 
 ```yaml
-    aura_connect_sdk 1.0.0
+    aura_mobile_sdk 1.0.0
 ```
 
 ## Step by step
@@ -48,7 +48,7 @@ Example
 ## Usage
 
 ```dart
-import 'package:aura_connect_sdk/aura_connect_sdk.dart';
+import 'package:aura_mobile_sdk/aura_mobile_sdk.dart';
 import 'package:flutter/material.dart';
 
 void main() {

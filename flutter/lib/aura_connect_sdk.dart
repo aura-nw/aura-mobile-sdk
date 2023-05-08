@@ -1,37 +1,52 @@
-library aura_connect_sdk;
+library aura_mobile_sdk;
 
 import 'dart:async';
+import 'package:aura_mobile_sdk/src/constants/server.dart';
 import 'package:flutter/foundation.dart';
+import 'src/aura_mobile_sdk.dart';
 import 'src/connect_wallet/aura_connect_wallet.dart';
 import 'src/core/parameters/aura_parameter.dart';
 import 'src/core/core_data/aura_wallet_core_data.dart';
 import 'src/core/types/aura_server_event_type.dart';
-
-
 export 'src/core/core_data/aura_wallet_core_data.dart';
 export 'src/core/parameters/aura_parameter.dart';
 export 'src/core/types/aura_server_event_type.dart';
 
-enum AuraWalletEnvironment {
-  mainNet,
-  testNet,
+import 'package:alan/alan.dart';
+import 'package:alan/proto/cosmos/bank/v1beta1/tx.pb.dart';
+import 'src/core/in_app_core_data/in_app_core_data.dart';
+import 'src/in_app_wallet/aura_in_app_wallet_client.dart';
+
+export 'src/core/in_app_core_data/in_app_core_data.dart';
+export 'package:alan/alan.dart' show Fee, Tx;
+export 'package:alan/proto/cosmos/bank/v1beta1/tx.pb.dart' show MsgSend;
+
+/// region Aura connect sdk
+class AuraConnectSdkParameter {
+  final String callbackUrl;
+  final String yourAppName;
+  final String yourAppLogo;
+
+  const AuraConnectSdkParameter({
+    required this.callbackUrl,
+    this.yourAppLogo = '',
+    required this.yourAppName,
+  });
 }
 
-class AuraConnectSdk {
+class AuraConnectSdk implements AuraMobileSdk<AuraConnectSdkParameter> {
   AuraConnectSdk();
-
-  bool _isReadyInit = false;
 
   String _chainId = '';
 
   AuraConnectWalletClient? _client;
 
+  @override
   Future<void> init({
     AuraWalletEnvironment environment = AuraWalletEnvironment.testNet,
-    required String callbackUrl,
-    required String yourAppName,
-    String yourAppLogo = '',
+    AuraConnectSdkParameter? parameter,
   }) async {
+    assert(parameter != null, 'You must provider Aura connect sdk parameter');
     switch (environment) {
       case AuraWalletEnvironment.mainNet:
         break;
@@ -41,17 +56,17 @@ class AuraConnectSdk {
     }
 
     _client = AuraConnectWalletClient(
-      callbackURL: callbackUrl,
-      dAppLogo: yourAppLogo,
-      dAppName: yourAppName,
+      callbackURL: parameter!.callbackUrl,
+      dAppLogo: parameter.yourAppLogo,
+      dAppName: parameter.yourAppName,
       chainId: _chainId,
     );
 
-    _isReadyInit = true;
+    isReadyInit = true;
   }
 
   Future<AuraWalletConnectionResult> connectWallet() async {
-    if (!_isReadyInit || _client == null) {
+    if (!isReadyInit || _client == null) {
       throw UnimplementedError('You must call init before connect wallet');
     }
 
@@ -59,7 +74,7 @@ class AuraConnectSdk {
   }
 
   Future<AuraWalletInfoData> requestAccessWallet() async {
-    if (!_isReadyInit || _client == null) {
+    if (!isReadyInit || _client == null) {
       throw UnimplementedError('You must call init before connect wallet');
     }
 
@@ -67,7 +82,7 @@ class AuraConnectSdk {
   }
 
   Future<Map<String, dynamic>> transfer({required TransferParam param}) async {
-    if (!_isReadyInit || _client == null) {
+    if (!isReadyInit || _client == null) {
       throw UnimplementedError('You must call init before connect wallet');
     }
 
@@ -100,7 +115,159 @@ class AuraConnectSdk {
 
   @mustCallSuper
   void dispose() {
-    _isReadyInit = false;
+    isReadyInit = false;
     _client?.dispose();
   }
+
+  @override
+  bool isReadyInit = false;
 }
+
+///endregion
+
+///region AuraInAppWalletSdk
+class AuraInAppWalletSdk implements AuraMobileSdk<void> {
+  AuraInAppWalletClient? _client;
+
+  @override
+  bool isReadyInit = false;
+
+  @override
+  Future<void> init({
+    AuraWalletEnvironment environment = AuraWalletEnvironment.testNet,
+    void parameter,
+  }) async {
+    LCDInfo lcdInfo;
+    GRPCInfo grpcInfo;
+
+    switch (environment) {
+      case AuraWalletEnvironment.testNet:
+        lcdInfo = LCDInfo(
+          host: lcdTestNet,
+          port: 443,
+        );
+        grpcInfo = GRPCInfo(
+          host: grpcTestNet,
+          port: 9092,
+        );
+        break;
+      case AuraWalletEnvironment.mainNet:
+        lcdInfo = LCDInfo(
+          host: lcdMainNet,
+        );
+        grpcInfo = GRPCInfo(
+          host: grpcMainNet,
+        );
+        break;
+    }
+
+    _client = AuraInAppWalletClient(
+      lcdInfo: lcdInfo,
+      grpcInfo: grpcInfo,
+    );
+
+    isReadyInit = true;
+  }
+
+  Future<AuraInAppWalletInfo> createRandomHDWallet() async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+
+    return _client!.createRandomHDWallet();
+  }
+
+  Future<AuraInAppWalletInfo> restoreHDWallet(
+      {required String mnemonic}) async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+
+    return _client!.restoreHDWallet(
+      mnemonic: mnemonic,
+    );
+  }
+
+  Future<bool> checkMnemonic({required String mnemonic}) async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+
+    return _client!.checkMnemonic(
+      mnemonic: mnemonic,
+    );
+  }
+
+  Future<MsgSend> createTransaction({
+    required String fromAddress,
+    required String toAddress,
+    required String amount,
+  }) async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+
+    return _client!.createTransaction(
+      fromAddress: fromAddress,
+      toAddress: toAddress,
+      amount: amount,
+    );
+  }
+
+  Future<Fee> createFee({required String amount}) async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+    return _client!.createFee(
+      amount: amount,
+    );
+  }
+
+  Future<Tx> signTransaction({
+    required Wallet wallet,
+    required List<MsgSend> msgSend,
+    required Fee fee,
+  }) async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+
+    return _client!.signTransaction(
+      wallet: wallet,
+      msgSend: msgSend,
+      fee: fee,
+    );
+  }
+
+  Future<bool> submitTransaction({required Tx signedTransaction}) async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+
+    return _client!.submitTransaction(
+      signedTransaction: signedTransaction,
+    );
+  }
+
+  Future<String> checkWalletBalance({required String address}) async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+
+    return _client!.checkWalletBalance(
+      address: address,
+    );
+  }
+
+  Future<List<AuraTransaction>> checkWalletHistory(
+      {required String address}) async {
+    if (!isReadyInit || _client == null) {
+      throw UnimplementedError('You must call init before used aura sdk');
+    }
+
+    return _client!.checkWalletHistory(
+      address: address,
+    );
+  }
+}
+///endregion

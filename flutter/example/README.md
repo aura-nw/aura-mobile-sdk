@@ -1,6 +1,6 @@
-# aura_connect_sdk_example
+# aura_mobile_sdk_example
 
-Demonstrates how to use the aura_connect_sdk plugin.
+Demonstrates how to use the aura_mobile_sdk plugin.
 
 ## Getting Started
 

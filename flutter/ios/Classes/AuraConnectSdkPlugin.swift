@@ -3,7 +3,7 @@ import UIKit
 
 public class AuraConnectSdkPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "aura_connect_sdk_launcher_platform", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(name: "aura_mobile_sdk_launcher_platform", binaryMessenger: registrar.messenger())
     let instance = AuraConnectSdkPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }

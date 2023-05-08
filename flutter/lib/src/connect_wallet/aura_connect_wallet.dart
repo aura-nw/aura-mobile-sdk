@@ -1,12 +1,12 @@
-import 'package:aura_connect_sdk/src/core/core_data/aura_wallet_core_data.dart';
-import 'package:aura_connect_sdk/src/core/parameters/aura_parameter.dart';
-import 'package:aura_connect_sdk/src/constants/server.dart';
-import 'package:aura_connect_sdk/src/constants/constant.dart';
-import 'package:aura_connect_sdk/src/core/types/aura_server_event_type.dart';
-import 'package:aura_connect_sdk/src/core/utils/core_extension.dart';
-import 'package:aura_connect_sdk/src/core/utils/open_url.dart';
-import 'package:aura_connect_sdk/src/core/utils/unique_id.dart';
-import 'package:aura_connect_sdk/src/core/utils/encode_rq.dart';
+import 'package:aura_mobile_sdk/src/core/core_data/aura_wallet_core_data.dart';
+import 'package:aura_mobile_sdk/src/core/parameters/aura_parameter.dart';
+import 'package:aura_mobile_sdk/src/constants/server.dart';
+import 'package:aura_mobile_sdk/src/constants/constant.dart';
+import 'package:aura_mobile_sdk/src/core/types/aura_server_event_type.dart';
+import 'package:aura_mobile_sdk/src/core/utils/core_extension.dart';
+import 'package:aura_mobile_sdk/src/core/utils/open_url.dart';
+import 'package:aura_mobile_sdk/src/core/utils/unique_id.dart';
+import 'package:aura_mobile_sdk/src/core/utils/encode_rq.dart';
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:uuid/data.dart';
@@ -82,11 +82,9 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
 
     Completer<AuraWalletConnectionResult> completer = Completer();
 
-    print('coin98_connect ${emitData.toJson()}');
     _client!.emitWithAck('coin98_connect', emitData.toJson(),
         ack: (String id) async {
       _id = id;
-      print('coin98_connect ConnectionID ${id}');
       if (!isConnected) {
         AuraRequestConnectWalletParam connectParam =
             AuraRequestConnectWalletParam(
@@ -176,9 +174,6 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
     String url = enCodeUrl('$_id&request=${enCodeRequestParam(
       param,
     )}');
-
-    print('requestId = $_id');
-    print('url = $url');
 
     Completer<AuraServerEventTypeData> completer = Completer();
 

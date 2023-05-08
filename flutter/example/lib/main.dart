@@ -1,4 +1,4 @@
-import 'package:aura_connect_sdk/aura_connect_sdk.dart';
+import 'package:aura_mobile_sdk/aura_connect_sdk.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -20,9 +20,11 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _connectSdk.init(
-      callbackUrl: 'app://open.my.app',
-      yourAppName: 'Example',
-      yourAppLogo: 'logo',
+      parameter: const AuraConnectSdkParameter(
+        callbackUrl: 'app://open.my.app',
+        yourAppName: 'Example',
+        yourAppLogo: 'logo',
+      ),
     );
     super.initState();
   }

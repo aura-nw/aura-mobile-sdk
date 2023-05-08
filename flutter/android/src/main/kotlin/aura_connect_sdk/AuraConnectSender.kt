@@ -1,4 +1,4 @@
-package aura_connect_sdk
+package aura_mobile_sdk
 
 import android.app.Activity
 import android.content.Context

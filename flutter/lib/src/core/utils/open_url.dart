@@ -1,4 +1,4 @@
-import 'package:aura_connect_sdk/src/core/launcher_platform/aura_launcher.dart';
+import 'package:aura_mobile_sdk/src/core/launcher_platform/aura_launcher.dart';
 
 class OpenUrl {
   const OpenUrl();
