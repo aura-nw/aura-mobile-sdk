@@ -4,6 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AuraMobileSDK{
+    public static class PromiseMainThreadCaller{
+        static Queue<Action> actions = new Queue<Action>();
+        [RuntimeInitializeOnLoadMethod]
+        static void Initialize(){
+            CoroutineRunner.StartCoroutine(InvokeQueuedActions());
+        }
+        static IEnumerator InvokeQueuedActions(){
+            while (true){
+                while (actions.Count > 0){
+                    Action action = actions.Dequeue();
+                    action?.Invoke();
+                }
+                yield return null;
+            }
+        }
+        public static void InvokeOnMainThread(Action action){
+            actions.Enqueue(action);
+        }
+    }
     public class Promise{
         bool resultResolved = false, afterDefined = false, fulfilled = false;
         Action<bool> after;
@@ -17,7 +36,7 @@ namespace AuraMobileSDK{
         void TryInvoke(){
             if (!fulfilled && resultResolved && afterDefined){
                 fulfilled = true;
-                after?.Invoke(success);
+                PromiseMainThreadCaller.InvokeOnMainThread(() => after?.Invoke(success));
             } 
         }
         public void Resolve(bool success){
@@ -49,7 +68,7 @@ namespace AuraMobileSDK{
         void TryInvoke(){
             if (!fulfilled && resultResolved && afterDefined){
                 fulfilled = true;
-                after?.Invoke(success, result);
+                PromiseMainThreadCaller.InvokeOnMainThread(() => after?.Invoke(success, result));
             } 
         }
         public void Resolve(bool success, T result){
