@@ -64,7 +64,7 @@ namespace AuraMobileSDK{
             public string tx_bytes;
             public BroadcastMode mode;
         }
-        private static async Task BroadcastTx(Tx signedTx){
+        public static async Task BroadcastTx(Tx signedTx){
             // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.Body).Value));
             // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.AuthInfo).Value));
             // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.Signatures).Value));
@@ -84,7 +84,7 @@ namespace AuraMobileSDK{
                     mode = BroadcastMode.BroadcastModeBlock
                 }
             );
-            // Logging.Info("response", httpResponseMessage);
+            Logging.Info("response", httpResponseMessage);
         }
     }
 }

@@ -83,7 +83,7 @@ namespace AuraMobileSDK{
             txBody.Messages.Add(Google.Protobuf.WellKnownTypes.Any.Pack(CreateSendMessage(address, toAddress, sendAmount), "/cosmos.bank.v1beta1.MsgSend"));
 
             AuthInfo authInfo = new AuthInfo(){
-                Fee = CreateFee(address, toAddress, feeAmount)
+                Fee = CreateFee(address, address, feeAmount)
             };
             authInfo.SignerInfos.Add(new SignerInfo() {
                 ModeInfo = new ModeInfo(){

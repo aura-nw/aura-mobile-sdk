@@ -14,6 +14,9 @@ public class RestoreWallet : MonoBehaviour
     {
         restore.onClick.AddListener(() => {
             DemoIAW.wallet = AuraWallet.RestoreAuraWallet(mnemonic.text);
+            
+            //go back to main menu
+            DemoIAW.instance.currentScreen = DemoIAW.Screen.MAIN_MENU;
         });
     }
 

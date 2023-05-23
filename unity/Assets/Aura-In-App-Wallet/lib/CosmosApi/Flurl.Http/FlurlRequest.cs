@@ -138,7 +138,7 @@ namespace Flurl.Http
 					WriteRequestCookies(request);
 
 				call.Response = await Client.HttpClient.SendAsync(request, completionOption, cancellationTokenWithTimeout).ConfigureAwait(false);
-				// Logging.Verbose("result", call.Response, await call.Response.Content.ReadAsStringAsync());
+				Logging.Verbose("result", call.Response, await call.Response.Content.ReadAsStringAsync());
 				call.Response.RequestMessage = request;
 
 				if (call.Succeeded)
