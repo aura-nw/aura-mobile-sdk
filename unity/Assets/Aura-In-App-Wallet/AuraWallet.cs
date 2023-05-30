@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using CosmosApi.Models;
 using Flurl.Http;
-
+using cosmwasm.wasm.v1;
 namespace AuraMobileSDK{
     public partial class AuraWallet{
         public readonly string mnemonic;
@@ -76,7 +76,7 @@ namespace AuraMobileSDK{
                 return 0;
             }
         }
-        public async Task<Tx> CreateTransaction(string toAddress, string sendAmount, string feeAmount = "200"){
+        public async Task<Tx> CreateSendTransaction(string toAddress, string sendAmount, string feeAmount = "200"){
             TxBody txBody = new TxBody(){
                 Memo = GenerateRandomMemo()
             };
@@ -98,6 +98,31 @@ namespace AuraMobileSDK{
                 Body = txBody,
                 AuthInfo = authInfo,
                 
+            };
+
+            return tx;
+        }
+        public async Task<Tx> CreateExecuteContractTransaction(string contractAddress, string msgJson, string funds = null, string feeAmount = "200"){
+            TxBody txBody = new TxBody(){
+                Memo = GenerateRandomMemo()
+            };
+            txBody.Messages.Add(Google.Protobuf.WellKnownTypes.Any.Pack(CreateExecuteContractMessage(address, contractAddress, BitSupporter.ToByteArrayUTF8(msgJson), funds), "/cosmwasm.wasm.v1.MsgExecuteContract"));
+
+            AuthInfo authInfo = new AuthInfo(){
+                Fee = CreateFee(address, address, feeAmount)
+            };
+            authInfo.SignerInfos.Add(new SignerInfo() {
+                ModeInfo = new ModeInfo(){
+                    single = new ModeInfo.Single(){
+                        Mode = cosmos.tx.signing.v1beta1.SignMode.SignModeDirect
+                    }
+                }, 
+                Sequence = await GetAccountSequence(),
+            });
+
+            Tx tx = new Tx(){
+                Body = txBody,
+                AuthInfo = authInfo,
             };
 
             return tx;

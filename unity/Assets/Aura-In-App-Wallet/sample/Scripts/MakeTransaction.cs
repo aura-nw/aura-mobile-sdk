@@ -19,7 +19,7 @@ public class MakeTransaction : MonoBehaviour
         BigInteger balance = await DemoIAW.wallet.GetBalance();
         info.text = "From address: " + DemoIAW.wallet.address + "\n" + "Balance: " + balance.ToString();
         send.onClick.AddListener(async () => {
-            var tx = await DemoIAW.wallet.CreateTransaction(toAddress.text, amount.text);
+            var tx = await DemoIAW.wallet.CreateSendTransaction(toAddress.text, amount.text);
             await DemoIAW.wallet.SignTransaction(tx);
             await AuraMobileSDK.AuraWallet.BroadcastTx(tx);
             

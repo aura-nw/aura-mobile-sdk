@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using CosmosApi;
 using Flurl.Http;
-
+using cosmwasm.wasm.v1;
 namespace AuraMobileSDK{
     public partial class AuraWallet{
         private static readonly ICosmosApiClient cosmosApiClient;
@@ -44,6 +44,21 @@ namespace AuraMobileSDK{
             });
             return msgSend;
         }
+        private static MsgExecuteContract CreateExecuteContractMessage(string senderAddress, string contractAddress, byte[] msgToSendToContract, string fundsInUAura = null){
+            MsgExecuteContract msgExecuteContract = new MsgExecuteContract() {
+                Sender = senderAddress,
+                Contract = contractAddress
+            };
+
+            if (fundsInUAura != null)
+                msgExecuteContract.Funds.Add(new Coin() {
+                    Denom = Constant.DENOM,
+                    Amount = fundsInUAura
+                });
+
+            msgExecuteContract.Msg = msgToSendToContract;
+            return msgExecuteContract;
+        }
         private static Fee CreateFee(string payer, string granter, string amount){
             Fee fee = new Fee() {
                 GasLimit = Constant.GAS_LIMIT,
@@ -64,7 +79,7 @@ namespace AuraMobileSDK{
             public string tx_bytes;
             public BroadcastMode mode;
         }
-        public static async Task BroadcastTx(Tx signedTx){
+        public static async Task<System.Net.Http.HttpResponseMessage> BroadcastTx(Tx signedTx){
             // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.Body).Value));
             // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.AuthInfo).Value));
             // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.Signatures).Value));
@@ -85,6 +100,7 @@ namespace AuraMobileSDK{
                 }
             );
             Logging.Info("response", httpResponseMessage);
+            return httpResponseMessage;
         }
     }
 }
