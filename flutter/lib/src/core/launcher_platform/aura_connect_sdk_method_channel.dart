@@ -6,7 +6,7 @@ import 'aura_connect_sdk_platform_interface.dart';
 class MethodChannelAuraConnectSdk extends AuraConnectSdkPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('aura_mobile_sdk_launcher_platform');
+  final methodChannel = const MethodChannel('aura_connect_sdk_launcher_platform');
 
   @override
   Future<bool> launchUrl(String url) async {

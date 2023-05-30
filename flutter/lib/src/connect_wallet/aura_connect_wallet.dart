@@ -1,12 +1,12 @@
-import 'package:aura_mobile_sdk/src/core/core_data/aura_wallet_core_data.dart';
-import 'package:aura_mobile_sdk/src/core/parameters/aura_parameter.dart';
-import 'package:aura_mobile_sdk/src/constants/server.dart';
-import 'package:aura_mobile_sdk/src/constants/constant.dart';
-import 'package:aura_mobile_sdk/src/core/types/aura_server_event_type.dart';
-import 'package:aura_mobile_sdk/src/core/utils/core_extension.dart';
-import 'package:aura_mobile_sdk/src/core/utils/open_url.dart';
-import 'package:aura_mobile_sdk/src/core/utils/unique_id.dart';
-import 'package:aura_mobile_sdk/src/core/utils/encode_rq.dart';
+import 'package:aura_sdk/src/core/core_data/aura_wallet_core_data.dart';
+import 'package:aura_sdk/src/core/parameters/aura_parameter.dart';
+import 'package:aura_sdk/src/constants/server.dart';
+import 'package:aura_sdk/src/constants/constant.dart';
+import 'package:aura_sdk/src/core/types/aura_server_event_type.dart';
+import 'package:aura_sdk/src/core/utils/core_extension.dart';
+import 'package:aura_sdk/src/core/utils/open_url.dart';
+import 'package:aura_sdk/src/core/utils/unique_id.dart';
+import 'package:aura_sdk/src/core/utils/encode_rq.dart';
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:uuid/data.dart';
@@ -82,20 +82,17 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
 
     Completer<AuraWalletConnectionResult> completer = Completer();
 
+    print('KhoaHM #1 coin98_connect params = ${emitData.toJson()}');
     _client!.emitWithAck('coin98_connect', emitData.toJson(),
         ack: (String id) async {
       _id = id;
+      print('KhoaHM #2 coin98_connect response = $id');
       if (!isConnected) {
         AuraRequestConnectWalletParam connectParam =
-            AuraRequestConnectWalletParam(
-          params: [
-            AuraConnectWalletOption(
-              appName: dAppName,
-              logo: dAppLogo,
-              dAppUrl: callbackURL,
-            ),
-          ],
-        );
+            AuraRequestConnectWalletParam(params: [
+          AuraConnectWalletOption(
+              appName: dAppName, logo: dAppLogo, dAppUrl: callbackURL)
+        ]);
 
         await _requestCore(
           param: connectParam.toJson(),
@@ -129,9 +126,12 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
         chainId,
       ],
     );
+    print('requestParams = ${requestParam.toJson()}');
+
     final AuraServerEventTypeData data = await _requestCore(
       param: requestParam.toJson(),
     );
+
     return AuraWalletInfoData(
       data: AuraWalletInfo.fromJson(data.result),
       idConnection: data.idConnection,
@@ -149,6 +149,8 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
 
   Future<AuraServerEventTypeData> _requestCore(
       {required Map<String, dynamic> param}) async {
+    print('KhoaHM ##Request Core##  params = $param');
+
     if (!isConnected && param['method'] != 'connect') {
       throw UnimplementedError(
           'You need to connect before handle any request!!');
@@ -175,6 +177,9 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
       param,
     )}');
 
+    print('requestId = $_id');
+    print('url = $url');
+
     Completer<AuraServerEventTypeData> completer = Completer();
 
     _emitter.once(id, data: (data) {
@@ -191,6 +196,7 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
         completer.complete(data);
       }
     });
+    print('KhoaHM ##Request Core##  DeepLink Url = $url');
 
     _openUrl.openUrl(url);
 
@@ -220,6 +226,8 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
           _client!.on(
             'sdk_connect',
             (event) {
+              print('KhoaHM ##SocketEvent##  sdk_connect event = $event');
+
               if (event is Map<String, dynamic>) {
                 AuraServerEventType fromEvent =
                     AuraServerEventType.fromJson(event);
@@ -238,6 +246,8 @@ class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {
           _client!.on(
             'disconnect',
             (data) {
+              print('KhoaHM ##SocketEvent##  disconnect data = $data');
+
               isConnected = false;
               _emitter.emit(
                 const AuraServerEventType(

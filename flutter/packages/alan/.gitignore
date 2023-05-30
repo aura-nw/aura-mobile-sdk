@@ -1,0 +1,48 @@
+# Miscellaneous
+.build/
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/tx_signer_helper_test
+.history
+.svn/
+
+# Documentation
+node_modules/
+doc/.vuepress/dist
+
+# Codecov
+coverage/
+test/.test_coverage.dart
+
+# IDEs
+*.iml
+.idea/
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.packages
+.pub-cache/
+.pub/
+build/
+
+# VM models
+*.vm.json
+
+# Used when publishing
+#.github/
+#.img/
+#doc/
+#proto
+#scripts
+#third_party/**
+#Makefile
+#package.json
+#package-lock.json
+

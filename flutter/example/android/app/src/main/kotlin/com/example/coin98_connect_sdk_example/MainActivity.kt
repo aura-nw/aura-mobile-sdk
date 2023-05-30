@@ -1,4 +1,4 @@
-package com.example.aura_mobile_sdk_example
+package com.example.aura_connect_sdk_example
 
 import io.flutter.embedding.android.FlutterActivity
 

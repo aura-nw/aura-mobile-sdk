@@ -1,5 +1,5 @@
-name: aura_mobile_sdk_example
-description: Demonstrates how to use the aura_mobile_sdk plugin.
+name: aura_connect_sdk_example
+description: Demonstrates how to use the aura_connect_sdk plugin.
 
 publish_to:
 
@@ -9,7 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  aura_mobile_sdk:
+  aura_sdk:
     path: ../
 
   # The following adds the Cupertino Icons font to your application.

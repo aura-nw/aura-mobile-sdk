@@ -1,37 +1,36 @@
-# aura_mobile_sdk
+# aura_sdk
 
 ## Description
 A Flutter plugin support dApp connect to Aura from Coin98 Wallet.
 
 ## Installation
-Add [install](https://github.com/ToanBarcelona1998/aura_mobile_sdk.git) to your pubspec.yaml
+Add [install](https://github.com/aura-nw/aura-mobile-sdk) to your pubspec.yaml
 
 Example
 
 ```yaml
-aura_mobile_sdk:
-  git: https://github.com/ToanBarcelona1998/aura_mobile_sdk.git
-  branch: main
+    aura_sdk 1.0.0
 ```
 
 ## Step by step
 
-##### 1. Init a AuraConnect SDK:
+### 1. Init a AuraConnect SDK:
 ``` dart
-  AuraConnectSdk connectSdk = AuraConnectSdk();
-   connectSdk.init(
-      environment: AuraWalletEnvironment.testNet,
-      callbackUrl: 'app://open.my.app',
-      yourAppName: 'My Aura DApp',
-      yourAppLogo: 'logo',
-    );
+  AuraSDK auraSDK = AuraSDK.init(
+        environment: AuraWalletEnvironment.testNet,
+        "DApp Name",
+        "DApp Logo",
+        "app://open.my.app");
 ```
  callBackUrl is the link that the wallet will open after user approved the connection
 
+### 2. External Wallet
+final WalletInfo wallet =
+        await AuraSDK.instance.digitalWallet.createRandomHDWallet();
 
-##### 2. Call the function sdk.connectWallet() to open connection with the Wallet
+##### 1. Call the function sdk.connectWallet() to open connection with the Wallet
 ``` dart
-	AuraWalletConnectionResult result = await connectSdk.connectWallet();
+	AuraWalletConnectionResult result = await auraSDK.externalWallet.connectWallet();
 ```
  AuraWalletConnectionResult  is the result of the connection, you have to storage the result.idConnection to use for "transfer fuction" later
  
@@ -43,14 +42,14 @@ aura_mobile_sdk:
 
 ##### 4. Now, the connection is ready, you can work with the Wallet. You may try the fuction: 
 ```dart
-    AuraWalletInfoData walletInfoData = await  connectSdk.requestAccessWallet();
+    AuraWalletInfoData walletInfoData = await  auraSDK.externalWallet.requestAccessWallet();
 ```
 
 
 ## Usage
 
 ```dart
-import 'package:aura_mobile_sdk/aura_mobile_sdk.dart';
+import 'package:aura_sdk/aura_sdk.dart';
 import 'package:flutter/material.dart';
 
 void main() {

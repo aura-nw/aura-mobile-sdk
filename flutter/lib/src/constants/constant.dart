@@ -20,6 +20,3 @@ List<int> crypto = List<int>.empty(growable: true)
     0x58,
     0x36,
   ]);
-
-const String deNom = 'uaura';
-const String bech32Hrp = 'aura';

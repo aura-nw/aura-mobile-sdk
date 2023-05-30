@@ -1,4 +1,4 @@
-group 'aura_mobile_sdk'
+group 'aura_connect_sdk'
 version '1.0-SNAPSHOT'
 
 buildscript {
