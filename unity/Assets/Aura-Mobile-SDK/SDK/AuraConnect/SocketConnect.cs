@@ -17,11 +17,13 @@ namespace AuraMobileSDK{
             //return promise
             Promise<SocketIOUnity> promise = new Promise<SocketIOUnity>();
             if (socket != null){
-                promise.Resolve(true, socket);
                 //Wait for the socket to be connected
                 CoroutineRunner.WaitFor(
                     condition: () => {return socket.Connected;}, action: () => promise.Resolve(true, socket), 
-                    maxWaitUnscaledTime: Constant.SOCKET_CONNECTION_TIMEOUT, onTimeout: () => promise.Resolve(false, null)
+                    maxWaitUnscaledTime: Constant.SOCKET_CONNECTION_TIMEOUT, onTimeout: () => {
+                        promise.Resolve(false, null);
+                        socket = null;
+                    }
                 );
             } else {
                 //initialize the options
@@ -74,13 +76,17 @@ namespace AuraMobileSDK{
                 socket.OnError += (sender, errorString) => {
                     Logging.Verbose("Error", sender, errorString);
                 };
+                Logging.Verbose("Connecting to socket", options.ToString(), socket);
                 //connect the socket to the server
                 socket.Connect();
 
                 //Wait for the socket to be connected
                 CoroutineRunner.WaitFor(
                     condition: () => {return socket.Connected;}, action: () => promise.Resolve(true, socket), 
-                    maxWaitUnscaledTime: Constant.SOCKET_CONNECTION_TIMEOUT, onTimeout: () => promise.Resolve(false, null)
+                    maxWaitUnscaledTime: Constant.SOCKET_CONNECTION_TIMEOUT, onTimeout: () => {
+                        promise.Resolve(false, null);
+                        socket = null;
+                    }
                 );
             }
             return promise;

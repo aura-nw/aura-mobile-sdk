@@ -24,7 +24,7 @@ namespace AuraMobileSDK{
                     replacement = r.ToString();
                 //else if (id[i] == 'y')
                     //replacement = ((r & 0x3) | 0x8).ToString();
-                Logging.Verbose("genid i=", i, "id[i]=", id[i], "d=", d, "r=", r, "replacement=", replacement);
+                //Logging.Verbose("genid i=", i, "id[i]=", id[i], "d=", d, "r=", r, "replacement=", replacement);
                 ret += replacement;
             };
             return ret;
