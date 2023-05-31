@@ -8,11 +8,11 @@ import 'package:uuid/data.dart';
 import 'package:uuid/rng.dart';
 import 'package:uuid/uuid.dart';
 
-import '../external_wallet/aura_connect_sdk.dart';
-import '../core_aura_sdk.dart';
-import '../constants/constant.dart';
-import 'utils/encode_rq.dart';
-import 'utils/open_url.dart';
+import 'constants/constant.dart';
+import 'core/core_data/aura_wallet_core_data.dart';
+import 'core/types/aura_server_event_type.dart';
+import 'core/utils/encode_rq.dart';
+import 'core/utils/open_url.dart';
 
 class ExternalWalletImpl extends ExternalWallet {
   final String appName;

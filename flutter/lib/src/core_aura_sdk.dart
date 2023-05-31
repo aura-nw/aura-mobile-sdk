@@ -2,7 +2,7 @@ import 'package:aura_sdk/src/inapp_wallet/inapp_wallet.dart';
 import 'package:aura_sdk/src/external_wallet/external_wallet.dart';
 import 'package:aura_sdk/src/inapp_wallet/inapp_wallet_impl.dart';
 
-import 'core/aura_sdk_implement.dart';
+import 'external_wallet/aura_sdk_implement.dart';
 
 export 'inapp_wallet/inapp_wallet.dart';
 export 'external_wallet/external_wallet.dart';

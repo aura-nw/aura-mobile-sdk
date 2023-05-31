@@ -1,18 +1,18 @@
-import 'package:aura_sdk/src/core/core_data/aura_wallet_core_data.dart';
-import 'package:aura_sdk/src/core/parameters/aura_parameter.dart';
-import 'package:aura_sdk/src/constants/server.dart';
-import 'package:aura_sdk/src/constants/constant.dart';
-import 'package:aura_sdk/src/core/types/aura_server_event_type.dart';
-import 'package:aura_sdk/src/core/utils/core_extension.dart';
-import 'package:aura_sdk/src/core/utils/open_url.dart';
-import 'package:aura_sdk/src/core/utils/unique_id.dart';
-import 'package:aura_sdk/src/core/utils/encode_rq.dart';
+import 'package:aura_sdk/src/external_wallet/core/utils/core_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:uuid/data.dart';
 import 'package:uuid/rng.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
+import '../constants/constant.dart';
+import '../constants/server.dart';
+import '../core/core_data/aura_wallet_core_data.dart';
+import '../core/parameters/aura_parameter.dart';
+import '../core/types/aura_server_event_type.dart';
+import '../core/utils/encode_rq.dart';
+import '../core/utils/open_url.dart';
+import '../core/utils/unique_id.dart';
 import 'core/aura_connect_wallet_event_emitter.dart';
 
 class AuraConnectWalletClient extends AuraConnectWalletEventEmitter {

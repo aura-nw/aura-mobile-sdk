@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'package:aura_sdk/aura_sdk.dart';
 import 'package:flutter/foundation.dart';
-import '../connect_wallet/aura_connect_wallet.dart';
-import '../core/parameters/aura_parameter.dart';
-import '../core/core_data/aura_wallet_core_data.dart';
-import '../core/types/aura_server_event_type.dart';
 
-export '../core/core_data/aura_wallet_core_data.dart';
-export '../core/parameters/aura_parameter.dart';
-export '../core/types/aura_server_event_type.dart';
+import 'connect_wallet/aura_connect_wallet.dart';
+import 'core/core_data/aura_wallet_core_data.dart';
+import 'core/parameters/aura_parameter.dart';
+import 'core/types/aura_server_event_type.dart';
 
 class AuraConnectSdk {
   AuraConnectSdk();

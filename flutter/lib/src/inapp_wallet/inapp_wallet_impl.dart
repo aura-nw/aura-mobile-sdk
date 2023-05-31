@@ -16,7 +16,7 @@ import 'dart:ffi';
 import 'package:bip39/bip39.dart' as bip39;
 
 import '../core_aura_sdk.dart';
-import '../core/errors/sdk_error.dart';
+import '../cores/errors/sdk_error.dart';
 import 'inapp_wallet.dart';
 import 'src/aura_transaction_info.dart';
 import 'src/inapp_wallet_helper.dart';
@@ -256,7 +256,8 @@ class InAppWalletImpl implements InAppWallet {
     required String sender,
     required Map<String, dynamic> message,
   }) async {
-    throw UnimplementedError('Unimplemented, Method not support in this version');
+    throw UnimplementedError(
+        'Unimplemented, Method not support in this version');
 
     ///validate message
     if (contractAddress.isEmpty) {
@@ -282,7 +283,6 @@ class InAppWalletImpl implements InAppWallet {
 
     return String.fromCharCodes(response.data);
   }
-
 
   @override
   Future<String> makeInteractiveWriteSmartContract({
@@ -338,7 +338,6 @@ class InAppWalletImpl implements InAppWallet {
       fee: feeData,
     );
 
-
     ///4: create tx sender
     final txSender = TxSender.fromNetworkInfo(networkInfo);
 
@@ -348,8 +347,7 @@ class InAppWalletImpl implements InAppWallet {
     if (response.isSuccessful) {
       return response.txhash;
     }
-    throw UnimplementedError(
-        'Broadcast transaction error\n${response.rawLog}');
+    throw UnimplementedError('Broadcast transaction error\n${response.rawLog}');
   }
 }
 

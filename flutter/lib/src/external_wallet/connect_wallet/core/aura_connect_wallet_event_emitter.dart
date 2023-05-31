@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'package:aura_sdk/src/core/types/aura_server_event_type.dart';
 import 'package:flutter/foundation.dart';
-import 'package:aura_sdk/src/core/listeners/aura_event_listener.dart';
+
+import '../../core/listeners/aura_event_listener.dart';
+import '../../core/types/aura_server_event_type.dart';
 
 class AuraConnectWalletEventEmitter with AuraEventListener {
   AuraConnectWalletEventEmitter() {

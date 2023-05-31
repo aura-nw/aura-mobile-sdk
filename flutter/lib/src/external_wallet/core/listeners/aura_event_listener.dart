@@ -1,4 +1,4 @@
-import 'package:aura_sdk/src/core/types/aura_server_event_type.dart';
+import '../types/aura_server_event_type.dart';
 
 typedef AuraConnectWalletListener = void Function(AuraServerEventType data);
 
