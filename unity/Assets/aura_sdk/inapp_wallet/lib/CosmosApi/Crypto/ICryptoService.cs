@@ -70,18 +70,15 @@ namespace CosmosApi.Crypto
             ISerializer serializer, string encodedPrivateKey, string passphrase, PublicKey publicKey = default)
         {
             var key = ParsePrivateKey(encodedPrivateKey, passphrase);
-            Logging.Verbose("Private key", key.Type, key.Value);
             return MakeStdSignature(chainId, accountNumber, sequence, fee, msgs, memo, serializer, key, publicKey);
         }
 
         public virtual StdSignature MakeStdSignature(string chainId, ulong accountNumber, ulong sequence, StdFee fee, IList<IMsg> msgs, string memo,
             ISerializer serializer, BinaryPrivateKey privateKey, PublicKey publicKey = default)
         {
-            Logging.Verbose("Signing", chainId, accountNumber, sequence);
             var stdSignDoc = new StdSignDoc(accountNumber, chainId, fee, memo, msgs, sequence);
 
             var bytesToSign = Encoding.UTF8.GetBytes(serializer.SerializeSortedAndCompact(stdSignDoc));
-            Logging.Verbose("bytesToSign", System.Text.Encoding.ASCII.GetString(bytesToSign));
             byte[] signedBytes = Sign(bytesToSign, privateKey);
 
             publicKey = MakePublicKey(publicKey, privateKey);

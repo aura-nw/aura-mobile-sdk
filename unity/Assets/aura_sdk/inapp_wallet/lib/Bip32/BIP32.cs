@@ -24,7 +24,6 @@ namespace dotnetstandard_bip32
 
                 var il = i.Slice(0, 32);
                 var ir = i.Slice(32);
-                //// Logging.Verbose("MasterKeyFromSeed:", Convert.ToBase64String(il), Convert.ToBase64String(ir), Convert.ToBase64String(i));
                 return (Key: il, ChainCode: ir);
             }
         }
@@ -36,7 +35,6 @@ namespace dotnetstandard_bip32
 
                 var il = i.Slice(0, 32);
                 var ir = i.Slice(32);
-                //// Logging.Verbose("MasterKeyFromSeed:", Convert.ToBase64String(il), Convert.ToBase64String(ir), Convert.ToBase64String(i));
                 return (Key: il, ChainCode: ir);
             }
         }
@@ -53,7 +51,6 @@ namespace dotnetstandard_bip32
                 buffer.Write(pubKey);
                 buffer.WriteUInt(index);
             }
-            // Logging.Verbose("With index = ", index % hardenedOffset, "hashing", buffer.ToArray().ToHexString(), "with chaincode = ", chainCode.ToHexString());
             using (HMACSHA512 hmacSha512 = new HMACSHA512(chainCode))
             {
                 var i = hmacSha512.ComputeHash(buffer.ToArray());
@@ -63,8 +60,6 @@ namespace dotnetstandard_bip32
 
                 BigInteger bKey = key.ToHexString().ToBigInteger();
                 BigInteger bLeft = il.ToHexString().ToBigInteger();
-                // Logging.Verbose("bLeft:", bLeft.ToString(), il.ToHexString());
-                // Logging.Verbose("bKey:", bKey.ToString(), key.ToHexString());
                 BigInteger newKey = (bKey + bLeft) % ECC_N;
 
                 return (Key: newKey.ToByteArray(isUnsigned: true, isBigEndian: true), ChainCode: ir);
@@ -74,38 +69,7 @@ namespace dotnetstandard_bip32
         public byte[] GetPublicKey(byte[] privateKey)
         {
             Secp256k1 secp256K1 = new Secp256k1();
-            // // Logging.Verbose("publicKeyBytes sec:", secp256K1.CompressKey(secp256K1.DerivePubKeyFromPrivKey(privateKey)).ToHexString());
             return secp256K1.CompressKey(secp256K1.DerivePubKeyFromPrivKey(privateKey));
-            // //This function assumes that compressed = true; then append the prefix of \x02 or \x03 when pointY is event or odd, respectively
-            // BigInteger secret = HexStringToBigInteger(ByteArrayToHexString(privateKey)) % ECC_N;
-            // //scalar multiplication
-
-            // BigInteger currentX = ECC_GX;
-            // BigInteger currentY = ECC_GY;
-            
-            // BigInteger pointX = 0;
-            // BigInteger pointY = 0;
-            
-            // BigInteger s = secret;
-            // while (s > 0) {
-            //     if (s % 2 == 1){
-            //         pointX += currentX;
-            //         pointY += currentY;
-            //     }
-            //     currentX += currentX;
-            //     currentY += currentY;
-            //     s /= 2;
-            // }
-
-            // // Logging.Verbose("secret", ByteArrayToHexString(secret.ToByteArray(true, true)), "point", ByteArrayToHexString(pointX.ToByteArray()), ByteArrayToHexString(pointY.ToByteArray()));
-            // byte[] prefix;
-            // if (pointY % 2 == 0) {
-            //     prefix = new byte[] {2};
-            // } else {
-            //     prefix = new byte[] {3};
-            // }
-            // // Logging.Verbose("publicKeyBytes:", ByteArrayToHexString(prefix.Concat(pointX.ToByteArray(true, true)).ToArray()));
-            // return prefix.Concat(pointX.ToByteArray(true, true)).ToArray();
         }
 
         private bool IsValidPath(string path)
@@ -139,7 +103,6 @@ namespace dotnetstandard_bip32
                         return Convert.ToUInt32(a.Substring(0, a.Length - 1), 10) + hardenedOffset;
                     else return Convert.ToUInt32(a, 10);
                 });
-            // Logging.Verbose(segments);
             var results = segments
                 .Aggregate(masterKeyFromSeed, (mks, next) => GetChildKeyDerivation(mks.Key, mks.ChainCode, next));
 
@@ -151,7 +114,6 @@ namespace dotnetstandard_bip32
                 throw new FormatException("Invalid derivation path");
 
             var masterKeyFromSeed = GetMasterKeyFromSeed(seed);
-            // Logging.Verbose("Master key:", System.BitConverter.ToString(masterKeyFromSeed.Key).ToLower().Replace("-", ""));
 
             var segments = path
                 .Split('/')
@@ -161,10 +123,8 @@ namespace dotnetstandard_bip32
                         return Convert.ToUInt32(a.Substring(0, a.Length - 1), 10) + hardenedOffset;
                     else return Convert.ToUInt32(a, 10);
                 });
-            // Logging.Verbose(segments);
             var results = segments
                 .Aggregate(masterKeyFromSeed, (mks, next) => {
-                    // Logging.Verbose(next % hardenedOffset, System.BitConverter.ToString(mks.Key).ToLower().Replace("-", ""));
                     return GetChildKeyDerivation(mks.Key, mks.ChainCode, next);
                 });
 

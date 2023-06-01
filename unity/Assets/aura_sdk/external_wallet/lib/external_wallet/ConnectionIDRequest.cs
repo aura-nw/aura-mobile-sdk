@@ -32,7 +32,7 @@ namespace AuraSDK{
                 type = "connection_request",
                 message = new ConnectionIDRequestParams.Message {
                     url = "app://open.my.app",
-                    id = Guid.NewGuid().ToString()//"109156be-c4fb-41ea-b1b4-efe1671c5836"
+                    id = Guid.NewGuid().ToString()
                 }
             };
             Logging.Verbose("requestParams", requestParams);

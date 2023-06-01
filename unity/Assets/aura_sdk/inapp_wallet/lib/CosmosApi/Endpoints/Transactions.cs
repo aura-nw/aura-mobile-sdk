@@ -51,15 +51,13 @@ namespace CosmosApi.Endpoints
             return GetByHashAsync(hash).Sync();
         }
 
-        public async Task<BroadcastTxResult> PostBroadcastAsync(BroadcastTxBody txBroadcast, CancellationToken cancellationToken = default)
+        public Task<BroadcastTxResult> PostBroadcastAsync(BroadcastTxBody txBroadcast, CancellationToken cancellationToken = default)
         {
-            //IFlurlRequest request = _clientGetter().Request("txs");
-            IFlurlRequest request = _clientGetter().Request("cosmos", "tx", "v1beta1", "txs");
-            Logging.Info(request.Url, txBroadcast.Tx.GetMsgs()[0].SignBytesObject().ToString(), txBroadcast.Mode);
-            System.Net.Http.HttpResponseMessage httpResponseMessage = await request.PostJsonAsync(txBroadcast, cancellationToken);
-            Logging.Info("response", httpResponseMessage);
-            BroadcastTxResult result = null; //httpResponseMessage.ReceiveJson<BroadcastTxResult>();
-            return result;
+            return _clientGetter()
+                .Request("cosmos", "tx", "v1beta1", "txs")
+                .PostJsonAsync(txBroadcast, cancellationToken)
+                .ReceiveJson<BroadcastTxResult>()
+                .WrapExceptions();
         }
 
         public BroadcastTxResult PostBroadcast(BroadcastTxBody txBroadcast)

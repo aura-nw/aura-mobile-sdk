@@ -84,17 +84,8 @@ namespace AuraSDK{
         }
         ///<summary>Broadcast a transaction to Aura LCD Endpoint. The transaction should be created and signed before sending; or otherwise, it will be rejected by the server</summary>
         public static async Task<System.Net.Http.HttpResponseMessage> BroadcastTx(Tx signedTx){
-            // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.Body).Value));
-            // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.AuthInfo).Value));
-            // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx.Signatures).Value));
-            // Logging.Verbose(System.Text.Encoding.ASCII.GetString(Google.Protobuf.WellKnownTypes.Any.Pack(signedTx, "/cosmos.tx.v1beta1.Tx").Value));
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
-            // System.IO.StringWriter sW = new System.IO.StringWriter();
-            // Newtonsoft.Json.JsonSerializer.Create().Serialize(sW, signedTx);
-            // Logging.Verbose("In package", sW.ToString());
             ProtoBuf.Serializer.Serialize(memoryStream, signedTx);
-            // Logging.Verbose(memoryStream.ToArray());
-            // Logging.Verbose(System.Text.Encoding.ASCII.GetString(memoryStream.ToArray()));
             byte[] bytes = memoryStream.ToArray();
             Flurl.Http.IFlurlRequest flurlRequest = flurlClient.Request("cosmos", "tx", "v1beta1", "txs");
             System.Net.Http.HttpResponseMessage httpResponseMessage = await flurlRequest.PostJsonAsync(

@@ -220,7 +220,6 @@ namespace CosmosApi.Crypto
             var armor = new Org.BouncyCastle.Bcpg.ArmoredInputStream(inputStream);
             
             var armorHeaders = armor.GetArmorHeaders();
-            Logging.Verbose(armorHeaders);
             var headers = armorHeaders
                 .Select(h => h.Split(": ", StringSplitOptions.RemoveEmptyEntries))
                 .ToDictionary(s => s[0], s => s[1], (IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);

@@ -73,9 +73,7 @@ namespace CosmosApi
             var signersSelector = signers.Select(async s => new Signer((await Auth.GetAuthAccountByAddressAsync(s.Address, cancellationToken)).Result, s.EncodedPrivateKey, s.Passphrase));
 
             var (nodeInfo, accountSigners) = await (GaiaRest.GetNodeInfoAsync(cancellationToken), Task.WhenAll(signersSelector));
-            Logging.Verbose(GetCryptoService(), tx, accountSigners, nodeInfo.NodeInfo.Network, Serializer);
             GetCryptoService().SignStdTx(tx, accountSigners, nodeInfo.NodeInfo.Network, Serializer);
-            Logging.Verbose("tx", tx.Signatures[0].Signature, tx.Msg[0].ToString());
             return await Transactions.PostBroadcastAsync(new BroadcastTxBody(tx, mode), cancellationToken);
         }
         public async Task SignStdTx(StdTx tx, IEnumerable<SignerWithAddress> signers, BroadcastTxMode mode = BroadcastTxMode.Async, CancellationToken cancellationToken = default)
@@ -83,9 +81,7 @@ namespace CosmosApi
             var signersSelector = signers.Select(async s => new Signer((await Auth.GetAuthAccountByAddressAsync(s.Address, cancellationToken)).Result, s.EncodedPrivateKey, s.Passphrase));
 
             var (nodeInfo, accountSigners) = await (GaiaRest.GetNodeInfoAsync(cancellationToken), Task.WhenAll(signersSelector));
-            Logging.Verbose(GetCryptoService(), tx, accountSigners, nodeInfo.NodeInfo.Network, Serializer);
             GetCryptoService().SignStdTx(tx, accountSigners, nodeInfo.NodeInfo.Network, Serializer);
-            Logging.Verbose("tx", tx.Signatures[0].Signature, tx.Msg[0].ToString());
         }
         public abstract void Dispose();
     }

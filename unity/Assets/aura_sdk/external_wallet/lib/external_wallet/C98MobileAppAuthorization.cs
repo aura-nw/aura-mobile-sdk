@@ -5,7 +5,6 @@ namespace AuraSDK{
     public partial class ExternalWallet{
         string GenerateAuthorizationRequestUniqueID(){
             long d = (long) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
-            //Logging.Verbose("genid", d);
             string id = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
             string ret = "";
             for (int i = 0; i < id.Length; ++i){
@@ -13,19 +12,12 @@ namespace AuraSDK{
                     ret += id[i];
                     continue;
                 }
-                //Logging.Verbose("genid", d);
                 System.Random random = new System.Random();
                 long r = (long) (random.Next() % 16); // random number between 0 and 16
                 // Use timestamp until depleted
                 r = (d + r) % 16 | 0;
                 d /= 16;
-                string replacement = null;
-                //if (id[i] == 'x')
-                    replacement = r.ToString();
-                //else if (id[i] == 'y')
-                    //replacement = ((r & 0x3) | 0x8).ToString();
-                //Logging.Verbose("genid i=", i, "id[i]=", id[i], "d=", d, "r=", r, "replacement=", replacement);
-                ret += replacement;
+                ret += r.ToString();
             };
             return ret;
         }

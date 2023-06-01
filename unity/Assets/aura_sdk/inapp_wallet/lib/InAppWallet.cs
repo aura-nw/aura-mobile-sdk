@@ -32,21 +32,17 @@ namespace AuraSDK{
             BIP32 bIP32 = new BIP32();
             BIP39 bIP39 = new BIP39();
             this.mnemonic = mnemonic;
-            // Logging.Verbose(System.BitConverter.ToString(bIP39.MnemonicToSeed(mnemonic, password)).Replace("-", "").ToLower());
             (privateKey, chainCode) = bIP32.DerivePath(Constant.DERIVATION_PATH, bIP39.MnemonicToSeedHex(mnemonic, password));
             publicKey = bIP32.GetPublicKey(privateKey);
             
             byte[] sha256DigestResult = SHA256.Create().ComputeHash(publicKey);
-            // Logging.Verbose("sha256Digest:", sha256DigestResult.ToHexString());
             
             var ripeMD160Digest = new Org.BouncyCastle.Crypto.Digests.RipeMD160Digest();
             ripeMD160Digest.BlockUpdate(sha256DigestResult, 0, sha256DigestResult.Length);
             byte[] ripeMD160DigestResult = new byte[20];
             ripeMD160Digest.DoFinal(ripeMD160DigestResult, 0);
 
-            // Logging.Verbose("ripeMD160Digest:", ripeMD160DigestResult.ToHexString());
             address = Bech32.Bech32Engine.Encode(Constant.BECH32_HRP, ripeMD160DigestResult);
-            // Logging.Verbose("Address:", Bech32.Bech32Engine.Encode(Constant.BECH32_HRP, ripeMD160DigestResult));
             Logging.Verbose("Wallet imported with following information:",
                             "\nmnemonic:", mnemonic,
                             "\nprivateKey:", GetPrivateKey(),
@@ -144,10 +140,8 @@ namespace AuraSDK{
                 ChainId = Constant.CHAIN_ID
             };
             byte[] bytesToSign = Google.Protobuf.WellKnownTypes.Any.Pack(signDoc).Value;
-            //Logging.Verbose("bytesToSign", bytesToSign, System.Text.Encoding.ASCII.GetString(bytesToSign));
             CosmosApi.Crypto.CosmosCryptoService cryptoService = new CosmosApi.Crypto.CosmosCryptoService();
             byte[] signature = cryptoService.Sign(bytesToSign, cryptoService.ParsePrivateKey(privateKey));
-            //Logging.Verbose("signature", signature, System.Text.Encoding.ASCII.GetString(signature));
             tx.Signatures.Add(signature);
         }
     }
