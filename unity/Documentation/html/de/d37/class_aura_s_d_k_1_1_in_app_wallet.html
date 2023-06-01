@@ -113,10 +113,13 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>GetPrivateKey</b> (
 &#160;</td><td class="memItemRight" valign="bottom"><b>InAppWallet</b> (string <a class="el" href="../../de/d37/class_aura_s_d_k_1_1_in_app_wallet.html#a3ba79ca0e8b9e88878589775a6b3c96b">mnemonic</a>, string password=&quot;&quot;)</td></tr>
 <tr class="memdesc:a40e0e3a7f2f03307c116b0edfc93a908"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor: Create an InAppWallet using mnemonic string and a password (if you have any). Mnemonic will be generated using RFC2898 standard using SHA512 function with the following parameters: password = GetBytes(mnemonic), salt = "mnemonic" + your_password, iterations = 2048 Public and Private Keys are generated using default "Aura derivation path" defined in Constant class. <br /></td></tr>
 <tr class="separator:a40e0e3a7f2f03307c116b0edfc93a908"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedcd7b9e28a266e2109c015f82428634"><td class="memItemLeft" align="right" valign="top"><a id="aedcd7b9e28a266e2109c015f82428634" name="aedcd7b9e28a266e2109c015f82428634"></a>
-async Task&lt; System.Numerics.BigInteger &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetBalance</b> ()</td></tr>
-<tr class="memdesc:aedcd7b9e28a266e2109c015f82428634"><td class="mdescLeft">&#160;</td><td class="mdescRight">summary&gt;Create a transaction with a MsgSend message. The returned Tx structured is defined in proto-generated code cosmos.tx.v1beta1.tx <br /></td></tr>
-<tr class="separator:aedcd7b9e28a266e2109c015f82428634"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af93f23d1274af90963df0f6de4ff12ab"><td class="memItemLeft" align="right" valign="top"><a id="af93f23d1274af90963df0f6de4ff12ab" name="af93f23d1274af90963df0f6de4ff12ab"></a>
+async Task&lt; System.Numerics.BigInteger &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CheckBalance</b> ()</td></tr>
+<tr class="separator:af93f23d1274af90963df0f6de4ff12ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a474f631783137e8151a2524e7b3e5471"><td class="memItemLeft" align="right" valign="top"><a id="a474f631783137e8151a2524e7b3e5471" name="a474f631783137e8151a2524e7b3e5471"></a>
+async Task&lt; List&lt; <a class="el" href="../../d2/db6/class_aura_s_d_k_1_1_aura_transaction.html">AuraTransaction</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CheckWalletHistory</b> (int limit=100)</td></tr>
+<tr class="memdesc:a474f631783137e8151a2524e7b3e5471"><td class="mdescLeft">&#160;</td><td class="mdescRight">summary&gt;Create a transaction with a MsgSend message. The returned Tx structured is defined in proto-generated code cosmos.tx.v1beta1.tx <br /></td></tr>
+<tr class="separator:a474f631783137e8151a2524e7b3e5471"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1d119f89b1bf061443484dcc4c2fe66"><td class="memItemLeft" align="right" valign="top"><a id="ad1d119f89b1bf061443484dcc4c2fe66" name="ad1d119f89b1bf061443484dcc4c2fe66"></a>
 async Task&lt; Tx &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CreateSendTransaction</b> (string toAddress, string sendAmount, string feeAmount=&quot;200&quot;)</td></tr>
 <tr class="memdesc:ad1d119f89b1bf061443484dcc4c2fe66"><td class="mdescLeft">&#160;</td><td class="mdescRight">summary&gt;Create a transaction with a MsgExecuteContract message. The returned Tx structured is defined in proto-generated code cosmos.tx.v1beta1.tx <br /></td></tr>
@@ -158,8 +161,8 @@ readonly string&#160;</td><td class="memItemRight" valign="bottom"><b>address</b
 <tr class="separator:a6fb9e10bf93b7ebe8a1838bee0907082"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>Assets/aura_sdk/inapp_wallet/InAppWallet.cs</li>
-<li>Assets/aura_sdk/inapp_wallet/InAppWalletStatic.cs</li>
+<li>Assets/aura_sdk/inapp_wallet/lib/InAppWallet.cs</li>
+<li>Assets/aura_sdk/inapp_wallet/lib/InAppWalletStatic.cs</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

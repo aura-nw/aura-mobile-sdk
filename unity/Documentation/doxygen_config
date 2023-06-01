@@ -945,9 +945,9 @@ WARN_LOGFILE           =
 
 INPUT                  = Assets/aura_sdk/external_wallet/config \
                          Assets/aura_sdk/inapp_wallet/config \
-                         Assets/aura_sdk/inapp_wallet \
                          Assets/aura_sdk/external_wallet/lib/external_wallet \
-                         Assets/aura_sdk/external_wallet/lib/logging
+                         Assets/aura_sdk/external_wallet/lib/logging \
+                         Assets/aura_sdk/inapp_wallet/lib
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

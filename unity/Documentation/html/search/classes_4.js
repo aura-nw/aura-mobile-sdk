@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['logging_0',['Logging',['../d9/d98/class_logging.html',1,'']]]
+  ['inappwallet_0',['InAppWallet',['../de/d37/class_aura_s_d_k_1_1_in_app_wallet.html',1,'AuraSDK']]]
 ];
