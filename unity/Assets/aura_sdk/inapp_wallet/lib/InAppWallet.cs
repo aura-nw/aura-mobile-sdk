@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using CosmosApi.Models;
 using Flurl.Http;
 using cosmwasm.wasm.v1;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 namespace AuraSDK{
     public partial class InAppWallet{
         ///<summary>The mnemonic that was used to construct this InAppWallet object. The mnemonic can't be changed once initialized. To change the mnemonic, create a new InAppWallet object</summary>
@@ -68,7 +70,7 @@ namespace AuraSDK{
             return accountInfo.AccountNumber;
         }
         ///<summary>Get Balance for the this.address address. This is an awaitable function and will return 0 if error occurs</summary>
-        public async Task<System.Numerics.BigInteger> GetBalance(){
+        public async Task<System.Numerics.BigInteger> CheckBalance(){
             try{
                 var balance = await cosmosApiClient.Bank.GetBankBalancesByAddressAsync(address);
                 var result = balance.Result;
@@ -77,6 +79,53 @@ namespace AuraSDK{
                 Logging.Error(e);
                 return 0;
             }
+        }
+        private async Task<LCDTransactionList> SearchTransaction(string events, int limit){
+            return await flurlClient
+                .Request("cosmos", "tx", "v1beta1", "txs")
+                .SetQueryParam("events", events)
+                .SetQueryParam("pagination.offset", 0)
+                .SetQueryParam("pagination.limit", limit).
+                GetJsonAsync<LCDTransactionList>();
+        }
+        public async Task<List<AuraTransaction>> CheckWalletHistory(int limit = 100){
+            List<AuraTransaction> transactionHistory = new List<AuraTransaction>();
+            
+            LCDTransactionList sendList = await SearchTransaction(System.Uri.EscapeUriString($"transfer.sender='{address}'"), 100);
+
+            for (int i = 0; i < sendList.transactions.Length; ++i){
+                var transaction = sendList.transactions[i];
+                var transactionResponse = sendList.transactionResponses[i];
+
+                if (transaction.body.messages[0].type == "/cosmos.bank.v1beta1.MsgSend"){
+                    transactionHistory.Add(new AuraTransaction() {
+                        type = TransactionType.SEND,
+                        fromAddress = transaction.body.messages[0].fromAddress,
+                        toAddress = transaction.body.messages[0].toAddress,
+                        timestamp = transactionResponse.timestamp,
+                        amount = transaction.body.messages[0].amount[0].amount
+                    });
+                }
+            }
+            
+            LCDTransactionList receiveList = await SearchTransaction(System.Uri.EscapeUriString($"transfer.sender='{address}'"), 100);
+
+            for (int i = 0; i < receiveList.transactions.Length; ++i){
+                var transaction = receiveList.transactions[i];
+                var transactionResponse = receiveList.transactionResponses[i];
+
+                if (transaction.body.messages[0].type == "/cosmos.bank.v1beta1.MsgSend"){
+                    transactionHistory.Add(new AuraTransaction() {
+                        type = TransactionType.SEND,
+                        fromAddress = transaction.body.messages[0].fromAddress,
+                        toAddress = transaction.body.messages[0].toAddress,
+                        timestamp = transactionResponse.timestamp,
+                        amount = transaction.body.messages[0].amount[0].amount
+                    });
+                }
+            }
+
+            return transactionHistory;
         }
         ///<summary>Create a transaction with a MsgSend message. The returned Tx structured is defined in proto-generated code cosmos.tx.v1beta1.tx</summary>
         public async Task<Tx> CreateSendTransaction(string toAddress, string sendAmount, string feeAmount = "200"){

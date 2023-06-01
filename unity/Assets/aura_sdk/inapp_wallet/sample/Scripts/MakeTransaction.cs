@@ -16,7 +16,7 @@ public class MakeTransaction : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {
-        BigInteger balance = await DemoIAW.wallet.GetBalance();
+        BigInteger balance = await DemoIAW.wallet.CheckBalance();
         info.text = "From address: " + DemoIAW.wallet.address + "\n" + "Balance: " + balance.ToString();
         send.onClick.AddListener(async () => {
             var tx = await DemoIAW.wallet.CreateSendTransaction(toAddress.text, amount.text);
