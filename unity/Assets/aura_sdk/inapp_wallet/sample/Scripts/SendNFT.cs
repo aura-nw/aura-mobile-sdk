@@ -6,7 +6,7 @@ public class SendNFT : MonoBehaviour
 {
     [SerializeField]
     TMPro.TMP_Text log;
-    async void Start()
+    async void OnEnable()
     {
         log.text = "Sending nft token 2 to aura1qye5hls3tnttxfhaa2klftrqcevcz02a4uzzy568nm5cgkqfvflqpu7plx";
         Tx tx = await DemoIAW.wallet.CreateExecuteContractTransaction(

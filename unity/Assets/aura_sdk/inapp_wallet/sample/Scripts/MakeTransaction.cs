@@ -12,7 +12,7 @@ public class MakeTransaction : MonoBehaviour
     [SerializeField]
     Button send;
     // Start is called before the first frame update
-    async void Start()
+    async void OnEnable()
     {
         BigInteger balance = await DemoIAW.wallet.CheckBalance();
         info.text = "From address: " + DemoIAW.wallet.address + "\n" + "Balance: " + balance.ToString();

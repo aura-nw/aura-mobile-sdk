@@ -77,7 +77,7 @@ namespace AuraSDK{
                 var result = response.result;
                 return BigInteger.Parse(result[0].amount);
             } catch(System.Exception e){
-                Logging.Error(e);
+                Logging.Info("Cannot parse coin list with exception:", e);
                 return 0;
             }
         }
