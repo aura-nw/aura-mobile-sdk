@@ -1,15 +1,10 @@
 using dotnetstandard_bip39;
 using dotnetstandard_bip32;
 using cosmos.tx.v1beta1;
-using cosmos._base.v1beta1;
-using cosmos.bank.v1beta1;
-using cosmos.tx.signing.v1beta1;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using CosmosApi.Models;
 using Flurl.Http;
-using cosmwasm.wasm.v1;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 namespace AuraSDK{
     public partial class InAppWallet{
