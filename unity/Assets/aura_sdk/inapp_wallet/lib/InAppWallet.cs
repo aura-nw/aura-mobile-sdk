@@ -3,9 +3,10 @@ using dotnetstandard_bip32;
 using cosmos.tx.v1beta1;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using CosmosApi.Models;
 using Flurl.Http;
 using System.Collections.Generic;
+using AuraSDK.Serialization;
+using System.Numerics;
 namespace AuraSDK{
     public partial class InAppWallet{
         ///<summary>The mnemonic that was used to construct this InAppWallet object. The mnemonic can't be changed once initialized. To change the mnemonic, create a new InAppWallet object</summary>
@@ -49,7 +50,12 @@ namespace AuraSDK{
             );
         }
         private async Task<BaseAccount> GetAccountInfo(){
-            BaseAccount accountInfo = ((await cosmosApiClient.Auth.GetAuthAccountByAddressAsync(address)).Result as CosmosApi.Models.BaseAccount);
+            BaseAccount accountInfo = (await 
+                                    flurlClient.
+                                    Request("auth", "accounts", address)
+                                    .GetJsonAsync<QueryResponse<TypeValue<BaseAccount>>>())
+                                    .result.value;
+
             if (accountInfo == null)
                 Logging.Warning("Cannot fetch account info, using cached data.");
             else 
@@ -58,35 +64,35 @@ namespace AuraSDK{
         }
         private async Task<ulong> GetAccountSequence(){
             BaseAccount accountInfo = await GetAccountInfo();
-            return accountInfo.Sequence;
+            return accountInfo.sequence;
         }
         private async Task<ulong> GetAccountNumber(){
             BaseAccount accountInfo = await GetAccountInfo();
-            return accountInfo.AccountNumber;
+            return accountInfo.accountNumber;
         }
         ///<summary>Get Balance for the this.address address. This is an awaitable function and will return 0 if error occurs</summary>
-        public async Task<System.Numerics.BigInteger> CheckBalance(){
+        public async Task<BigInteger> CheckBalance(){
             try{
-                var balance = await cosmosApiClient.Bank.GetBankBalancesByAddressAsync(address);
-                var result = balance.Result;
-                return result[0].Amount;
+                QueryResponse<List<Coin>> response = await flurlClient.Request("bank", "balances", address).GetJsonAsync<QueryResponse<List<Coin>>>();
+                var result = response.result;
+                return BigInteger.Parse(result[0].amount);
             } catch(System.Exception e){
                 Logging.Error(e);
                 return 0;
             }
         }
-        private async Task<LCDTransactionList> SearchTransaction(string events, int limit){
+        private async Task<Serialization.TransactionList> SearchTransaction(string events, int limit){
             return await flurlClient
                 .Request("cosmos", "tx", "v1beta1", "txs")
                 .SetQueryParam("events", events)
                 .SetQueryParam("pagination.offset", 0)
                 .SetQueryParam("pagination.limit", limit).
-                GetJsonAsync<LCDTransactionList>();
+                GetJsonAsync<Serialization.TransactionList>();
         }
         public async Task<List<AuraTransaction>> CheckWalletHistory(int limit = 100){
             List<AuraTransaction> transactionHistory = new List<AuraTransaction>();
             
-            LCDTransactionList sendList = await SearchTransaction(System.Uri.EscapeUriString($"transfer.sender='{address}'"), 100);
+            Serialization.TransactionList sendList = await SearchTransaction(System.Uri.EscapeUriString($"transfer.sender='{address}'"), 100);
 
             for (int i = 0; i < sendList.transactions.Length; ++i){
                 var transaction = sendList.transactions[i];
@@ -103,7 +109,7 @@ namespace AuraSDK{
                 }
             }
             
-            LCDTransactionList receiveList = await SearchTransaction(System.Uri.EscapeUriString($"transfer.sender='{address}'"), 100);
+            Serialization.TransactionList receiveList = await SearchTransaction(System.Uri.EscapeUriString($"transfer.sender='{address}'"), 100);
 
             for (int i = 0; i < receiveList.transactions.Length; ++i){
                 var transaction = receiveList.transactions[i];
@@ -184,8 +190,7 @@ namespace AuraSDK{
                 ChainId = Constant.CHAIN_ID
             };
             byte[] bytesToSign = Google.Protobuf.WellKnownTypes.Any.Pack(signDoc).Value;
-            CosmosApi.Crypto.CosmosCryptoService cryptoService = new CosmosApi.Crypto.CosmosCryptoService();
-            byte[] signature = cryptoService.Sign(bytesToSign, cryptoService.ParsePrivateKey(privateKey));
+            byte[] signature = SignatureProvider.Sign(bytesToSign, privateKey);
             tx.Signatures.Add(signature);
         }
     }

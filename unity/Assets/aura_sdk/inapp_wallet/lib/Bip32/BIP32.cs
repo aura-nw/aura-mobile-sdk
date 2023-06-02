@@ -4,8 +4,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Numerics;
-using Ecdsa.Secp;
 using AuraSDK;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Asn1.X9;
 
 namespace dotnetstandard_bip32
 {
@@ -66,8 +67,19 @@ namespace dotnetstandard_bip32
 
         public byte[] GetPublicKey(byte[] privateKey)
         {
-            Secp256k1 secp256K1 = new Secp256k1();
-            return secp256K1.CompressKey(secp256K1.DerivePubKeyFromPrivKey(privateKey));
+            ///create the curve
+            var curve = ECNamedCurveTable.GetByName("secp256k1");
+            var curveSpec = new ECDomainParameters(curve.Curve, curve.G, curve.N, curve.H);
+
+            //derive public key from private key
+            var privateKeyParameters = new ECPrivateKeyParameters(new Org.BouncyCastle.Math.BigInteger(1, privateKey), curveSpec);
+            var Q = curveSpec.G.Multiply(privateKeyParameters.D);
+            
+            byte[] uncompressedPublicKey = Q.GetEncoded();
+
+            //compress the key
+            var pubKeyParameters = new ECPublicKeyParameters("ECDSA", curve.Curve.DecodePoint(uncompressedPublicKey), curveSpec);
+            return pubKeyParameters.Q.GetEncoded(true);
         }
 
         private bool IsValidPath(string path)

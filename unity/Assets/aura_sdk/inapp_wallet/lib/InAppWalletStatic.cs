@@ -3,20 +3,12 @@ using cosmos.tx.v1beta1;
 using cosmos._base.v1beta1;
 using cosmos.bank.v1beta1;
 using System.Threading.Tasks;
-using CosmosApi;
 using Flurl.Http;
 using cosmwasm.wasm.v1;
 namespace AuraSDK{
     public partial class InAppWallet{
-        private static readonly ICosmosApiClient cosmosApiClient;
         private static readonly Flurl.Http.FlurlClient flurlClient;
         static InAppWallet(){
-            cosmosApiClient = new CosmosApiBuilder()
-                .UseBaseUrl(Constant.LCD_URL)
-                .RegisterCosmosSdkTypeConverters()
-                .RegisterAccountType<CosmosApi.Models.BaseAccount>("cosmos-sdk/BaseAccount")
-                .CreateClient();
-             
             flurlClient = new Flurl.Http.FlurlClient(Constant.LCD_URL);
         }
         ///<summary>Create a random HD Wallet using default strength as <paramref name="Constant.BIP39_STRENGTH"> and default wordlist as <paramref name="Constant.BIP39_WORDLIST"></summary>
@@ -91,7 +83,7 @@ namespace AuraSDK{
                     mode = BroadcastMode.BroadcastModeBlock
                 }
             );
-            Logging.Info("response", httpResponseMessage);
+            Logging.Info("response", await httpResponseMessage.Content.ReadAsStringAsync());
             return httpResponseMessage;
         }
     }
