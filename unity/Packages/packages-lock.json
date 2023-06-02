@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.aura-nw.socketiounity": {
+      "version": "https://github.com/aura-nw/SocketIOUnity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "45df4f36370dc741370ca2634903e69675a9f199"
+    },
     "com.github-glitchenzo.nugetforunity": {
       "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
       "depth": 0,
