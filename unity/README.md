@@ -17,15 +17,15 @@ This method is the easiest way to install Aura SDK. We have all configured Nuget
 This method suits installing Aura SDK to an existing project. It involves downloading and importing the ```.unitypackage``` file, adding package manager and Nuget dependencies, and configure custom Android manifest.
 
 - Step 1: Download and import aura-sdk-unity.unitypackage file in the Releases folder.
-- Step 2: Install SocketIOUnity package using the github URL <https://github.com/aura-nw/SocketIOUnity.git>
-- Step 3: Install NuGetForUnity package using the github URL <https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity>
+- Step 2: Install SocketIOUnity package using the github URL <https://github.com/aura-nw/SocketIOUnity.git>.
+- Step 3: Install NuGetForUnity package using the github URL <https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity>.
 - Step 4: (Unity <=2021 only) Disable ```Assembly Version Validation``` in the ```Player Settings```. For Unity 2022 or later, this option is disabled by default.
-- Step 5: Append these NuGet dependencies into your Assets/packages.config file. If there is no packages.config file in the Assets folder, you can create one and use the content below
+- Step 5: Append these NuGet dependencies into your Assets/packages.config file. If there is no packages.config file in the Assets folder, you can create one and use the content below.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <packages>
-  <!-- Only append this part if-->
+  <!-- Only append the part below if the file already exists -->
   <package id="BouncyCastle.NetCore" version="1.8.6" />
   <package id="dotnetstandard-bip39" version="1.0.2" />
   <package id="ExtendedNumerics.BigDecimal" version="2023.121.1953" />
@@ -52,6 +52,7 @@ This method suits installing Aura SDK to an existing project. It involves downlo
   <package id="System.Text.Json" version="6.0" />
   <package id="System.Threading.Tasks.Extensions" version="4.5.4" />
   <package id="TaskTupleAwaiter" version="1.2.0" />
+  <!-- Only append the part above if the file already exists -->
 </packages>
 ```
 
