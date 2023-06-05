@@ -71,5 +71,7 @@ crashlytics-build.properties
 [Aa]ssets/[Ss]treamingAssets/aa.meta
 [Aa]ssets/[Ss]treamingAssets/aa/*
 [Aa]ssets/Test*
+
 #Nuget downloaded packages
 Assets/Packages 
+Assets/TextMesh Pro*
