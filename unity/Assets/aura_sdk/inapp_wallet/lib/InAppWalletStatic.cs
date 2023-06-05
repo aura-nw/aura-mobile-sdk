@@ -12,9 +12,9 @@ namespace AuraSDK{
             flurlClient = new Flurl.Http.FlurlClient(Constant.LCD_URL);
         }
         ///<summary>Create a random HD Wallet using default strength as <paramref name="Constant.BIP39_STRENGTH"> and default wordlist as <paramref name="Constant.BIP39_WORDLIST"></summary>
-        public static InAppWallet CreateRandomHDWallet(){
+        public static InAppWallet CreateRandomHDWallet(string password = ""){
             BIP39 bIP39 = new BIP39();
-            return new InAppWallet(bIP39.GenerateMnemonic(Constant.BIP39_STRENGTH, Constant.BIP39_WORDLIST));
+            return new InAppWallet(bIP39.GenerateMnemonic(Constant.BIP39_STRENGTH, Constant.BIP39_WORDLIST), password);
         }
         ///<summary>Restore HD Wallet using mnemonic phrase and a password (if you have one; otherwise, empty string "" will be used as password). It is the same as calling the InAppWallet constructor</summary>
         public static InAppWallet RestoreHDWallet(string mnemonic, string password = ""){
