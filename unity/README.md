@@ -19,7 +19,8 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 - Step 1: Download and import aura-sdk-unity.unitypackage file in the Releases folder.
 - Step 2: Install SocketIOUnity package using the github URL <https://github.com/aura-nw/SocketIOUnity.git>
 - Step 3: Install NuGetForUnity package using the github URL <https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity>
-- Step 4: Append these NuGet dependencies into your Assets/packages.config file
+- Step 4: Disable ```Assembly Version Validation``` in the ```Player Settings```
+- Step 5: Append these NuGet dependencies into your Assets/packages.config file
 
 ```xml
 <package id="BouncyCastle.NetCore" version="1.8.6" />
@@ -50,8 +51,8 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 <package id="TaskTupleAwaiter" version="1.2.0" />
 ```
 
-- Step 5: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies.
-- Step 6: (Android additionals) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
+- Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies.
+- Step 7: (Android additionals) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
