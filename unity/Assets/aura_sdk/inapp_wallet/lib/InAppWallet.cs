@@ -71,11 +71,16 @@ namespace AuraSDK{
             return accountInfo.accountNumber;
         }
         ///<summary>Get Balance for the this.address address. This is an awaitable function and will return 0 if error occurs</summary>
-        public async Task<BigInteger> CheckBalance(){
+        public async Task<BigInteger> CheckBalance(string denom){
             try{
                 QueryResponse<List<Coin>> response = await flurlClient.Request("bank", "balances", address).GetJsonAsync<QueryResponse<List<Coin>>>();
                 var result = response.result;
-                return BigInteger.Parse(result[0].amount);
+                foreach (var resultItem in response.result){
+                    if (resultItem.denom.Equals(denom))
+                        return BigInteger.Parse(resultItem.amount);
+                }
+                Logging.Warning($"Denom {denom} couldn't be found in the coin list. Zero default value was returned.");
+                return 0;
             } catch(System.Exception e){
                 Logging.Info("Cannot parse coin list with exception:", e);
                 return 0;
@@ -129,11 +134,11 @@ namespace AuraSDK{
             return transactionHistory;
         }
         ///<summary>Create a transaction with a MsgSend message. The returned Tx structured is defined in proto-generated code cosmos.tx.v1beta1.tx</summary>
-        public async Task<Tx> CreateSendTransaction(string toAddress, string sendAmount, string feeAmount = "200"){
+        public async Task<Tx> CreateSendTransaction(string toAddress, string sendDenom, string sendAmount, string feeAmount = "200"){
             TxBody txBody = new TxBody(){
                 Memo = GenerateRandomMemo()
             };
-            txBody.Messages.Add(Google.Protobuf.WellKnownTypes.Any.Pack(CreateSendMessage(address, toAddress, sendAmount), "/cosmos.bank.v1beta1.MsgSend"));
+            txBody.Messages.Add(Google.Protobuf.WellKnownTypes.Any.Pack(CreateSendMessage(address, toAddress, sendDenom, sendAmount), "/cosmos.bank.v1beta1.MsgSend"));
 
             AuthInfo authInfo = new AuthInfo(){
                 Fee = CreateFee(address, address, feeAmount)

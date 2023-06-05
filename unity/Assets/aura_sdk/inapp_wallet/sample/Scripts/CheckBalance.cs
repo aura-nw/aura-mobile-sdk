@@ -8,7 +8,7 @@ public class CheckBalance : MonoBehaviour
     {
         if (DemoIAW.wallet != null){
             output.text = "Checking account balance...";
-            output.text = "Account address: " + DemoIAW.wallet.address + "\nBalance: " + await DemoIAW.wallet.CheckBalance() + " uaura";
+            output.text = "Account address: " + DemoIAW.wallet.address + "\nBalance: " + await DemoIAW.wallet.CheckBalance("uaura") + " uaura";
         } else {
             output.text = "Please restore or create a wallet first";
         }

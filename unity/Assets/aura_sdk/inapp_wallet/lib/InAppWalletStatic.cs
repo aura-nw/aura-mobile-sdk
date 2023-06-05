@@ -25,32 +25,33 @@ namespace AuraSDK{
             BIP39 bIP39 = new BIP39();
             return bIP39.ValidateMnemonic(mnemonic, Constant.BIP39_WORDLIST);
         }
-        private static MsgSend CreateSendMessage(string fromAddress, string toAddress, string amount){
+        private static MsgSend CreateSendMessage(string fromAddress, string toAddress, string denom, string amount){
             MsgSend msgSend = new MsgSend(){
                 FromAddress = fromAddress,
                 ToAddress = toAddress,
             };
             msgSend.Amounts.Add(new Coin() {
-                Denom = Constant.DENOM,
+                Denom = denom,
                 Amount = amount
             });
             return msgSend;
         }
-        private static MsgExecuteContract CreateExecuteContractMessage(string senderAddress, string contractAddress, byte[] msgToSendToContract, string fundsInUAura = null){
+        private static MsgExecuteContract CreateExecuteContractMessage(string senderAddress, string contractAddress, byte[] msgToSendToContract, string fundsDenom, string fundsAmount = null){
             MsgExecuteContract msgExecuteContract = new MsgExecuteContract() {
                 Sender = senderAddress,
                 Contract = contractAddress
             };
 
-            if (fundsInUAura != null)
+            if (fundsAmount != null)
                 msgExecuteContract.Funds.Add(new Coin() {
-                    Denom = Constant.DENOM,
-                    Amount = fundsInUAura
+                    Denom = fundsDenom,
+                    Amount = fundsAmount
                 });
 
             msgExecuteContract.Msg = msgToSendToContract;
             return msgExecuteContract;
         }
+        ///<summary> Create a fee in uaura. Note that the fee is always in uaura denom, defined in the Constant class </summary>
         private static Fee CreateFee(string payer, string granter, string amount){
             Fee fee = new Fee() {
                 GasLimit = Constant.GAS_LIMIT,
@@ -58,11 +59,12 @@ namespace AuraSDK{
                 Granter = granter
             };
             fee.Amounts.Add(new Coin() {
-                Denom = Constant.DENOM,
+                Denom = Constant.FEE_DENOM,
                 Amount = amount
             });
             return fee;
         }
+        
         private static string GenerateRandomMemo(){
             return System.Guid.NewGuid().ToString("D");
         }

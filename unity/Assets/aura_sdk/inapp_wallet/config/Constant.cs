@@ -8,7 +8,7 @@ namespace AuraSDK{
         public const string LCD_URL = "https://lcd.serenity.aura.network";
         public const string RPC_URL = "http://rpc.serenity.aura.network";
         public const string BECH32_HRP = "aura";
-        public const string DENOM = "uaura";
+        public const string FEE_DENOM = "uaura";
         public const ulong GAS_LIMIT = 200000;
         public const string CHAIN_ID = "serenity-testnet-001";
     }
