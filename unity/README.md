@@ -19,39 +19,46 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 - Step 1: Download and import aura-sdk-unity.unitypackage file in the Releases folder.
 - Step 2: Install SocketIOUnity package using the github URL <https://github.com/aura-nw/SocketIOUnity.git>
 - Step 3: Install NuGetForUnity package using the github URL <https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity>
-- Step 4: Disable ```Assembly Version Validation``` in the ```Player Settings```
-- Step 5: Append these NuGet dependencies into your Assets/packages.config file
+- Step 4: (Unity <=2021 only) Disable ```Assembly Version Validation``` in the ```Player Settings```. For Unity 2022 or later, this option is disabled by default.
+- Step 5: Append these NuGet dependencies into your Assets/packages.config file. If there is no packages.config file in the Assets folder, you can create one and use the content below
 
 ```xml
-<package id="BouncyCastle.NetCore" version="1.8.6" />
-<package id="dotnetstandard-bip39" version="1.0.2" />
-<package id="ExtendedNumerics.BigDecimal" version="2023.121.1953" />
-<package id="Flurl" version="2.8.2" />
-<package id="Flurl.Http" version="2.4.2" />
-<package id="JsonSubTypes" version="1.7.0" />
-<package id="Microsoft.Bcl.AsyncInterfaces" version="7.0.0" />
-<package id="Microsoft.Extensions.Logging.Abstractions" version="6.0.1" />
-<package id="Microsoft.NETCore.App" version="2.1.0" />
-<package id="NaCl.Net" version="0.1.6-pre" />
-<package id="NBitcoin.Secp256k1" version="1.0.1" />
-<package id="Newtonsoft.Json" version="12.0.3" />
-<package id="protobuf-net" version="3.2.16" />
-<package id="protobuf-net.Core" version="3.2.16" />
-<package id="System.Buffers" version="4.5.1" />
-<package id="System.Buffers" version="4.5.1" />
-<package id="System.Collections.Immutable" version="7.0.0" />
-<package id="System.Memory" version="4.5.5" />
-<package id="System.Numerics.Vectors" version="4.5.0" />
-<package id="System.Reactive" version="6.0.0" />
-<package id="System.Runtime.CompilerServices.Unsafe" version="6.0" />
-<package id="System.Text.Encoding.CodePages" version="4.5.1" />
-<package id="System.Text.Encodings.Web" version="6.0" />
-<package id="System.Text.Json" version="6.0" />
-<package id="System.Threading.Tasks.Extensions" version="4.5.4" />
-<package id="TaskTupleAwaiter" version="1.2.0" />
+<?xml version="1.0" encoding="utf-8"?>
+<packages>
+  <!-- Only append this part if-->
+  <package id="BouncyCastle.NetCore" version="1.8.6" />
+  <package id="dotnetstandard-bip39" version="1.0.2" />
+  <package id="ExtendedNumerics.BigDecimal" version="2023.121.1953" />
+  <package id="Flurl" version="2.8.2" />
+  <package id="Flurl.Http" version="2.4.2" />
+  <package id="JsonSubTypes" version="1.7.0" />
+  <package id="Microsoft.Bcl.AsyncInterfaces" version="7.0.0" />
+  <package id="Microsoft.Extensions.Logging.Abstractions" version="6.0.1" />
+  <package id="Microsoft.NETCore.App" version="2.1.0" />
+  <package id="NaCl.Net" version="0.1.6-pre" />
+  <package id="NBitcoin.Secp256k1" version="1.0.1" />
+  <package id="Newtonsoft.Json" version="12.0.3" />
+  <package id="protobuf-net" version="3.2.16" />
+  <package id="protobuf-net.Core" version="3.2.16" />
+  <package id="System.Buffers" version="4.5.1" />
+  <package id="System.Buffers" version="4.5.1" />
+  <package id="System.Collections.Immutable" version="7.0.0" />
+  <package id="System.Memory" version="4.5.5" />
+  <package id="System.Numerics.Vectors" version="4.5.0" />
+  <package id="System.Reactive" version="6.0.0" />
+  <package id="System.Runtime.CompilerServices.Unsafe" version="6.0" />
+  <package id="System.Text.Encoding.CodePages" version="4.5.1" />
+  <package id="System.Text.Encodings.Web" version="6.0" />
+  <package id="System.Text.Json" version="6.0" />
+  <package id="System.Threading.Tasks.Extensions" version="4.5.4" />
+  <package id="TaskTupleAwaiter" version="1.2.0" />
+</packages>
 ```
 
 - Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies.
+**Note on NuGetForUnity**
+Despite being one of the best NuGet package manager for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
+
 - Step 7: (Android additionals) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
 
 ```xml
@@ -115,7 +122,7 @@ For more information on how password is used in generating seed and keys, refer 
 ### Check wallet balance
 
 ```csharp
-BigInteger balance = await DemoIAW.wallet.CheckBalance();
+BigInteger balance = await wallet.CheckBalance();
 ```
 
 The balance returned is in uaura, from which you can derive to aura unit by dividing it by 1e6.
@@ -164,7 +171,8 @@ foreach(AuraTransaction transaction in transactionHistory){
 
 ### Test your code
 
-To verify if the SDK runs correctly or the transactions are performed according to your wish, use AuraScan tool located at <aurascan.io> or <serenity.aurascan.io> as for the testnet.
+To verify if the SDK runs correctly or the transactions are performed according to your wish, use AuraScan tool located at <https://aurascan.io> or <https://serenity.aurascan.io> as for the testnet.
 
 ### Configuration
+
 By default, the sdk uses the Aura Serenity Testnet. To use other network, change the configuration in the ```inapp_wallet/config/Constant.cs``` file.
