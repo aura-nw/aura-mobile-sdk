@@ -23,31 +23,31 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 
 ```xml
 <package id="BouncyCastle.NetCore" version="1.8.6" />
-  <package id="dotnetstandard-bip39" version="1.0.2" />
-  <package id="ExtendedNumerics.BigDecimal" version="2023.121.1953" />
-  <package id="Flurl" version="2.8.2" />
-  <package id="Flurl.Http" version="2.4.2" />
-  <package id="JsonSubTypes" version="1.7.0" />
-  <package id="Microsoft.Bcl.AsyncInterfaces" version="7.0.0" />
-  <package id="Microsoft.Extensions.Logging.Abstractions" version="6.0.1" />
-  <package id="Microsoft.NETCore.App" version="2.1.0" />
-  <package id="NaCl.Net" version="0.1.6-pre" />
-  <package id="NBitcoin.Secp256k1" version="1.0.1" />
-  <package id="Newtonsoft.Json" version="12.0.3" />
-  <package id="protobuf-net" version="3.2.16" />
-  <package id="protobuf-net.Core" version="3.2.16" />
-  <package id="System.Buffers" version="4.5.1" />
-  <package id="System.Buffers" version="4.5.1" />
-  <package id="System.Collections.Immutable" version="7.0.0" />
-  <package id="System.Memory" version="4.5.5" />
-  <package id="System.Numerics.Vectors" version="4.5.0" />
-  <package id="System.Reactive" version="6.0.0" />
-  <package id="System.Runtime.CompilerServices.Unsafe" version="6.0" />
-  <package id="System.Text.Encoding.CodePages" version="4.5.1" />
-  <package id="System.Text.Encodings.Web" version="6.0" />
-  <package id="System.Text.Json" version="6.0" />
-  <package id="System.Threading.Tasks.Extensions" version="4.5.4" />
-  <package id="TaskTupleAwaiter" version="1.2.0" />
+<package id="dotnetstandard-bip39" version="1.0.2" />
+<package id="ExtendedNumerics.BigDecimal" version="2023.121.1953" />
+<package id="Flurl" version="2.8.2" />
+<package id="Flurl.Http" version="2.4.2" />
+<package id="JsonSubTypes" version="1.7.0" />
+<package id="Microsoft.Bcl.AsyncInterfaces" version="7.0.0" />
+<package id="Microsoft.Extensions.Logging.Abstractions" version="6.0.1" />
+<package id="Microsoft.NETCore.App" version="2.1.0" />
+<package id="NaCl.Net" version="0.1.6-pre" />
+<package id="NBitcoin.Secp256k1" version="1.0.1" />
+<package id="Newtonsoft.Json" version="12.0.3" />
+<package id="protobuf-net" version="3.2.16" />
+<package id="protobuf-net.Core" version="3.2.16" />
+<package id="System.Buffers" version="4.5.1" />
+<package id="System.Buffers" version="4.5.1" />
+<package id="System.Collections.Immutable" version="7.0.0" />
+<package id="System.Memory" version="4.5.5" />
+<package id="System.Numerics.Vectors" version="4.5.0" />
+<package id="System.Reactive" version="6.0.0" />
+<package id="System.Runtime.CompilerServices.Unsafe" version="6.0" />
+<package id="System.Text.Encoding.CodePages" version="4.5.1" />
+<package id="System.Text.Encodings.Web" version="6.0" />
+<package id="System.Text.Json" version="6.0" />
+<package id="System.Threading.Tasks.Extensions" version="4.5.4" />
+<package id="TaskTupleAwaiter" version="1.2.0" />
 ```
 
 - Step 5: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies.
@@ -76,14 +76,14 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 
 ### Initialize an InApp Wallet
 
-To initialize an InApp wallet, there you need a mnemonic phrase and a password (default to an empty string). The mnemonic should look like this
+To initialize an InApp wallet, you need a mnemonic phrase and a password (default to an empty string). The mnemonic should look like below.
 
 ```plain
 garage audit public frown ball tribe dragon outdoor rug point radio funny clean furnace range have hire second use taxi regular mutual other disease
 ```
 
 Note that this mnemonic phrase is randomly generated for demonstrative purposes only. You should not use this phrase in any real-life operations, because you might lose your money.
-For more information on mnemonic code, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki>
+For more information on mnemonic code, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki>.
 
 The code below demonstrates the initialization of InApp wallet.
 
@@ -95,8 +95,9 @@ InAppWallet wallet = InAppWallet.CreateRandomHDWallet(password = "");
 // get mnemonic of the just-generated wallet
 Debug.Log(wallet.mnemonic);
 ```
+
 Note that if the password isn't specified, an empty string ```""``` will be used.
-For more information on how password is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>
+For more information on how password is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
 
 #### Restore HD Wallet using existing mnemonic
 
@@ -108,7 +109,7 @@ Debug.Log(wallet.address);
 ```
 
 Note that if the password isn't specified, an empty string ```""``` will be used.
-For more information on how password is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>
+For more information on how password is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
 
 ### Check wallet balance
 
@@ -160,3 +161,9 @@ foreach(AuraTransaction transaction in transactionHistory){
 }
 ```
 
+### Test your code
+
+To verify if the SDK runs correctly or the transactions are performed according to your wish, use AuraScan tool located at <aurascan.io> or <serenity.aurascan.io> as for the testnet.
+
+### Configuration
+By default, the sdk uses the Aura Serenity Testnet. To use other network, change the configuration in the ```inapp_wallet/config/Constant.cs``` file.
