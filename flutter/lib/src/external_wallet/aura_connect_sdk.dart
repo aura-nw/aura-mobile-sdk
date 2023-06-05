@@ -3,9 +3,9 @@ import 'package:aura_sdk/aura_sdk.dart';
 import 'package:flutter/foundation.dart';
 
 import 'connect_wallet/aura_connect_wallet.dart';
-import 'core/core_data/aura_wallet_core_data.dart';
-import 'core/parameters/aura_parameter.dart';
-import 'core/types/aura_server_event_type.dart';
+import 'src/core_data/aura_wallet_core_data.dart';
+import 'src/parameters/aura_parameter.dart';
+import 'src/types/aura_server_event_type.dart';
 
 class AuraConnectSdk {
   AuraConnectSdk();
@@ -48,7 +48,7 @@ class AuraConnectSdk {
     return _client!.connectWalletSdk();
   }
 
-  Future<AuraWalletInfoData> requestAccessWallet() async {
+  Future<AuraWalletInfo> requestAccessWallet() async {
     if (!_isReadyInit || _client == null) {
       throw UnimplementedError('You must call init before connect wallet');
     }

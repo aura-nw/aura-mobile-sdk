@@ -1,4 +1,4 @@
-class AuraWalletInfo {
+class AuraWalletInfoData {
   final String name;
   final String algo;
   final String pubKey;
@@ -6,7 +6,7 @@ class AuraWalletInfo {
   final String be32Address;
   final bool isNanoLedger;
 
-  const AuraWalletInfo({
+  const AuraWalletInfoData({
     required this.name,
     required this.address,
     required this.algo,
@@ -15,8 +15,8 @@ class AuraWalletInfo {
     required this.pubKey,
   });
 
-  factory AuraWalletInfo.fromJson(Map<String, dynamic> json) {
-    return AuraWalletInfo(
+  factory AuraWalletInfoData.fromJson(Map<String, dynamic> json) {
+    return AuraWalletInfoData(
       name: json['name'],
       address: json['address'],
       algo: json['algo'],
@@ -27,11 +27,10 @@ class AuraWalletInfo {
   }
 }
 
-class AuraWalletInfoData {
+class AuraWalletInfo {
   final String idConnection;
-  final AuraWalletInfo data;
-
-  const AuraWalletInfoData({
+  final AuraWalletInfoData data;
+  const AuraWalletInfo({
     required this.data,
     required this.idConnection,
   });

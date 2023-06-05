@@ -25,8 +25,6 @@ Example
  callBackUrl is the link that the wallet will open after user approved the connection
 
 ### 2. External Wallet
-final WalletInfo wallet =
-        await AuraSDK.instance.digitalWallet.createRandomHDWallet();
 
 ##### 1. Call the function sdk.connectWallet() to open connection with the Wallet
 ``` dart
@@ -44,6 +42,14 @@ final WalletInfo wallet =
 ```dart
     AuraWalletInfoData walletInfoData = await  auraSDK.externalWallet.requestAccessWallet();
 ```
+
+
+### 3. In-App Wallet
+
+##### 1. Create random HD Wallet
+``` dart
+    WalletInfo walletInfo = await auraSDK.inAppWallet.createRandomHDWallet();
+``` 
 
 
 ## Usage

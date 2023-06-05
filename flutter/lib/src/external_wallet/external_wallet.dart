@@ -1,4 +1,4 @@
-import 'core/aura_sdk_implement.dart';
+import 'aura_sdk_implement.dart';
 
 ///
 /// This type of wallet uses third-party wallet applications, such as C98 Wallet, Kepler Wallet, and others, to perform blockchain operations.

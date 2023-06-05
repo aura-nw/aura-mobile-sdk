@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 
 import 'pages/digital_wallet/check_aura_balance.dart';
 import 'pages/digital_wallet/create_hd_wallet.dart';
-import 'pages/digital_wallet/digital_wallet_page.dart';
+import 'pages/digital_wallet/inapp_wallet_page.dart';
 import 'pages/digital_wallet/make_a_transaction.dart';
 import 'pages/digital_wallet/restore_hd_wallet.dart';
 import 'pages/digital_wallet/transaction_history.dart';
+import 'pages/external_wallet/external_wallet_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,12 +48,15 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (_) => const HomePage(),
-        '/digital-wallet': (_) =>
+        '/inapp-wallet': (_) =>
             const InAppWalletPage(title: 'Digital Wallet Demo'),
         '/generate-hd-wallet': (_) => const CreateHdWalletPage(),
         '/restore-hd-wallet': (_) => const RestoreHdWalletPage(),
         '/check-hd-wallet-balance': (_) => const CheckHDWalletBalance(),
         '/make-transaction': (_) => const MakeTransactionPage(),
+        '/external-wallet': (_) => const ExternalWalletPage(
+              title: "External Wallet Demo",
+            ),
         // '/transaction-history': (_) => const TransactionHistory(),
       },
     );
@@ -86,7 +90,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             ElevatedButton(
               onPressed: () async {
-                //Navigator.of(context).pushNamed('/digital-wallet');
+                Navigator.of(context).pushNamed('/inapp-wallet');
                 // auraSDK.;
 
                 // await _connectSdk.connectWallet().then((connection) {
@@ -95,19 +99,11 @@ class _HomePageState extends State<HomePage> {
                 //   print('error --$error');
                 // });
               },
-              child: const Text('Open'),
+              child: const Text('In App wallet'),
             ),
             ElevatedButton(
-              onPressed: () async {
-                // await _connectSdk.requestAccessWallet().then((walletData) {
-                //   setState(() {
-                //     data = walletData;
-                //   });
-                // }).catchError((error) {
-                //   print('request access Wallet error ${error}');
-                // });
-              },
-              child: const Text('Get account'),
+              onPressed: () async {},
+              child: const Text('External wallet'),
             ),
             ElevatedButton(
               onPressed: () async {
