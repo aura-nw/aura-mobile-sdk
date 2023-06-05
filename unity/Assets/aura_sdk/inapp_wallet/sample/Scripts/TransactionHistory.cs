@@ -11,6 +11,7 @@ public class TransactionHistory : MonoBehaviour
         log.text = "";
         List<AuraTransaction> transactionHistory = await DemoIAW.wallet.CheckWalletHistory();
         foreach(AuraTransaction transaction in transactionHistory){
+            // The addresses have been truncated to fit the screen
             log.text += $"{transaction.type}: {transaction.fromAddress.Substring(32)} -> {transaction.toAddress.Substring(32)} {transaction.amount} uaura\n";
         }
     }
