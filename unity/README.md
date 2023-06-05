@@ -57,7 +57,7 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 ```
 
 - Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies.
-**Note on NuGetForUnity**
+#### **Note on NuGetForUnity**
 Despite being one of the best NuGet package manager for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
 
 - Step 7: (Android additionals) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
