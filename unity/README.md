@@ -126,7 +126,7 @@ For more information on how password is used in generating seed and keys, refer 
 BigInteger balance = await wallet.CheckBalance();
 ```
 
-The balance returned is in uaura, from which you can derive to aura unit by dividing it by 1e6.
+The balance returned is in the default Aura Denom (defined in Constant.cs), from which you can derive to aura unit by dividing it by 1e6.
 
 ### Make a transaction
 
