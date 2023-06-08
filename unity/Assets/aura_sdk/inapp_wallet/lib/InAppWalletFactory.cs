@@ -12,7 +12,7 @@ namespace AuraSDK{
             flurlClient = new Flurl.Http.FlurlClient(Constant.LCD_URL);
         }
         /// <summary>
-        /// Create a random HD Wallet using default strength as <paramref name="Constant.BIP39_STRENGTH"> and default wordlist as <paramref name="Constant.BIP39_WORDLIST">
+        /// Create a random HD Wallet using default strength as Constant.BIP39_STRENGTH and default wordlist as Constant.BIP39_WORDLIST
         /// </summary>
         /// <param name="password">Password to be used along with mnemonic to generate the keys. Default value is an empty string.</param>
         /// <returns>InAppWallet object created by a random mnemonic</returns>
@@ -29,7 +29,7 @@ namespace AuraSDK{
         public static InAppWallet RestoreHDWallet(string mnemonic, string password = ""){
             return new InAppWallet(mnemonic, password);
         }
-        ///<summary>Check if the mnemonic is a valid BIP39 mnemonic in <paramref name="Constant.BIP39_WORDLIST"> wordlist</summary>
+        ///<summary>Check if the mnemonic is a valid BIP39 mnemonic in Constant.BIP39_WORDLIST wordlist</summary>
         /// <param name="mnemonic">Mnemonic phrase in English</param>
         /// <returns>True if the mnemonic phrase is valid, or False otherwise</returns>
         public static bool CheckMnemonic(string mnemonic){

@@ -14,14 +14,14 @@ namespace AuraSDK{
         public readonly string mnemonic;
         private readonly byte[] publicKey, privateKey, chainCode;
         /// <summary>
-        /// Return wallet public key derived from <paramref name="Constant.DERIVATION_PATH"> using BIP32 and BIP44 standard. The key is in hex string format, similar to the format used by coin98 wallet
+        /// Return wallet public key derived from Constant.DERIVATION_PATH using BIP32 and BIP44 standard. The key is in hex string format, similar to the format used by coin98 wallet
         /// </summary>
         /// <returns>A hex string representing the byte data of the wallet's Public Key</returns>
         public string GetPublicKey(){
             return publicKey.ToHexString();
         }
         /// <summary>
-        /// Return wallet private key derived from <paramref name="Constant.DERIVATION_PATH"> using BIP32 standard. The key is in hex string format, similar to the format used by coin98 wallet
+        /// Return wallet private key derived from Constant.DERIVATION_PATH using BIP32 standard. The key is in hex string format, similar to the format used by coin98 wallet
         /// </summary>
         /// <returns>A hex string representing the byte data of the wallet's Private Key</returns>
         public string GetPrivateKey(){
@@ -235,7 +235,7 @@ namespace AuraSDK{
             return tx;
         }
         /// <summary>
-        /// Sign existing transaction using the <paramref name="cosmos.tx.signing.v1beta1.SignMode.SignModeDirect"> mode. The signature will be appended directly to the passed-in Tx and the signing process will use existing account private key
+        /// Sign existing transaction using the cosmos.tx.signing.v1beta1.SignMode.SignModeDirect mode. The signature will be appended directly to the passed-in Tx and the signing process will use existing account private key
         /// </summary>
         /// <param name="tx">Tx object that was created by CreateSendTransaction() or CreateExecuteContractTransaction() function.</param>
         /// <returns>Nothing, the signature will be appended directly into the Tx object</returns>

@@ -75,3 +75,10 @@ crashlytics-build.properties
 #Nuget downloaded packages
 Assets/Packages 
 Assets/TextMesh Pro*
+
+#Generated Documents
+Documentation/*/**
+!Documentation/doxygen/doxygen_config
+!Documentation/docfx/config.yaml
+!Documentation/docfx/docfx.json
+!Documentation/docfx/docfxgen.ps1

@@ -1,0 +1,4 @@
+# DocFxMarkdownGen configuration file
+# You should run docfxgen.ps1
+outputPath: _md
+yamlPath: _api
