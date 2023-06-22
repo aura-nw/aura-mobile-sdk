@@ -4,7 +4,6 @@ using cosmos.tx.v1beta1;
 using cosmos.crypto.secp256k1;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Flurl.Http;
 using System.Collections.Generic;
 using AuraSDK.Serialization;
 using System.Numerics;
@@ -53,10 +52,9 @@ namespace AuraSDK{
             address = Bech32.Bech32Engine.Encode(Constant.BECH32_HRP, ripeMD160DigestResult);
         }
         private async Task<BaseAccount> GetAccountInfo(){
+            string getAccountInfoURL = $"{Constant.LCD_URL}/auth/accounts/{address}";
             BaseAccount accountInfo = (await 
-                                    flurlClient.
-                                    Request("auth", "accounts", address)
-                                    .GetJsonAsync<QueryResponse<TypeValue<BaseAccount>>>())
+                                    HttpRequest.Get<QueryResponse<TypeValue<BaseAccount>>>(getAccountInfoURL))
                                     .result.value;
 
             if (accountInfo == null)
@@ -80,7 +78,8 @@ namespace AuraSDK{
         /// <returns>Balance in denom as a BigInteger</returns>
         public async Task<BigInteger> CheckBalance(string denom){
             try{
-                QueryResponse<List<Coin>> response = await flurlClient.Request("bank", "balances", address).GetJsonAsync<QueryResponse<List<Coin>>>();
+                string balanceURL = $"{Constant.LCD_URL}/bank/balances/{address}";
+                QueryResponse<List<Coin>> response = await HttpRequest.Get<QueryResponse<List<Coin>>>(balanceURL);
                 var result = response.result;
                 Logging.Verbose("Balances", response.result.ToArray());
                 foreach (var resultItem in response.result){
@@ -95,12 +94,11 @@ namespace AuraSDK{
             }
         }
         private async Task<Serialization.TransactionList> SearchTransaction(string events, int limit){
-            return await flurlClient
-                .Request("cosmos", "tx", "v1beta1", "txs")
-                .SetQueryParam("events", events)
-                .SetQueryParam("pagination.offset", 0)
-                .SetQueryParam("pagination.limit", limit).
-                GetJsonAsync<Serialization.TransactionList>();
+            string searchURL =  $"{Constant.LCD_URL}/cosmos/tx/v1beta1/txs" + 
+                                $"?events={events}" +
+                                $"?pagination.offset=0" + 
+                                $"?pagination.limit={limit}";
+            return await HttpRequest.Get<Serialization.TransactionList>(searchURL);
         }
         private async Task<List<AuraTransaction>> CheckWalletHistory(int limit = 100){
             List<AuraTransaction> transactionHistory = new List<AuraTransaction>();

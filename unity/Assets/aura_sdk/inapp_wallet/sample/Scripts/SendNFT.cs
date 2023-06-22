@@ -17,6 +17,6 @@ public class SendNFT : MonoBehaviour
         );
         await DemoIAW.wallet.SignTransaction(tx);
         var result = await InAppWallet.BroadcastTx(tx);
-        log.text += "\nResult: " + await result.Content.ReadAsStringAsync();
+        log.text += "\nResult: " + result.Content;
     }
 }

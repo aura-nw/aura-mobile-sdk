@@ -3,14 +3,9 @@ using cosmos.tx.v1beta1;
 using cosmos._base.v1beta1;
 using cosmos.bank.v1beta1;
 using System.Threading.Tasks;
-using Flurl.Http;
 using cosmwasm.wasm.v1;
 namespace AuraSDK{
     public partial class InAppWallet{
-        private static readonly Flurl.Http.FlurlClient flurlClient;
-        static InAppWallet(){
-            flurlClient = new Flurl.Http.FlurlClient(Constant.LCD_URL);
-        }
         /// <summary>
         /// Create a random HD Wallet using default strength as Constant.BIP39_STRENGTH and default wordlist as Constant.BIP39_WORDLIST
         /// </summary>
@@ -44,24 +39,22 @@ namespace AuraSDK{
         ///<summary>Broadcast a transaction to Aura LCD Endpoint. The transaction should be created and signed before sending; or otherwise, it will be rejected by the server. This function can be used for both SendTransaction and ExecuteContractTransaction</summary>
         /// <param name="signedTx">The Tx transaction that has gone through the creating and the signing process.</param>
         /// <returns>The HttpResponseMessage received from LCD after broadcastingTx.</returns>
-        public static async Task<System.Net.Http.HttpResponseMessage> BroadcastTx(Tx signedTx){
+        public static async Task<HttpResponse> BroadcastTx(Tx signedTx){
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
             ProtoBuf.Serializer.Serialize(memoryStream, signedTx);
-            Logging.Verbose("Broadcasting transaction:", signedTx.SerializeToString());
             byte[] bytes = memoryStream.ToArray();
-            Flurl.Http.IFlurlRequest flurlRequest = flurlClient.Request("cosmos", "tx", "v1beta1", "txs");
+            string broadcastURL = $"{Constant.LCD_URL}/cosmos/tx/v1beta1/txs";
             LcdBroadcastedTx broadcastedTx = new LcdBroadcastedTx(){
                 tx_bytes = System.Convert.ToBase64String(bytes),
                 mode = BroadcastMode.BroadcastModeBlock
             };
-            System.Net.Http.HttpResponseMessage httpResponseMessage = await flurlRequest.PostJsonAsync(
+            var response = await HttpRequest.Post(broadcastURL,
                 new LcdBroadcastedTx(){
                     tx_bytes = System.Convert.ToBase64String(bytes),
                     mode = BroadcastMode.BroadcastModeBlock
                 }
             );
-            Logging.Info("response", await httpResponseMessage.Content.ReadAsStringAsync());
-            return httpResponseMessage;
+            return response;
         }
 
         #region private

@@ -19,8 +19,8 @@ public class MakeTransaction : MonoBehaviour
         send.onClick.AddListener(async () => {
             var tx = await DemoIAW.wallet.CreateSendTransaction(toAddress.text, AuraSDK.Constant.AURA_DENOM, amount.text);
             await DemoIAW.wallet.SignTransaction(tx);
-            await AuraSDK.InAppWallet.BroadcastTx(tx);
-            
+            var broadcastResponse = await AuraSDK.InAppWallet.BroadcastTx(tx);
+            Logging.Verbose(broadcastResponse.StatusCode, broadcastResponse.Content);
             //go back to main menu
             DemoIAW.instance.currentScreen = DemoIAW.Screen.MAIN_MENU;
         });

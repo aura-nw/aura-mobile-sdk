@@ -1,0 +1,4 @@
+<linker>
+    <assembly fullname="protobuf-net"  preserve="all"/>
+    <assembly fullname="dotnetstandard-bip39"  preserve="all"/>
+</linker>
