@@ -1,4 +1,4 @@
-#define USE_NETWORK_SERENITY
+#define USE_NETWORK_EUPHORIA
 using dotnetstandard_bip39;
 namespace AuraSDK{
     public partial class Constant{
