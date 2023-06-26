@@ -54,7 +54,7 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 </packages>
 ```
 
-- Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package manager for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
+- Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package managers for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
 
 - Step 7 (for WebGL builds): When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
 
@@ -119,7 +119,7 @@ For more information on how password is used in generating seed and keys, refer 
 ```csharp
 InAppWallet wallet = InAppWallet.RestoreHDWallet(mnemonic.text);
 
-// get address of the just-imported wallet
+// get address of the just-imported wallet. Wallet address is a base32 address (alphanumeric excluding '1' (seperator), 'b', 'i' (so not to be confused with 'l'), 'o' (so not to be confused with '0')), prefixed by the human-readable part "aura1", and suffixed by the six-character-long checksum. The address should look like this: aura1jr8x0qy2m9ccp0jslyglnljrgxumvrg4rsvcn4
 Debug.Log(wallet.address);
 ```
 
@@ -149,13 +149,26 @@ await wallet.SignTransaction(tx);
 await AuraSDK.InAppWallet.BroadcastTx(tx);
 ```
 
+### Interact with smart contract
+
+Firstly, let's query the state of a contract. The code below demonstrates how to do that.
+
+```csharp
+var response = await InAppWallet.QuerySmartContract(
+    contractAddress: "aura158kn7jhsvttsmhn4q9jf2mteu5nsq8e6lxrfgmnhzg55ghftfh6qngxk6g",
+    queryJson: "{\"get_wheel_rewards\":{}}");
+Debug.Log(response.StatusCode + " " + response.Content);
+```
+
+The code below illustrates how you can send **Execute** message to a contract. Note that for MsgExecute, you need to sign your transaction before broadcasting it.
+
 ```csharp
 /// Create a contract executing transaction
 Tx tx = await wallet.CreateExecuteContractTransaction(
     //contract address
     "aura1qye5hls3tnttxfhaa2klftrqcevcz02a4uzzy568nm5cgkqfvflqpu7plx",
     //message
-    "{\"transfer_nft\": {\"recipient\": \"aura1k24l7vcfz9e7p9ufhjs3tfnjxwu43h8quq4glv\",\"token_id\": \"2\"}}"
+    "{\"transfer_nft\": {\"recipient\": \"aura1jr8x0qy2m9ccp0jslyglnljrgxumvrg4rsvcn4\",\"token_id\": \"2\"}}"
 );
 
 /// SignTransaction will perform the signings and embed the result into the existing tx variable.

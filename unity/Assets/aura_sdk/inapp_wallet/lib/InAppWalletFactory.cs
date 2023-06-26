@@ -1,9 +1,9 @@
 using dotnetstandard_bip39;
 using cosmos.tx.v1beta1;
-using cosmos._base.v1beta1;
-using cosmos.bank.v1beta1;
 using System.Threading.Tasks;
-using cosmwasm.wasm.v1;
+using System.Numerics;
+using AuraSDK.Serialization;
+using System.Collections.Generic;
 namespace AuraSDK{
     public partial class InAppWallet{
         /// <summary>
@@ -31,6 +31,25 @@ namespace AuraSDK{
             BIP39 bIP39 = new BIP39();
             return bIP39.ValidateMnemonic(mnemonic, Constant.BIP39_WORDLIST);
         }
+
+        public static async Task<BigInteger> CheckBalance(string address, string denom){
+            try{
+                string balanceURL = $"{Constant.LCD_URL}/bank/balances/{address}";
+                QueryResponse<List<AuraSDK.Serialization.Coin>> response = await HttpRequest.Get<QueryResponse<List<AuraSDK.Serialization.Coin>>>(balanceURL);
+                var result = response.result;
+                Logging.Verbose("Balances", response.result.ToArray());
+                foreach (var resultItem in response.result){
+                    if (resultItem.denom.Equals(denom))
+                        return BigInteger.Parse(resultItem.amount);
+                }
+                Logging.Warning($"Denom {denom} couldn't be found in the coin list. Zero default value was returned.");
+                return 0;
+            } catch(System.Exception e){
+                Logging.Info("Cannot parse coin list with exception:", e);
+                return 0;
+            }
+        }
+
         [System.Serializable]
         class LcdBroadcastedTx{
             public string tx_bytes;
@@ -56,51 +75,12 @@ namespace AuraSDK{
             );
             return response;
         }
-
-        #region private
-        private static MsgSend CreateSendMessage(string fromAddress, string toAddress, string denom, string amount){
-            MsgSend msgSend = new MsgSend(){
-                FromAddress = fromAddress,
-                ToAddress = toAddress,
-            };
-            msgSend.Amounts.Add(new Coin() {
-                Denom = denom,
-                Amount = amount
-            });
-            return msgSend;
+        public static async Task<HttpResponse> QuerySmartContract(string contractAddress, string queryJson){
+            byte[] queryBytes = BitSupporter.ToByteArrayUTF8(queryJson);
+            string queryBase64 = System.Convert.ToBase64String(queryBytes);
+            string queryURL = $"{Constant.LCD_URL}/cosmwasm/wasm/v1/contract/{contractAddress}/smart/{queryBase64}";
+            var response = await HttpRequest.Get(queryURL);
+            return response;
         }
-        private static MsgExecuteContract CreateExecuteContractMessage(string senderAddress, string contractAddress, byte[] msgToSendToContract, string fundsDenom, string fundsAmount = null){
-            MsgExecuteContract msgExecuteContract = new MsgExecuteContract() {
-                Sender = senderAddress,
-                Contract = contractAddress
-            };
-
-            if (fundsDenom != null && fundsAmount != null)
-                msgExecuteContract.Funds.Add(new Coin() {
-                    Denom = fundsDenom,
-                    Amount = fundsAmount
-                });
-
-            msgExecuteContract.Msg = msgToSendToContract;
-            return msgExecuteContract;
-        }
-        ///<summary> Create a fee in Constant.AURA_DENOM. Note that the fee is always in Constant.AURA_DENOM denom, defined in the Constant class </summary>
-        private static Fee CreateFee(string payer, string granter, string amount){
-            Fee fee = new Fee() {
-                GasLimit = Constant.GAS_LIMIT,
-                Payer = payer,
-                Granter = granter
-            };
-            fee.Amounts.Add(new Coin() {
-                Denom = Constant.AURA_DENOM,
-                Amount = amount
-            });
-            return fee;
-        }
-        
-        private static string GenerateRandomMemo(){
-            return System.Guid.NewGuid().ToString("D");
-        }
-        #endregion
     }
 }

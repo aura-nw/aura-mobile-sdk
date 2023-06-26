@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using AuraSDK.Serialization;
 using System.Numerics;
+using cosmos._base.v1beta1;
+using cosmos.bank.v1beta1;
+using cosmwasm.wasm.v1;
+
 namespace AuraSDK{
     public partial class InAppWallet{
         ///<summary>The mnemonic that was used to construct this InAppWallet object. The mnemonic can't be changed once initialized. To change the mnemonic, create a new InAppWallet object</summary>
@@ -77,21 +81,7 @@ namespace AuraSDK{
         /// <param name="denom">The denom in which you want to get balance, for example, "uaura".</param>
         /// <returns>Balance in denom as a BigInteger</returns>
         public async Task<BigInteger> CheckBalance(string denom){
-            try{
-                string balanceURL = $"{Constant.LCD_URL}/bank/balances/{address}";
-                QueryResponse<List<Coin>> response = await HttpRequest.Get<QueryResponse<List<Coin>>>(balanceURL);
-                var result = response.result;
-                Logging.Verbose("Balances", response.result.ToArray());
-                foreach (var resultItem in response.result){
-                    if (resultItem.denom.Equals(denom))
-                        return BigInteger.Parse(resultItem.amount);
-                }
-                Logging.Warning($"Denom {denom} couldn't be found in the coin list. Zero default value was returned.");
-                return 0;
-            } catch(System.Exception e){
-                Logging.Info("Cannot parse coin list with exception:", e);
-                return 0;
-            }
+            return await InAppWallet.CheckBalance(address, denom);
         }
         private async Task<Serialization.TransactionList> SearchTransaction(string events, int limit){
             string searchURL =  $"{Constant.LCD_URL}/cosmos/tx/v1beta1/txs" + 
@@ -138,6 +128,37 @@ namespace AuraSDK{
             }
 
             return transactionHistory;
+        }
+
+        #region transaction
+        ///<summary> Create a fee in Constant.AURA_DENOM. Note that the fee is always in Constant.AURA_DENOM denom, defined in the Constant class </summary>
+        private Fee CreateFee(string payer, string granter, string amount){
+            Fee fee = new Fee() {
+                GasLimit = Constant.GAS_LIMIT,
+                Payer = payer,
+                Granter = granter
+            };
+            fee.Amounts.Add(new cosmos._base.v1beta1.Coin() {
+                Denom = Constant.AURA_DENOM,
+                Amount = amount
+            });
+            return fee;
+        }
+        
+        private string GenerateRandomMemo(){
+            return System.Guid.NewGuid().ToString("D");
+        }
+
+        private MsgSend CreateSendMessage(string fromAddress, string toAddress, string denom, string amount){
+            MsgSend msgSend = new MsgSend(){
+                FromAddress = fromAddress,
+                ToAddress = toAddress,
+            };
+            msgSend.Amounts.Add(new cosmos._base.v1beta1.Coin() {
+                Denom = denom,
+                Amount = amount
+            });
+            return msgSend;
         }
         /// <summary>
         /// Create a transaction with a MsgSend message. The returned Tx structured is defined in proto-generated code cosmos.tx.v1beta1.tx
@@ -188,6 +209,22 @@ namespace AuraSDK{
             };
 
             return tx;
+        }
+        
+        private MsgExecuteContract CreateExecuteContractMessage(string senderAddress, string contractAddress, byte[] msgToSendToContract, string fundsDenom, string fundsAmount = null){
+            MsgExecuteContract msgExecuteContract = new MsgExecuteContract() {
+                Sender = senderAddress,
+                Contract = contractAddress
+            };
+
+            if (fundsDenom != null && fundsAmount != null)
+                msgExecuteContract.Funds.Add(new cosmos._base.v1beta1.Coin() {
+                    Denom = fundsDenom,
+                    Amount = fundsAmount
+                });
+
+            msgExecuteContract.Msg = msgToSendToContract;
+            return msgExecuteContract;
         }
         /// <summary>
         /// Create a transaction with a MsgExecuteContract message. The returned Tx structured is defined in proto-generated code cosmos.tx.v1beta1.tx
@@ -248,5 +285,6 @@ namespace AuraSDK{
             byte[] signature = SignatureProvider.Sign(bytesToSign, privateKey);
             tx.Signatures.Add(signature);
         }
+        #endregion
     }
 }
