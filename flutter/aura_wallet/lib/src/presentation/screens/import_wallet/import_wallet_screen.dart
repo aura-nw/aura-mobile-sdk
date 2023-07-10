@@ -12,6 +12,7 @@ import 'package:aura_wallet/src/presentation/widgets/app_bar_widget.dart';
 import 'package:aura_wallet/src/presentation/widgets/app_button.dart';
 import 'package:aura_wallet/src/presentation/widgets/text_input_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ImportWalletScreen extends StatefulWidget {
   const ImportWalletScreen({Key? key}) : super(key: key);
@@ -75,6 +76,11 @@ class _ImportWalletScreenState extends State<ImportWalletScreen>
                         isDisable = _passPhraseController.text.isEmpty;
                         setState(() {});
                       },
+                      onSubmit: (value,isValid){
+                        if(value.isNotEmpty){
+                          _onSubmit();
+                        }
+                      },
                     ),
                     if (error.isNotNullOrEmpty) ...[
                       const SizedBox(
@@ -91,29 +97,7 @@ class _ImportWalletScreenState extends State<ImportWalletScreen>
                     InactiveGradientButton(
                       text: _language
                           .translate(LanguageKey.importWalletButtonImport),
-                      onPress: () async {
-                        showLoading();
-                        error = null;
-                        setState(() {});
-                        try {
-                          final wallet = await AuraSDK.instance.inAppWallet
-                              .restoreHDWallet(
-                            key: _passPhraseController.text.trim(),
-                          );
-
-                          _appGlobalCubit.changeState(
-                            AppGlobalState(
-                              status: AppGlobalStatus.authorized,
-                              auraWallet: wallet,
-                            ),
-                          );
-                        } catch (e) {
-                          error = e.toString();
-                          setState(() {});
-                        } finally {
-                          hideLoading();
-                        }
-                      },
+                      onPress: _onSubmit,
                       disabled: isDisable,
                     ),
                   ],
@@ -124,5 +108,29 @@ class _ImportWalletScreenState extends State<ImportWalletScreen>
         );
       },
     );
+  }
+
+  void _onSubmit()async{
+    showLoading();
+    error = null;
+    setState(() {});
+    try {
+      final wallet = await AuraSDK.instance.inAppWallet
+          .restoreHDWallet(
+        key: _passPhraseController.text.trim(),
+      );
+
+      _appGlobalCubit.changeState(
+        AppGlobalState(
+          status: AppGlobalStatus.authorized,
+          auraWallet: wallet,
+        ),
+      );
+    } catch (e) {
+      error = e.toString();
+      setState(() {});
+    } finally {
+      hideLoading();
+    }
   }
 }

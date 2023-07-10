@@ -48,56 +48,64 @@ class _AuraWalletApplicationState extends State<AuraWalletApplication>
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: AppNavigator.navigatorKey,
-      onGenerateRoute: AppNavigator.onGenerateRoute,
-      initialRoute: AppRoutes.splash.path,
-      debugShowCheckedModeBanner: false,
-      title: 'Aura Wallet',
-      locale: AppLocalizationManager.instance.locale,
-      localizationsDelegates: const [
-        AppTranslationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: AppLocalizationManager.instance.supportedLang
-          .map(
-            (e) => Locale(e),
-          )
-          .toList(),
-      builder: (_, child) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (__) => AppThemeCubit(),
-            ),
-            BlocProvider(
-              create: (_) => AppGlobalCubit(),
-            ),
-          ],
-          child: Builder(builder: (context) {
-            return MultiBlocListener(
-              listeners: [
-                BlocListener<AppGlobalCubit,AppGlobalState>(
-                  listenWhen: (previous, current) => current.status != previous.status,
-                  listener: (context, state) {
-                    switch(state.status){
-                      case AppGlobalStatus.authorized:
-                        AppNavigator.replaceAllWith(AppRoutes.home);
-                        break;
-                      case AppGlobalStatus.unauthorized:
-                        AppNavigator.replaceAllWith(AppRoutes.setupWallet);
-                        break;
-                    }
-                  },
-                ),
-              ],
-              child: child ?? const SizedBox(),
-            );
-          }),
-        );
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: (){
+        if(WidgetsBinding.instance.focusManager.primaryFocus?.hasFocus ?? false){
+          WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+        }
       },
+      child: MaterialApp(
+        navigatorKey: AppNavigator.navigatorKey,
+        onGenerateRoute: AppNavigator.onGenerateRoute,
+        initialRoute: AppRoutes.splash.path,
+        debugShowCheckedModeBanner: false,
+        title: 'Aura Wallet',
+        locale: AppLocalizationManager.instance.locale,
+        localizationsDelegates: const [
+          AppTranslationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizationManager.instance.supportedLang
+            .map(
+              (e) => Locale(e),
+            )
+            .toList(),
+        builder: (_, child) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (__) => AppThemeCubit(),
+              ),
+              BlocProvider(
+                create: (_) => AppGlobalCubit(),
+              ),
+            ],
+            child: Builder(builder: (context) {
+              return MultiBlocListener(
+                listeners: [
+                  BlocListener<AppGlobalCubit,AppGlobalState>(
+                    listenWhen: (previous, current) => current.status != previous.status,
+                    listener: (context, state) {
+                      switch(state.status){
+                        case AppGlobalStatus.authorized:
+                          AppNavigator.replaceAllWith(AppRoutes.home);
+                          break;
+                        case AppGlobalStatus.unauthorized:
+                          AppNavigator.replaceAllWith(AppRoutes.setupWallet);
+                          break;
+                      }
+                    },
+                  ),
+                ],
+                child: child ?? const SizedBox(),
+              );
+            }),
+          );
+        },
+      ),
     );
   }
 }

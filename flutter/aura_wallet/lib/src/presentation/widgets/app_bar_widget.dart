@@ -26,6 +26,7 @@ class PrimaryAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: theme.darkColor,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -37,10 +38,10 @@ class PrimaryAppBar extends StatelessWidget implements PreferredSizeWidget {
                   }
                 },
                 child: Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8.0),
                   child: Icon(
                     Icons.arrow_back_ios_rounded,
-                    size: 18,
+                    size: 24,
                     color: theme.lightColor,
                   ),
                 ),
@@ -50,6 +51,7 @@ class PrimaryAppBar extends StatelessWidget implements PreferredSizeWidget {
                   title,
                   style: AppTypoGraPhy.title2.copyWith(
                     color: theme.lightColor,
+                    fontSize: 18,
                   ),
                   textAlign: TextAlign.center,
                 ),

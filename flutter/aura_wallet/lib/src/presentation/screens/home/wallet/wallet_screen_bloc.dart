@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:aura_wallet/src/domain/entities/aura_block.dart';
 import 'package:aura_wallet/src/domain/entities/aura_token_market.dart';
 import 'package:aura_wallet/src/domain/entities/aura_transaction.dart';
@@ -9,7 +7,6 @@ import 'package:aura_wallet/src/domain/use_case/market_use_case.dart';
 import 'wallet_screen_event.dart';
 import 'wallet_screen_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:developer' as Log;
 
 class WalletScreenBloc extends Bloc<WalletScreenEvent, WalletScreenState> {
   final MarketUseCase _marketUseCase;
@@ -72,8 +69,8 @@ class WalletScreenBloc extends Bloc<WalletScreenEvent, WalletScreenState> {
         ),
       );
       print("#5 ");
-    } catch (e, s) {
-      Log.log(e.toString(), stackTrace: s);
+    } catch (e) {
+      print(e.toString());
       emit(
         state.copyWith(
           status: WalletScreenStatus.error,

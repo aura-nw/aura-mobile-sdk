@@ -20,7 +20,7 @@ class HoroScopeUseCase {
   }) async {
     final AuraWalletConfig config = getIt.get<AuraWalletConfig>();
 
-    if (config.environment == Environment.dev) return [];
+    // if (config.environment == Environment.dev) return [];
 
     final GetBlockParameter param = GetBlockParameter(
       chainId: config.configs!.chainId,
@@ -40,7 +40,7 @@ class HoroScopeUseCase {
   }) async {
     final AuraWalletConfig config = getIt.get<AuraWalletConfig>();
 
-    if (config.environment == Environment.dev) return [];
+    // if (config.environment == Environment.dev) return [];
 
     final GetTransactionParameter param = GetTransactionParameter(
       chainId: config.configs!.chainId,

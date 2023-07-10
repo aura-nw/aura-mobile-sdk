@@ -6,6 +6,7 @@ import 'package:aura_wallet/src/domain/repository/horo_scope_repository.dart';
 import 'package:aura_wallet/src/domain/repository/market_repository.dart';
 import 'package:aura_wallet/src/domain/use_case/horo_scope_use_case.dart';
 import 'package:aura_wallet/src/domain/use_case/market_use_case.dart';
+import 'package:aura_wallet/src/presentation/screens/create_wallet/create_wallet_screen_bloc.dart';
 import 'package:aura_wallet/src/presentation/screens/home/wallet/wallet_screen_bloc.dart';
 import 'package:aura_wallet/src/presentation/screens/send_transaction/send_transaction_bloc.dart';
 import 'package:aura_wallet/src/presentation/screens/splash/splash_screen_cubit.dart';
@@ -80,6 +81,9 @@ Future<void> initDependency(
   ///Bloc
   getIt.registerFactory<SplashScreenCubit>(
     () => SplashScreenCubit(),
+  );
+  getIt.registerFactory<CreateWalletScreenBloc>(
+    () => CreateWalletScreenBloc(),
   );
 
   getIt.registerFactory<WalletScreenBloc>(
