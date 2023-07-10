@@ -1,0 +1,25 @@
+{
+	"metadata": [
+		{
+			"src": [
+				{
+					"files": [
+						"Assembly-CSharp.csproj"
+					],
+					"src": "../../"
+				}
+			]
+		}
+	],
+	"build": {
+		"output": "_site",
+		"template": [
+			"default",
+			"modern",
+			"templates/mytemplate"
+		],
+		"content": [
+			"_api/AuraSDK.*"
+		]
+	}
+}

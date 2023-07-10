@@ -5,5 +5,8 @@ namespace AuraSDK.Serialization{
         public string denom;
         [JsonProperty(PropertyName = "amount")]
         public string amount;
+        public override string ToString(){
+            return $"{amount} {denom}";
+        }
     }
 }

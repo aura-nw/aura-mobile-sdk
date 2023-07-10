@@ -25,42 +25,48 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <packages>
-  <!-- Only append the part below if the file already exists -->
-  <package id="BouncyCastle.NetCore" version="1.8.6" />
-  <package id="dotnetstandard-bip39" version="1.0.2" />
-  <package id="ExtendedNumerics.BigDecimal" version="2023.121.1953" />
-  <package id="Flurl" version="2.8.2" />
-  <package id="Flurl.Http" version="2.4.2" />
-  <package id="JsonSubTypes" version="1.7.0" />
-  <package id="Microsoft.Bcl.AsyncInterfaces" version="7.0.0" />
-  <package id="Microsoft.Extensions.Logging.Abstractions" version="6.0.1" />
-  <package id="Microsoft.NETCore.App" version="2.1.0" />
-  <package id="NaCl.Net" version="0.1.6-pre" />
-  <package id="NBitcoin.Secp256k1" version="1.0.1" />
-  <package id="Newtonsoft.Json" version="12.0.3" />
-  <package id="protobuf-net" version="3.2.16" />
-  <package id="protobuf-net.Core" version="3.2.16" />
-  <package id="System.Buffers" version="4.5.1" />
-  <package id="System.Buffers" version="4.5.1" />
-  <package id="System.Collections.Immutable" version="7.0.0" />
-  <package id="System.Memory" version="4.5.5" />
-  <package id="System.Numerics.Vectors" version="4.5.0" />
-  <package id="System.Reactive" version="6.0.0" />
-  <package id="System.Runtime.CompilerServices.Unsafe" version="6.0" />
-  <package id="System.Text.Encoding.CodePages" version="4.5.1" />
-  <package id="System.Text.Encodings.Web" version="6.0" />
-  <package id="System.Text.Json" version="6.0" />
-  <package id="System.Threading.Tasks.Extensions" version="4.5.4" />
-  <package id="TaskTupleAwaiter" version="1.2.0" />
-  <!-- Only append the part above if the file already exists -->
+    <!-- Only append the part below if the file already exists -->
+    <package id="BouncyCastle.Cryptography" version="2.2.1" />
+    <package id="Microsoft.Bcl.AsyncInterfaces" version="7.0.0" />
+    <package id="Microsoft.Extensions.Logging.Abstractions" version="6.0.1" />
+    <package id="Microsoft.Extensions.ObjectPool" version="5.0.10" />
+    <package id="Microsoft.NETCore.App" version="2.1.0" />
+    <package id="NBitcoin.Secp256k1" version="1.0.1" />
+    <package id="Newtonsoft.Json" version="12.0.3" />
+    <package id="protobuf-net" version="2.3.17" />
+    <package id="System.Formats.Asn1" version="6.0.0" />
+    <package id="System.Private.ServiceModel" version="4.10.2" />
+    <package id="System.Reactive" version="6.0.0" />
+    <package id="System.Reflection.TypeExtensions" version="4.4.0" />
+    <package id="System.Runtime.CompilerServices.Unsafe" version="6.0" />
+    <package id="System.Security.AccessControl" version="6.0.0" />
+    <package id="System.Security.Cryptography.Cng" version="5.0.0" />
+    <package id="System.Security.Cryptography.Pkcs" version="6.0.1" />
+    <package id="System.Security.Cryptography.Xml" version="6.0.1" />
+    <package id="System.Security.Principal.Windows" version="5.0.0" />
+    <package id="System.ServiceModel.Primitives" version="4.5.3" />
+    <package id="System.ServiceModel.Syndication" version="4.5.0" />
+    <package id="System.Text.Encoding.CodePages" version="4.5.1" />
+    <package id="System.Text.Encodings.Web" version="6.0" />
+    <package id="System.Text.Json" version="6.0" />
+    <package id="TaskTupleAwaiter" version="1.2.0" />
+    <!-- Only append the part above if the file already exists -->
 </packages>
 ```
 
-- Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies.
-#### **Note on NuGetForUnity**
-Despite being one of the best NuGet package manager for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
+- Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package managers for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
 
-- Step 7: (Android additionals) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
+- Step 7 (for WebGL builds): When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
+
+
+```xml
+<!--Assets/link.xml content-->
+<linker>
+    <assembly fullname="protobuf-net"  preserve="all"/>
+</linker>
+```
+
+- Step 8: (for Android builds) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -113,7 +119,7 @@ For more information on how password is used in generating seed and keys, refer 
 ```csharp
 InAppWallet wallet = InAppWallet.RestoreHDWallet(mnemonic.text);
 
-// get address of the just-imported wallet
+// get address of the just-imported wallet. Wallet address is a base32 address (alphanumeric excluding '1' (seperator), 'b', 'i' (so not to be confused with 'l'), 'o' (so not to be confused with '0')), prefixed by the human-readable part "aura1", and suffixed by the six-character-long checksum. The address should look like this: aura1jr8x0qy2m9ccp0jslyglnljrgxumvrg4rsvcn4
 Debug.Log(wallet.address);
 ```
 
@@ -126,7 +132,7 @@ For more information on how password is used in generating seed and keys, refer 
 BigInteger balance = await wallet.CheckBalance();
 ```
 
-The balance returned is in uaura, from which you can derive to aura unit by dividing it by 1e6.
+The balance returned is in the default Aura Denom (defined in Constant.cs), from which you can derive to aura unit by dividing it by 1e6.
 
 ### Make a transaction
 
@@ -143,13 +149,26 @@ await wallet.SignTransaction(tx);
 await AuraSDK.InAppWallet.BroadcastTx(tx);
 ```
 
+### Interact with smart contract
+
+Firstly, let's query the state of a contract. The code below demonstrates how to do that.
+
+```csharp
+var response = await InAppWallet.QuerySmartContract(
+    contractAddress: "aura158kn7jhsvttsmhn4q9jf2mteu5nsq8e6lxrfgmnhzg55ghftfh6qngxk6g",
+    queryJson: "{\"get_wheel_rewards\":{}}");
+Debug.Log(response.StatusCode + " " + response.Content);
+```
+
+The code below illustrates how you can send **Execute** message to a contract. Note that for MsgExecute, you need to sign your transaction before broadcasting it.
+
 ```csharp
 /// Create a contract executing transaction
 Tx tx = await wallet.CreateExecuteContractTransaction(
     //contract address
     "aura1qye5hls3tnttxfhaa2klftrqcevcz02a4uzzy568nm5cgkqfvflqpu7plx",
     //message
-    "{\"transfer_nft\": {\"recipient\": \"aura1k24l7vcfz9e7p9ufhjs3tfnjxwu43h8quq4glv\",\"token_id\": \"2\"}}"
+    "{\"transfer_nft\": {\"recipient\": \"aura1jr8x0qy2m9ccp0jslyglnljrgxumvrg4rsvcn4\",\"token_id\": \"2\"}}"
 );
 
 /// SignTransaction will perform the signings and embed the result into the existing tx variable.
@@ -159,7 +178,7 @@ await wallet.SignTransaction(tx);
 await AuraSDK.InAppWallet.BroadcastTx(tx);
 ```
 
-### View transaction history
+### View transaction history (deprecated)
 
 The code below shows how you can query transaction history and print it out to the log.
 
@@ -176,4 +195,4 @@ To verify if the SDK runs correctly or the transactions are performed according 
 
 ### Configuration
 
-By default, the sdk uses the Aura Serenity Testnet. To use other network, change the configuration in the ```inapp_wallet/config/Constant.cs``` file.
+Network configurations are defined in the configuration file ```inapp_wallet/config/Constant.cs```. We have previously defined three network profiles, including Serenity Testnet, Euphoria Staging Network, and Aura Mainnet. Change the #define directive to one of the followings to switch to corresponding profile: USE_NETWORK_EUPHORIA, USE_NETWORK_SERENITY, USE_NETWORK_MAINNET. By default, Euphoria is used.
