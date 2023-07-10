@@ -1,0 +1,27 @@
+name: aura_sdk
+description: Flutter Coin 98 Connect Sdk.
+version: 0.0.1
+publish_to: none
+homepage:
+
+environment:
+  sdk: '>=2.19.2 <3.0.0'
+  flutter: ">=2.5.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  aura_external_wallet:
+    path: packages/aura_external_wallet
+  aura_internal_wallet:
+    path: packages/aura_internal_wallet
+
+  #private
+  local_auth: ^2.1.6
+  flutter_secure_storage: ^8.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0

@@ -1,0 +1,11 @@
+# This is a generated file; do not edit or check into version control.
+flutter_plugin_android_lifecycle=/Users/kypi/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.15/
+flutter_secure_storage=/Users/kypi/.pub-cache/hosted/pub.dev/flutter_secure_storage-8.0.0/
+flutter_secure_storage_linux=/Users/kypi/.pub-cache/hosted/pub.dev/flutter_secure_storage_linux-1.1.3/
+flutter_secure_storage_macos=/Users/kypi/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.0.0/
+flutter_secure_storage_web=/Users/kypi/.pub-cache/hosted/pub.dev/flutter_secure_storage_web-1.1.1/
+flutter_secure_storage_windows=/Users/kypi/.pub-cache/hosted/pub.dev/flutter_secure_storage_windows-2.0.0/
+local_auth=/Users/kypi/.pub-cache/hosted/pub.dev/local_auth-2.1.6/
+local_auth_android=/Users/kypi/.pub-cache/hosted/pub.dev/local_auth_android-1.0.32/
+local_auth_ios=/Users/kypi/.pub-cache/hosted/pub.dev/local_auth_ios-1.1.3/
+local_auth_windows=/Users/kypi/.pub-cache/hosted/pub.dev/local_auth_windows-1.0.8/
