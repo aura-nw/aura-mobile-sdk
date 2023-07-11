@@ -17,7 +17,7 @@ Aura Wallet is an electronic wallet project developed by Aura Network, designed 
 ## Getting Started
 
 1. Clone the repository: `git clone https://github.com/aura-nw/aura-mobile-sdk.git`
-2. Open Aura Wallet : `cd aura-mobile-sdk/flutter/aura_wallet`
+2. Open Aura Wallet : `cd aura-mobile-sdk/flutter/aura_wallet_example`
 3. Install the dependencies: `flutter pub get`
 4. Run the app: `flutter run`
 
