@@ -27,7 +27,7 @@ We welcome contributions to improve Aura Wallet! If you have any suggestions, bu
 
 ## License
 
-Aura Wallet is released under the [MIT License](https://github.com/your-username/aura-wallet/blob/main/LICENSE).
+Aura Wallet is released under the [MIT License](https://github.com/aura-nw/aura-mobile-sdk/LICENSE).
 Feel free to customize and modify the README file according to your project's specific details and requirements.
 
 
