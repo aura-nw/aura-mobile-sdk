@@ -156,6 +156,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "unity-advanced-playerprefs": {
+      "version": "https://github.com/realphamanhtuan/unity-advanced-playerprefs.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2758c4e1475fbb178735e545afaf4fca3013c765"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,

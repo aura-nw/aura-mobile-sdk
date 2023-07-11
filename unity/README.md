@@ -189,6 +189,37 @@ foreach(AuraTransaction transaction in transactionHistory){
 }
 ```
 
+### Save your wallets
+
+Aura SDK comes with a utility called InAppWalletManager, which is designed to simplify the process of securely save wallet information to the storage. InAppWalletManager can save multiple InAppWallet instances and manage them all at once.
+
+To use the InAppWalletManager, you first need your user to create a **password**. Then, you can initialize the InAppWalletManager as below.
+
+```csharp
+// InAppWalletManager can only be successfully initialized once. To change the password, call the ChangePassword function.
+bool passwordIsCorrect = InAppWalletManager.Initialize(password);
+
+if (passwordIsCorrect){
+    // Do something
+}
+```
+
+The code below demonstrates how to save and get the wallet out of the secure storage.
+
+```csharp
+InAppWalletManager.AddWallet(InAppWallet.CreateRandomHDWallet());
+// The wallet then will be saved to PlayerPrefs and can be retrieved later.
+```
+
+```csharp
+string[] addresses = InAppWalletManager.GetWalletAddresses();
+
+foreach(string address in addresses){
+    InAppWallet wallet = InAppWalletManager.GetWalletByAddress(address);
+    //Do something with your wallet.
+}
+```
+
 ### Test your code
 
 To verify if the SDK runs correctly or the transactions are performed according to your wish, use AuraScan tool located at <https://aurascan.io> or <https://serenity.aurascan.io> as for the testnet.
