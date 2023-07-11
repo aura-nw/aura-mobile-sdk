@@ -1,0 +1,252 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.kypi.studio.aura.wallet"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="33" />
+10    <!--
+11         The INTERNET permission is required for development. Specifically,
+12         the Flutter tool needs it to communicate with the running application
+13         to allow setting breakpoints, to provide hot reload, etc.
+14    -->
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->/Users/toannv/Documents/Work-Aura/aura-mobile-sdk/flutter/aura_wallet_example/android/app/src/main/AndroidManifest.xml:3:5-66
+15-->/Users/toannv/Documents/Work-Aura/aura-mobile-sdk/flutter/aura_wallet_example/android/app/src/main/AndroidManifest.xml:3:22-64
+16    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+16-->/Users/toannv/Documents/Work-Aura/aura-mobile-sdk/flutter/aura_wallet_example/android/app/src/main/AndroidManifest.xml:2:5-71
+16-->/Users/toannv/Documents/Work-Aura/aura-mobile-sdk/flutter/aura_wallet_example/android/app/src/main/AndroidManifest.xml:2:22-69
+17    <uses-permission android:name="android.permission.CAMERA" /> <!-- suppress DeprecatedClassUsageInspection -->
+17-->[:mobile_scanner] /Users/toannv/Documents/Work-Aura/aura-mobile-sdk/flutter/aura_wallet_example/build/mobile_scanner/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-65
+17-->[:mobile_scanner] /Users/toannv/Documents/Work-Aura/aura-mobile-sdk/flutter/aura_wallet_example/build/mobile_scanner/intermediates/merged_manifest/debug/AndroidManifest.xml:9:22-62
+18    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+18-->[androidx.biometric:biometric:1.1.0] /Users/toannv/.gradle/caches/transforms-3/29a53b35c072e5e16e15ef7c62078a12/transformed/biometric-1.1.0/AndroidManifest.xml:27:5-74
+18-->[androidx.biometric:biometric:1.1.0] /Users/toannv/.gradle/caches/transforms-3/29a53b35c072e5e16e15ef7c62078a12/transformed/biometric-1.1.0/AndroidManifest.xml:27:22-71
+19
+20    <permission
+20-->[androidx.core:core:1.10.1] /Users/toannv/.gradle/caches/transforms-3/c4988ff80110f75080a936fc6f044848/transformed/core-1.10.1/AndroidManifest.xml:22:5-24:47
+21        android:name="com.kypi.studio.aura.wallet.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+21-->[androidx.core:core:1.10.1] /Users/toannv/.gradle/caches/transforms-3/c4988ff80110f75080a936fc6f044848/transformed/core-1.10.1/AndroidManifest.xml:23:9-81
+22        android:protectionLevel="signature" />
+22-->[androidx.core:core:1.10.1] /Users/toannv/.gradle/caches/transforms-3/c4988ff80110f75080a936fc6f044848/transformed/core-1.10.1/AndroidManifest.xml:24:9-44
+23
+24    <uses-permission android:name="com.kypi.studio.aura.wallet.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- Although the *SdkVersion is captured in gradle build files, this is required for non gradle builds -->
+24-->[androidx.core:core:1.10.1] /Users/toannv/.gradle/caches/transforms-3/c4988ff80110f75080a936fc6f044848/transformed/core-1.10.1/AndroidManifest.xml:26:5-97
+24-->[androidx.core:core:1.10.1] /Users/toannv/.gradle/caches/transforms-3/c4988ff80110f75080a936fc6f044848/transformed/core-1.10.1/AndroidManifest.xml:26:22-94
+25    <!-- <uses-sdk android:minSdkVersion="14"/> -->
+26    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+26-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/toannv/.gradle/caches/transforms-3/865800f069935b874f356d17af4d45b6/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:25:5-79
+26-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/toannv/.gradle/caches/transforms-3/865800f069935b874f356d17af4d45b6/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:25:22-76
+27
+28    <application
+29        android:name="android.app.Application"
+30        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+30-->[androidx.core:core:1.10.1] /Users/toannv/.gradle/caches/transforms-3/c4988ff80110f75080a936fc6f044848/transformed/core-1.10.1/AndroidManifest.xml:28:18-86
+31        android:debuggable="true"
+32        android:icon="@mipmap/app_icon"
+33        android:label="Aura Wallet Example" >
+34        <activity
+35            android:name="com.example.aura_wallet_example.MainActivity"
+36            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+37            android:exported="true"
+38            android:hardwareAccelerated="true"
+39            android:launchMode="singleTop"
+40            android:theme="@style/LaunchTheme"
+41            android:windowSoftInputMode="adjustResize" >
+42
+43            <!--
+44                 Specifies an Android theme to apply to this Activity as soon as
+45                 the Android process has started. This theme is visible to the user
+46                 while the Flutter UI initializes. After that, this theme continues
+47                 to determine the Window background behind the Flutter UI.
+48            -->
+49            <meta-data
+50                android:name="io.flutter.embedding.android.NormalTheme"
+51                android:resource="@style/NormalTheme" />
+52
+53            <intent-filter>
+54                <action android:name="android.intent.action.MAIN" />
+55
+56                <category android:name="android.intent.category.LAUNCHER" />
+57            </intent-filter>
+58        </activity>
+59        <!--
+60             Don't delete the meta-data below.
+61             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
+62        -->
+63        <meta-data
+64            android:name="flutterEmbedding"
+65            android:value="2" />
+66
+67        <service
+67-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.2.0] /Users/toannv/.gradle/caches/transforms-3/dfde8f034b51679985fc09924c6dc617/transformed/jetified-play-services-mlkit-barcode-scanning-18.2.0/AndroidManifest.xml:9:9-15:19
+68            android:name="com.google.mlkit.common.internal.MlKitComponentDiscoveryService"
+68-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.2.0] /Users/toannv/.gradle/caches/transforms-3/dfde8f034b51679985fc09924c6dc617/transformed/jetified-play-services-mlkit-barcode-scanning-18.2.0/AndroidManifest.xml:10:13-91
+69            android:directBootAware="true"
+69-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:17:13-43
+70            android:exported="false" >
+70-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.2.0] /Users/toannv/.gradle/caches/transforms-3/dfde8f034b51679985fc09924c6dc617/transformed/jetified-play-services-mlkit-barcode-scanning-18.2.0/AndroidManifest.xml:11:13-37
+71            <meta-data
+71-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.2.0] /Users/toannv/.gradle/caches/transforms-3/dfde8f034b51679985fc09924c6dc617/transformed/jetified-play-services-mlkit-barcode-scanning-18.2.0/AndroidManifest.xml:12:13-14:85
+72                android:name="com.google.firebase.components:com.google.mlkit.vision.barcode.internal.BarcodeRegistrar"
+72-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.2.0] /Users/toannv/.gradle/caches/transforms-3/dfde8f034b51679985fc09924c6dc617/transformed/jetified-play-services-mlkit-barcode-scanning-18.2.0/AndroidManifest.xml:13:17-120
+73                android:value="com.google.firebase.components.ComponentRegistrar" />
+73-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.2.0] /Users/toannv/.gradle/caches/transforms-3/dfde8f034b51679985fc09924c6dc617/transformed/jetified-play-services-mlkit-barcode-scanning-18.2.0/AndroidManifest.xml:14:17-82
+74            <meta-data
+74-->[com.google.mlkit:vision-common:17.3.0] /Users/toannv/.gradle/caches/transforms-3/66bd106c250be9f02190d447f7a4703c/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:12:13-14:85
+75                android:name="com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar"
+75-->[com.google.mlkit:vision-common:17.3.0] /Users/toannv/.gradle/caches/transforms-3/66bd106c250be9f02190d447f7a4703c/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:13:17-124
+76                android:value="com.google.firebase.components.ComponentRegistrar" />
+76-->[com.google.mlkit:vision-common:17.3.0] /Users/toannv/.gradle/caches/transforms-3/66bd106c250be9f02190d447f7a4703c/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:14:17-82
+77            <meta-data
+77-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:20:13-22:85
+78                android:name="com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar"
+78-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:21:17-120
+79                android:value="com.google.firebase.components.ComponentRegistrar" />
+79-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:22:17-82
+80        </service>
+81
+82        <provider
+82-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:9:9-13:38
+83            android:name="com.google.mlkit.common.internal.MlKitInitProvider"
+83-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:10:13-78
+84            android:authorities="com.kypi.studio.aura.wallet.mlkitinitprovider"
+84-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:11:13-69
+85            android:exported="false"
+85-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:12:13-37
+86            android:initOrder="99" />
+86-->[com.google.mlkit:common:18.7.0] /Users/toannv/.gradle/caches/transforms-3/1eda5e83faa7eb78e7db9605f01a3e58/transformed/jetified-common-18.7.0/AndroidManifest.xml:13:13-35
+87
+88        <activity
+88-->[com.google.android.gms:play-services-base:18.1.0] /Users/toannv/.gradle/caches/transforms-3/781e5567158e59d38ee2b89930f9808b/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:20:9-22:45
+89            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+89-->[com.google.android.gms:play-services-base:18.1.0] /Users/toannv/.gradle/caches/transforms-3/781e5567158e59d38ee2b89930f9808b/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:20:19-85
+90            android:exported="false"
+90-->[com.google.android.gms:play-services-base:18.1.0] /Users/toannv/.gradle/caches/transforms-3/781e5567158e59d38ee2b89930f9808b/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:22:19-43
+91            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+91-->[com.google.android.gms:play-services-base:18.1.0] /Users/toannv/.gradle/caches/transforms-3/781e5567158e59d38ee2b89930f9808b/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:21:19-78
+92
+93        <meta-data
+93-->[com.google.android.gms:play-services-basement:18.1.0] /Users/toannv/.gradle/caches/transforms-3/58aa1384bde170d075503b845cfcf44c/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:21:9-23:69
+94            android:name="com.google.android.gms.version"
+94-->[com.google.android.gms:play-services-basement:18.1.0] /Users/toannv/.gradle/caches/transforms-3/58aa1384bde170d075503b845cfcf44c/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:22:13-58
+95            android:value="@integer/google_play_services_version" />
+95-->[com.google.android.gms:play-services-basement:18.1.0] /Users/toannv/.gradle/caches/transforms-3/58aa1384bde170d075503b845cfcf44c/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:23:13-66
+96
+97        <service
+97-->[androidx.camera:camera-camera2:1.2.2] /Users/toannv/.gradle/caches/transforms-3/36757e0b0c36c98afc13118ba16c8527/transformed/jetified-camera-camera2-1.2.2/AndroidManifest.xml:24:9-33:19
+98            android:name="androidx.camera.core.impl.MetadataHolderService"
+98-->[androidx.camera:camera-camera2:1.2.2] /Users/toannv/.gradle/caches/transforms-3/36757e0b0c36c98afc13118ba16c8527/transformed/jetified-camera-camera2-1.2.2/AndroidManifest.xml:25:13-75
+99            android:enabled="false"
+99-->[androidx.camera:camera-camera2:1.2.2] /Users/toannv/.gradle/caches/transforms-3/36757e0b0c36c98afc13118ba16c8527/transformed/jetified-camera-camera2-1.2.2/AndroidManifest.xml:26:13-36
+100            android:exported="false" >
+100-->[androidx.camera:camera-camera2:1.2.2] /Users/toannv/.gradle/caches/transforms-3/36757e0b0c36c98afc13118ba16c8527/transformed/jetified-camera-camera2-1.2.2/AndroidManifest.xml:27:13-37
+101            <meta-data
+101-->[androidx.camera:camera-camera2:1.2.2] /Users/toannv/.gradle/caches/transforms-3/36757e0b0c36c98afc13118ba16c8527/transformed/jetified-camera-camera2-1.2.2/AndroidManifest.xml:30:13-32:89
+102                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+102-->[androidx.camera:camera-camera2:1.2.2] /Users/toannv/.gradle/caches/transforms-3/36757e0b0c36c98afc13118ba16c8527/transformed/jetified-camera-camera2-1.2.2/AndroidManifest.xml:31:17-103
+103                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+103-->[androidx.camera:camera-camera2:1.2.2] /Users/toannv/.gradle/caches/transforms-3/36757e0b0c36c98afc13118ba16c8527/transformed/jetified-camera-camera2-1.2.2/AndroidManifest.xml:32:17-86
+104        </service>
+105
+106        <uses-library
+106-->[androidx.window:window:1.0.0-beta04] /Users/toannv/.gradle/caches/transforms-3/25cee5f028ac2a6b79fd6278ff5b59e2/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:25:9-27:40
+107            android:name="androidx.window.extensions"
+107-->[androidx.window:window:1.0.0-beta04] /Users/toannv/.gradle/caches/transforms-3/25cee5f028ac2a6b79fd6278ff5b59e2/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:26:13-54
+108            android:required="false" />
+108-->[androidx.window:window:1.0.0-beta04] /Users/toannv/.gradle/caches/transforms-3/25cee5f028ac2a6b79fd6278ff5b59e2/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:27:13-37
+109        <uses-library
+109-->[androidx.window:window:1.0.0-beta04] /Users/toannv/.gradle/caches/transforms-3/25cee5f028ac2a6b79fd6278ff5b59e2/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:28:9-30:40
+110            android:name="androidx.window.sidecar"
+110-->[androidx.window:window:1.0.0-beta04] /Users/toannv/.gradle/caches/transforms-3/25cee5f028ac2a6b79fd6278ff5b59e2/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:29:13-51
+111            android:required="false" />
+111-->[androidx.window:window:1.0.0-beta04] /Users/toannv/.gradle/caches/transforms-3/25cee5f028ac2a6b79fd6278ff5b59e2/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:30:13-37
+112
+113        <provider
+113-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:24:9-32:20
+114            android:name="androidx.startup.InitializationProvider"
+114-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:25:13-67
+115            android:authorities="com.kypi.studio.aura.wallet.androidx-startup"
+115-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:26:13-68
+116            android:exported="false" >
+116-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:27:13-37
+117            <meta-data
+117-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:29:13-31:52
+118                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+118-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:30:17-85
+119                android:value="androidx.startup" />
+119-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:31:17-49
+120        </provider>
+121
+122        <receiver
+122-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:34:9-52:20
+123            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+123-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:35:13-76
+124            android:directBootAware="false"
+124-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:36:13-44
+125            android:enabled="true"
+125-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:37:13-35
+126            android:exported="true"
+126-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:38:13-36
+127            android:permission="android.permission.DUMP" >
+127-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:39:13-57
+128            <intent-filter>
+128-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:40:13-42:29
+129                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+129-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:41:17-91
+129-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:41:25-88
+130            </intent-filter>
+131            <intent-filter>
+131-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:43:13-45:29
+132                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+132-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:44:17-85
+132-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:44:25-82
+133            </intent-filter>
+134            <intent-filter>
+134-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:46:13-48:29
+135                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+135-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:47:17-88
+135-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:47:25-85
+136            </intent-filter>
+137            <intent-filter>
+137-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:49:13-51:29
+138                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+138-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:50:17-95
+138-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/toannv/.gradle/caches/transforms-3/635b1770925726da461e843c0a3c6641/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:50:25-92
+139            </intent-filter>
+140        </receiver>
+141
+142        <service
+142-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/toannv/.gradle/caches/transforms-3/865800f069935b874f356d17af4d45b6/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:29:9-35:19
+143            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+143-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/toannv/.gradle/caches/transforms-3/865800f069935b874f356d17af4d45b6/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:30:13-103
+144            android:exported="false" >
+144-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/toannv/.gradle/caches/transforms-3/865800f069935b874f356d17af4d45b6/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:31:13-37
+145            <meta-data
+145-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/toannv/.gradle/caches/transforms-3/865800f069935b874f356d17af4d45b6/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:32:13-34:39
+146                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+146-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/toannv/.gradle/caches/transforms-3/865800f069935b874f356d17af4d45b6/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:33:17-94
+147                android:value="cct" />
+147-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/toannv/.gradle/caches/transforms-3/865800f069935b874f356d17af4d45b6/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:34:17-36
+148        </service>
+149        <service
+149-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/toannv/.gradle/caches/transforms-3/8a86750eba43ba46ae6e646b43a84835/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:26:9-30:19
+150            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+150-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/toannv/.gradle/caches/transforms-3/8a86750eba43ba46ae6e646b43a84835/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:27:13-117
+151            android:exported="false"
+151-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/toannv/.gradle/caches/transforms-3/8a86750eba43ba46ae6e646b43a84835/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:28:13-37
+152            android:permission="android.permission.BIND_JOB_SERVICE" >
+152-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/toannv/.gradle/caches/transforms-3/8a86750eba43ba46ae6e646b43a84835/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:29:13-69
+153        </service>
+154
+155        <receiver
+155-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/toannv/.gradle/caches/transforms-3/8a86750eba43ba46ae6e646b43a84835/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:32:9-34:40
+156            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+156-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/toannv/.gradle/caches/transforms-3/8a86750eba43ba46ae6e646b43a84835/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:33:13-132
+157            android:exported="false" />
+157-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/toannv/.gradle/caches/transforms-3/8a86750eba43ba46ae6e646b43a84835/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:34:13-37
+158    </application>
+159
+160</manifest>

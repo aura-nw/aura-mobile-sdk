@@ -4,14 +4,15 @@ import 'package:aura_wallet_example/src/application/wrappers/localization/app_lo
 import 'package:aura_wallet_example/src/application/wrappers/localization/localization_manager.dart';
 import 'package:aura_wallet_example/src/core/constants/language_key.dart';
 import 'package:aura_wallet_example/src/core/typography.dart';
+import 'package:aura_wallet_example/src/core/utils/dart_core_extension.dart';
 import 'package:aura_wallet_example/src/presentation/widgets/slider_base/slider_base_widget.dart';
 import 'package:flutter/material.dart';
 
 class FeeSliderWidget extends SliderBaseWidget<double> {
   const FeeSliderWidget({
-    double max = 200,
-    double min = 0,
-    double current = 100,
+    double max = 400,
+    double min = 200,
+    double current = 300,
     OnSliderChange? onChange,
     Key? key,
   }) : super(
@@ -78,7 +79,7 @@ class _FeeSliderWidgetState
                 Text(
                   '${language.translate(
                     LanguageKey.sendTransactionFee,
-                  )} : ${getCurrent.toInt()} UAURA',
+                  )} : ${(getCurrent/1000000).truncateToDecimalPlaces(6)} AURA',
                   style: AppTypoGraPhy.caption12.copyWith(
                     color: theme.lightColor,
                   ),
@@ -95,9 +96,9 @@ class _FeeSliderWidgetState
   }
 
   String getPriority(AppLocalizationManager language) {
-    if (getCurrent >= 0 && getCurrent <= 70) {
+    if (getCurrent >= 200 && getCurrent <= 270) {
       return language.translate(LanguageKey.sendTransactionFeeLow);
-    } else if (getCurrent > 70 && getCurrent <= 140) {
+    } else if (getCurrent > 270 && getCurrent <= 340) {
       return language.translate(LanguageKey.sendTransactionFeeMedium);
     } else {
       return language.translate(LanguageKey.sendTransactionFeeHigh);

@@ -12,7 +12,6 @@ import 'package:aura_wallet_example/src/presentation/widgets/app_bar_widget.dart
 import 'package:aura_wallet_example/src/presentation/widgets/app_button.dart';
 import 'package:aura_wallet_example/src/presentation/widgets/text_input_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class ImportWalletScreen extends StatefulWidget {
   const ImportWalletScreen({Key? key}) : super(key: key);

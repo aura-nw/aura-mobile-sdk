@@ -149,7 +149,7 @@ class _SendTransactionScreenState extends State<SendTransactionScreen>
                               keyBoardType: TextInputType.number,
                               hintText: _language.translate('100'),
                               suffix: Text(
-                                _language.translate('UAURA'),
+                                _language.translate('UEAURA'),
                                 style: AppTypoGraPhy.caption14.copyWith(
                                   color: theme.lightColor,
                                 ),
