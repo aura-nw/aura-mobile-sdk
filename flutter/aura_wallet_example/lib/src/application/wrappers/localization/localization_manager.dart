@@ -45,7 +45,7 @@ class AppLocalizationManager {
 
   Future<void> load() async {
     const String languageFolder =
-        'packages/aura_wallet_example/assets/language/';
+        'assets/language/';
 
     List<String> supportedLanguage = ['en', 'vi'];
 

@@ -1,4 +1,4 @@
-const String _baseAsset = 'package:aura_wallet_example/assets/';
+const String _baseAsset = 'assets/';
 
 class ImageKey {
   static const String _imageKey = '${_baseAsset}image/';
