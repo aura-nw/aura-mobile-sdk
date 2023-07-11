@@ -1,0 +1,4 @@
+<!--Assets/link.xml content-->
+<linker>
+    <assembly fullname="protobuf-net"  preserve="all"/>
+</linker>
