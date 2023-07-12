@@ -19,8 +19,9 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 - Step 1: Download and import aura-sdk-unity.unitypackage file in the Releases folder.
 - Step 2: Install SocketIOUnity package using the github URL <https://github.com/aura-nw/SocketIOUnity.git>.
 - Step 3: Install NuGetForUnity package using the github URL <https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity>.
-- Step 4: (Unity <=2021 only) Disable ```Assembly Version Validation``` in the ```Player Settings```. For Unity 2022 or later, this option is disabled by default.
-- Step 5: Append these NuGet dependencies into your Assets/packages.config file. If there is no packages.config file in the Assets folder, you can create one and use the content below.
+- Step 4: Install AdvancedPlayerPrefs using the github URL <https://github.com/realphamanhtuan/unity-advanced-playerprefs.git>. This library is used for wallet information encryption.
+- Step 5: (Unity <=2021 only) Disable ```Assembly Version Validation``` in the ```Player Settings```. For Unity 2022 or later, this option is disabled by default.
+- Step 6: Append these NuGet dependencies into your Assets/packages.config file. If there is no packages.config file in the Assets folder, you can create one and use the content below.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -54,9 +55,9 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 </packages>
 ```
 
-- Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package managers for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
+- Step 7: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package managers for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
 
-- Step 7 (for WebGL builds): When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
+- Step 8 (for WebGL builds): When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
 
 
 ```xml
@@ -66,7 +67,7 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 </linker>
 ```
 
-- Step 8: (for Android builds) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
+- Step 9: (for Android builds) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
