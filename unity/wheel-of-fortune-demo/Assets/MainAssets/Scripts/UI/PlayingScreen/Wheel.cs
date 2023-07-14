@@ -24,6 +24,17 @@ public class Wheel : MonoBehaviour
     Button spinningButton;
     [SerializeField]
     GameObject spinningText, backButton; //to disable backButton when spinning
+    [SerializeField]
+    TMPro.TMP_Text txHashText;
+    string txHash;
+    void CopyTxHash(){
+        GUIUtility.systemCopyBuffer = txHash;
+    }
+    void UpdateTxHash(string txHash){
+        this.txHash = txHash;
+        if (!string.IsNullOrWhiteSpace(txHash))
+            txHashText.text = $"Tap to copy your txHash\n{txHash}";
+    }
     bool wheelLoaded = false;
     void Start()
     {
@@ -32,12 +43,11 @@ public class Wheel : MonoBehaviour
         });
         pickerWheel.OnSpinEnd((piece) => {
             Tebug.Log("Spinning finished");
-            spinningText.SetActive(false);
-            spinningButton.gameObject.SetActive(true);
-            backButton.SetActive(true);
+            ShowReadyUI();
             Popup.instance.ShowPopup("Reward arrived", $"You have got {piece.Label}");
         });
         spinningText.SetActive(false);
+        txHashText.GetComponent<Button>()?.onClick.AddListener(CopyTxHash);
     }
     async void OnEnable(){
         if (wheelLoaded || ScreenManager.instance == null || WalletManager.wallet == null) return;
@@ -78,6 +88,7 @@ public class Wheel : MonoBehaviour
         spinningButton.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
         spinningText.SetActive(false);
+        UpdateTxHash("");
     }
     async void RequestSpin(){
         if (wheelLoaded && !pickerWheel.IsSpinning){
@@ -89,20 +100,32 @@ public class Wheel : MonoBehaviour
                     "{\"spin\": {\"number\": 1}}",
                     Constant.AURA_DENOM,
                     "1000", //for each spin
-                    "300"
+                    "1000"
                 );
                 await WalletManager.wallet.SignTransaction(spinTransaction);
                 var spinResult = await InAppWallet.BroadcastTx(spinTransaction);
                 Tebug.Log(spinResult.StatusCode, spinResult.Content);
                 if (spinResult.StatusCode == 200){
-                    await WaitForNewRewardOrAbortAfter();
+                    JObject spinResultJO = JObject.Parse(spinResult.Content);
+                    if (spinResultJO["tx_response"] != null && spinResultJO["tx_response"]["txhash"] != null){
+                        if (spinResultJO["tx_response"]["data"] != null && !string.IsNullOrWhiteSpace(spinResultJO["tx_response"]["data"].ToString())){
+                            UpdateTxHash(spinResultJO["tx_response"]["txhash"].ToString());
+                            await WaitForNewRewardOrAbortAfter();
+                        } else if (spinResultJO["tx_response"]["raw_log"] != null && !string.IsNullOrWhiteSpace(spinResultJO["tx_response"]["raw_log"].ToString())){
+                            throw new System.Exception(spinResultJO["tx_response"]["raw_log"].ToString());
+                        } else {
+                            throw new System.Exception("Unknown error");
+                        }
+                    } else {
+                        throw new System.Exception("Failed to parse txHash");
+                    }
                 } else {
-                    throw new System.Exception();
+                    throw new System.Exception("Failed to send Transaction");
                 }
-            } catch {
+            } catch (System.Exception e){
                 ShowReadyUI();
                 pickerWheel.StopSpinning();
-                Popup.instance.ShowPopup("Error Spinning", "Error(s) happened spinning the wheel. Try again later.");
+                Popup.instance.ShowPopup("Error Spinning", $"Error(s) happened spinning the wheel: {e.Message}. Try again later!");
             }
         }
     }

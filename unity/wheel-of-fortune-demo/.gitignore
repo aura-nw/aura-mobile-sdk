@@ -74,3 +74,5 @@ crashlytics-build.properties
 #Nuget downloaded packages
 Assets/Packages 
 Assets/TextMesh Pro*
+
+Build/Android/*BackupThisFolder*
