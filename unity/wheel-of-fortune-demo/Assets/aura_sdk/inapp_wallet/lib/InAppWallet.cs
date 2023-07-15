@@ -260,6 +260,12 @@ namespace AuraSDK{
                     }
                 }, 
                 Sequence = await GetAccountSequence(),
+                PublicKey = Google.Protobuf.WellKnownTypes.Any.Pack(
+                    new PubKey(){
+                        Key = this.publicKey
+                    },
+                    "/cosmos.crypto.secp256k1.PubKey"
+                )
             });
 
             Tx tx = new Tx(){

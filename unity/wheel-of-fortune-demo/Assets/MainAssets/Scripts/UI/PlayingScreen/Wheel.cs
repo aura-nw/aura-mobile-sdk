@@ -34,6 +34,7 @@ public class Wheel : MonoBehaviour
         this.txHash = txHash;
         if (!string.IsNullOrWhiteSpace(txHash))
             txHashText.text = $"Tap to copy your txHash\n{txHash}";
+        else txHashText.text = "";
     }
     bool wheelLoaded = false;
     void Start()
@@ -53,11 +54,11 @@ public class Wheel : MonoBehaviour
         if (wheelLoaded || ScreenManager.instance == null || WalletManager.wallet == null) return;
         await PopulateRewards();
     }
-    async Task WaitForNewRewardOrAbortAfter(float seconds = 120f){
+    async Task WaitForNewRewardOrAbortAfter(float waitTime = 120f, int delayMiliseconds = 15000){
         float startTime = Time.time;
-        while (Time.time - startTime < seconds){
-            await Task.Delay(15000);
-            seconds -= Time.deltaTime;
+        while (Time.time - startTime < waitTime){
+            await Task.Delay(delayMiliseconds);
+            waitTime -= Time.deltaTime;
             var newRewardsResult = await Inventory.QueryNewRewards();
             if (newRewardsResult.Item1 == true){
                 var newRewards = newRewardsResult.Item2;
@@ -105,8 +106,8 @@ public class Wheel : MonoBehaviour
                 await WalletManager.wallet.SignTransaction(spinTransaction);
                 var spinResult = await InAppWallet.BroadcastTx(spinTransaction);
                 Tebug.Log(spinResult.StatusCode, spinResult.Content);
+                JObject spinResultJO = JObject.Parse(spinResult.Content);
                 if (spinResult.StatusCode == 200){
-                    JObject spinResultJO = JObject.Parse(spinResult.Content);
                     if (spinResultJO["tx_response"] != null && spinResultJO["tx_response"]["txhash"] != null){
                         if (spinResultJO["tx_response"]["data"] != null && !string.IsNullOrWhiteSpace(spinResultJO["tx_response"]["data"].ToString())){
                             UpdateTxHash(spinResultJO["tx_response"]["txhash"].ToString());
@@ -119,8 +120,15 @@ public class Wheel : MonoBehaviour
                     } else {
                         throw new System.Exception("Failed to parse txHash");
                     }
+                } else if (spinResultJO["message"] != null) {
+                    if (spinResultJO["code"] != null && spinResultJO["code"].ToString().Equals("2")) {//time out in block mode
+                        txHashText.text = "The network is taking longer to confirm your transaction";
+                        await WaitForNewRewardOrAbortAfter();
+                    } else {
+                        throw new System.Exception(spinResultJO["message"].ToString());
+                    }
                 } else {
-                    throw new System.Exception("Failed to send Transaction");
+                    throw new System.Exception("Unknown error");
                 }
             } catch (System.Exception e){
                 ShowReadyUI();
