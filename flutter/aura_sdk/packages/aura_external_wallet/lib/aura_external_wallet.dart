@@ -28,9 +28,21 @@ abstract class AuraExternalWallet {
 
   Future<AuraConnectWalletInfoResult> requestAccountInfo();
 
-  Future sendTransaction();
+  Future<String> sendTransaction({
+    required String signer,
+    required String toAddress,
+    required String amount,
+    required String fee,
+    String? memo,
+  });
 
-  Future signContract();
+  Future<String> executeContract({
+    required String signer,
+    required String contractAddress,
+    required Map<String, dynamic> executeMessage,
+    List<int>? funds,
+    int? fee,
+  });
 
   void dispose();
 }

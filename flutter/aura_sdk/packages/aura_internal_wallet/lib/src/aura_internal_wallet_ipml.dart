@@ -296,12 +296,12 @@ class AuraWalletImpl extends AuraWallet {
     ///Validator
     ///
     if (contractAddress.isEmpty) {
-      throw UnimplementedError('Contract address is not empty');
+      throw AuraInternalError(4,'Contract address is not empty');
     }
 
     if (fee != null) {
       if (fee < 200) {
-        throw UnimplementedError('Min fee is 200');
+        throw AuraInternalError(5,'Min fee is 200');
       }
     }
 
@@ -352,7 +352,7 @@ class AuraWalletImpl extends AuraWallet {
     if (response.isSuccessful) {
       return response.txhash;
     }
-    throw UnimplementedError('Broadcast transaction error\n${response.rawLog}');
+    throw AuraInternalError(150,'Broadcast transaction error\n${response.rawLog}');
   }
 
   @override

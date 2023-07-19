@@ -24,6 +24,9 @@
       <excludeFolder url="file://$MODULE_DIR$/flutter/aura_wallet_example/packages/mobile_scanner/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/flutter/aura_wallet_example/packages/mobile_scanner/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/flutter/aura_wallet_example/packages/mobile_scanner/build" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter/aura_sdk/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter/aura_sdk/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter/aura_sdk/example/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
