@@ -1,5 +1,8 @@
 library aura_external_wallet;
 
+import 'dart:typed_data';
+
+
 import 'src/aura_external_wallet_impl.dart';
 import 'src/core/type_data/aura_wallet_type_data.dart';
 export 'src/core/exceptions/aura_external_exception.dart';
@@ -28,12 +31,17 @@ abstract class AuraExternalWallet {
 
   Future<AuraConnectWalletInfoResult> requestAccountInfo();
 
-  Future<String> sendTransaction({
+  Future<Uint8List> signTransaction({
     required String signer,
     required String toAddress,
     required String amount,
     required String fee,
     String? memo,
+  });
+
+  Future<String> broadcastTransaction({
+    required Uint8List bytes,
+    required String signer,
   });
 
   Future<String> executeContract({

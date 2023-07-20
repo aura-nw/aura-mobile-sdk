@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:aura_sdk/aura_sdk.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ class ExternalWalletPage extends StatefulWidget {
 }
 
 class _ExternalWalletPageState extends State<ExternalWalletPage> {
+  Uint8List? data;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,16 +64,22 @@ class _ExternalWalletPageState extends State<ExternalWalletPage> {
               child: OutlinedButton(
                 onPressed: () async {
                   try {
-                    final hash =
-                        await AuraSDK.instance.externalWallet.sendTransaction(
-                      signer: 'aura176wt9d8zdg0dgrtvzxvplgdmv99j5yn3enpedl',
-                      toAddress: 'aura18dftkv07h76uhmxjkrp8da4ezlsdql5sudtuxn',
-                      amount: '340',
-                      fee: '210',
+                    if (data != null) {
+                      await AuraSDK.instance.externalWallet
+                          .broadcastTransaction(
+                        bytes: data!,
+                        signer: 'aura18dftkv07h76uhmxjkrp8da4ezlsdql5sudtuxn',
+                      );
+                      return;
+                    }
+                    data =
+                        await AuraSDK.instance.externalWallet.signTransaction(
+                      signer: 'aura18dftkv07h76uhmxjkrp8da4ezlsdql5sudtuxn',
+                      toAddress: 'aura176wt9d8zdg0dgrtvzxvplgdmv99j5yn3enpedl',
+                      amount: '5000',
+                      fee: '1000',
                       memo: 'Auto memo for Dev',
                     );
-
-                    log('Received Hash = $hash');
                   } catch (e) {
                     log('Received Error ${e.toString()}');
                   }

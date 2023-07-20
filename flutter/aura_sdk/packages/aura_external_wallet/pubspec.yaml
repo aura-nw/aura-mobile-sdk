@@ -15,6 +15,8 @@ dependencies:
 
   aura_launcher:
     path: plugins/aura_launcher
+  alan:
+    path: ../aura_internal_wallet/packages/alan
 
 dev_dependencies:
   flutter_test:

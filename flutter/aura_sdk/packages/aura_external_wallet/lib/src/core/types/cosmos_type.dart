@@ -92,12 +92,13 @@ class StdSignDoc {
     required String sequence,
   }) {
     return StdSignDoc(
-        fee: fee,
-        chainId: chainId,
-        msgs: msgs,
-        memo: memo,
-        accountNumber: Uint53.fromString(accountNumber).toString(),
-        sequence: Uint53.fromString(sequence).toString());
+      fee: fee,
+      chainId: chainId,
+      msgs: msgs,
+      memo: memo,
+      accountNumber: Uint53.fromString(accountNumber).toString(),
+      sequence: Uint53.fromString(sequence).toString(),
+    );
   }
 
   Map<String, dynamic> toSignDoc() {

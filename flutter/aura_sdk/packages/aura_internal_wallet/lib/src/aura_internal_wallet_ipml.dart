@@ -418,11 +418,11 @@ class AuraWalletImpl extends AuraWallet {
         chainId = 'serenity-testnet-001';
         break;
       case AuraInternalWalletEnvironment.euphoria:
-        baseUrl = 'https://indexer.dev.aurascan.io';
+        baseUrl = 'https://indexer.staging.aurascan.io';
         chainId = 'euphoria-2';
         break;
       case AuraInternalWalletEnvironment.mainNet:
-        baseUrl = 'https://indexer.aurascan.io';
+        baseUrl = 'https://horoscope.aura.network';
         chainId = 'xstaxy-1';
         break;
     }
