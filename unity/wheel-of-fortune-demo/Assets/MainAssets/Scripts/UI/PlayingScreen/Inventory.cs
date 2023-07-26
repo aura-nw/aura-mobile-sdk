@@ -8,13 +8,6 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 public class Inventory : MonoBehaviour
 {
-    public class Reward{
-        public string type;
-        public string label;
-        public Sprite GetSprite(){
-            return Resources.Load<Sprite>($"reward_icons/{label}");
-        }
-    }
     public static Inventory instance;
     public static List<Reward> rewardList = new List<Reward>();
     public static void AddReward(string type, string text){

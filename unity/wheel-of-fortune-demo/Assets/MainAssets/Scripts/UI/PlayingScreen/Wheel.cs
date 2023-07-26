@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 public class Wheel : MonoBehaviour
 {
-    public const string woFContractAddress = "aura158kn7jhsvttsmhn4q9jf2mteu5nsq8e6lxrfgmnhzg55ghftfh6qngxk6g"; //EUPHORIA
+    public const string woFContractAddress = "aura1upyv5y5ak7ewelak2tptdjuku25jljky4j76nscatf0ssw8n3ufqlmenr3"; //EUPHORIA
     // public const string woFContractAddress = "aura1pzr4c8lcc9e8kzry5qykjsfy7s8t969c6au5k563ev6gd8tx4rpsus9q8g"; //SERENITY
     public bool IsSpinning{
         get{
@@ -100,7 +100,7 @@ public class Wheel : MonoBehaviour
                     woFContractAddress,
                     "{\"spin\": {\"number\": 1}}",
                     Constant.AURA_DENOM,
-                    "1000", //for each spin
+                    "101000", //for each spin
                     "1000"
                 );
                 await WalletManager.wallet.SignTransaction(spinTransaction);
@@ -165,7 +165,7 @@ public class Wheel : MonoBehaviour
                             Index = i,
                             Amount = i,
                             Chance = 1f / (float) rewardArray.Count,
-                            Icon = Resources.Load<Sprite>($"reward_icons/{label}"),
+                            Icon = Reward.GetSprite(label),
                             Label = label
                         };
                     } 

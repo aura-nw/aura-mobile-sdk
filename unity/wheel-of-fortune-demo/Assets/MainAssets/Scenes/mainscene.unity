@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -245,11 +245,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: mnemonic
       objectReference: {fileID: 0}
+    - target: {fileID: 114267918838182736, guid: 48cd4469f52efb049b60ba44e83da257, type: 3}
+      propertyPath: m_text
+      value: "fix myself olive license rain muffin ecology embody goddess misery
+        oblige nasty logic crazy stereo fitness tiger demise original satisfy nest
+        giraffe plunge melody\u200B"
+      objectReference: {fileID: 0}
     - target: {fileID: 114397009966825276, guid: 48cd4469f52efb049b60ba44e83da257, type: 3}
       propertyPath: m_Text
-      value: fix myself olive license rain muffin ecology embody goddess misery oblige
-        nasty logic crazy stereo fitness tiger demise original satisfy nest giraffe
-        plunge melody
+      value: trigger tower attack secret phone suggest reflect word cook easily security
+        spell rely organ enhance surprise endorse color ivory remember spike almost
+        aerobic satisfy
       objectReference: {fileID: 0}
     - target: {fileID: 114397009966825276, guid: 48cd4469f52efb049b60ba44e83da257, type: 3}
       propertyPath: m_Placeholder
@@ -4573,7 +4579,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'In order to spin the wheel, you need at least 2000 uaura for each spinning''s
+  m_text: 'In order to spin the wheel, you need at least 102000 uaura for each spinning''s
     fee and contract execution fee. You don''t seem to have enough aura in your account.
     Please try the followings:
 
@@ -7701,7 +7707,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2960873590782760405}
   m_HandleRect: {fileID: 3142742921409335635}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
