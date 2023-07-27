@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:developer' as dev;
-import 'dart:typed_data';
 import 'package:alan/alan.dart' as alan;
 import 'package:aura_external_wallet/aura_external_wallet.dart';
 import 'package:aura_external_wallet/src/core/types/cosmos_type.dart';
@@ -14,7 +13,6 @@ import 'core/aura_external_wallet_emitter.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:uuid/uuid.dart';
 
-import 'core/type_data/external_type_data.dart';
 import 'core/types/aura_server_event_type.dart';
 
 class AuraExternalWalletImpl implements AuraExternalWallet {
@@ -105,7 +103,7 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
   final AuraExternalWalletEmitter emitter = AuraExternalWalletEmitter();
 
   @override
-  Future<Uint8List> signTransaction({
+  Future<String> signAndBroadcast({
     required String signer,
     required String toAddress,
     required String amount,
@@ -138,8 +136,8 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
       final HttpClientResponse response = await request.close();
 
       final String dataString =
-          await (response.transform(utf8.decoder).join()).whenComplete(
-        () => client.close(),
+      await (response.transform(utf8.decoder).join()).whenComplete(
+            () => client.close(),
       );
 
       Map<String, dynamic> account = jsonDecode(dataString);
@@ -149,9 +147,8 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
       }
 
       String? accountNumber =
-          account['data']?['account_auth']?['account']?['account_number'];
-      String? sequence =
-          account['data']?['account_auth']?['account']?['sequence'];
+      account['data']['account_auth']['account']['account_number'];
+      String? sequence = account['data']['account_auth']['account']['sequence'];
 
       if (accountNumber == null || sequence == null) {
         throw AuraExternalError(108, 'Can not get Account');
@@ -188,7 +185,7 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
       );
 
       final Map<String, dynamic> params = {
-        'method': 'cosmos_signAmino',
+        'method': 'cosmos_signAndBroadcast',
         'params': [
           {
             'signer': signer,
@@ -208,16 +205,14 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
 
       final Map<String, dynamic> result = data.result;
 
-      return Uint8List.fromList(jsonEncode(result).codeUnits);
+      if (result.isEmpty ||
+          result['code'] != 0 ||
+          result['transactionHash'] == null) {
+        throw AuraExternalError(
+            152, result['rawLog']?.toString() ?? 'Send transaction error');
+      }
 
-      // if (result.isEmpty ||
-      //     result['code'] != 0 ||
-      //     result['transactionHash'] == null) {
-      //   throw AuraExternalError(
-      //       152, result['rawLog']?.toString() ?? 'Send transaction error');
-      // }
-      //
-      // return result['transactionHash'] as String;
+      return result['transactionHash'] as String;
     } catch (e) {
       print(e.toString());
       if (e is AuraExternalError) {
@@ -522,99 +517,4 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
     }
     return baseUrl;
   }
-
-  @override
-  Future<String> broadcastTransaction({
-    required Uint8List bytes,
-    required String signer,
-  }) async {
-    final Map<String, dynamic> params = {
-      'method': 'cosmos_sendTx',
-      'params': [
-        {
-          'chainId': chainId,
-          'tx': bytes,
-          'mode': 'BROADCAST_MODE_SYNC',
-        }
-      ],
-    };
-
-    dev.log(params.toString());
-
-    final AuraSocketServerEventTypeData data = await _requestCore(
-      _id,
-      param: params,
-    );
-
-    dev.log(data.result.toString());
-
-    return '';
-  }
-
-  // void createTxRaw(Map<String,dynamic> data)async{
-  //   var pubKey = account.pubKey;
-  //   if (pubKey.value.isNotEmpty != true) {
-  //     final secp256Key = secp256.PubKey.create()..key = wallet.publicKey;
-  //     pubKey = Codec.serialize(secp256Key);
-  //   }
-  //
-  //   // For SIGN_MODE_DIRECT, calling SetSignatures calls setSignerInfos on
-  //   // TxBuilder under the hood, and SignerInfos is needed to generated the
-  //   // sign bytes. This is the reason for setting SetSignatures here, with a
-  //   // nil signature.
-  //   //
-  //   // Note: this line is not needed for SIGN_MODE_LEGACY_AMINO, but putting it
-  //   // also doesn't affect its generated sign bytes, so for code's simplicity
-  //   // sake, we put it here.
-  //   var sigData = SingleSignatureData(signMode: signMode, signature: null);
-  //
-  //   // Set SignatureV2 with empty signatures, to set correct signer infos.
-  //   var sig = SignatureV2(
-  //     pubKey: pubKey,
-  //     data: sigData,
-  //     sequence: account.sequence,
-  //   );
-  //
-  //   // Create the transaction builder
-  //   final tx = config.newTxBuilder()
-  //     ..setMsgs(msgs)
-  //     ..setSignatures([sig])
-  //     ..setMemo(memo)
-  //     ..setFeeAmount(fee.amount)
-  //     ..setFeePayer(fee.payer)
-  //     ..setFeeGranter(fee.granter)
-  //     ..setGasLimit(fee.gasLimit);
-  //
-  //   // Generate the bytes to be signed.
-  //   final handler = config.signModeHandler();
-  //   final signerData = SignerData(
-  //     chainId: nodeInfo.network,
-  //     accountNumber: account.accountNumber,
-  //     sequence: account.sequence,
-  //   );
-  //   final bytesToSign = handler.getSignBytes(signMode, signerData, tx.getTx());
-  //
-  //   // print("KhoaHM bytesToSign $bytesToSign");
-  //   Log.log("KhoaHM bytesToSign $bytesToSign");
-  //
-  //   // Sign those bytes
-  //   final sigBytes = wallet.sign(Uint8List.fromList(bytesToSign));
-  //
-  //   // Construct the SignatureV2 struct
-  //   sigData = SingleSignatureData(signMode: signMode, signature: sigBytes);
-  //   sig = SignatureV2(
-  //     pubKey: pubKey,
-  //     data: sigData,
-  //     sequence: account.sequence,
-  //   );
-  //
-  //   print("KhoaHM sig = $sig");
-  //   print("KhoaHM sig.pubKey = ${sig.pubKey}");
-  //   print("KhoaHM sig.sigData = ${sig.data}");
-  //   print("KhoaHM sig.sequence = ${sig.sequence}");
-  //   tx.setSignatures([sig]);
-  //
-  //   // Return the signed transaction
-  //   return tx.getTx();
-  // }
 }

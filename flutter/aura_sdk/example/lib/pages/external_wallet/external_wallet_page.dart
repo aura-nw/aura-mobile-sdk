@@ -1,6 +1,4 @@
 import 'dart:developer';
-import 'dart:typed_data';
-
 import 'package:aura_sdk/aura_sdk.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +12,10 @@ class ExternalWalletPage extends StatefulWidget {
 }
 
 class _ExternalWalletPageState extends State<ExternalWalletPage> {
-  Uint8List? data;
+
+  bool isConnect = false;
+
+  AuraConnectWalletInfoResult ?account;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,43 @@ class _ExternalWalletPageState extends State<ExternalWalletPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
+            if(isConnect) ...[
+              SizedBox(
+                width: 200,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    try{
+                      account = await AuraSDK.instance.externalWallet.requestAccountInfo();
+                    }catch(e){
+                      log('Received Error ${e.toString()}');
+                    }
+                  },
+                  child: const Text('Get Account Info'),
+                ),
+              ),
+              SizedBox(
+                width: 200,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    if(account!=null){
+                      Navigator.pushNamed(context, '/external-wallet/sign-and-broadcast',arguments: account);
+                    }
+                  },
+                  child: const Text('Make transaction'),
+                ),
+              ),
+              SizedBox(
+                width: 200,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    if(account!=null){
+                      Navigator.pushNamed(context, '/external-wallet/execute-contract',arguments: account);
+                    }
+                  },
+                  child: const Text('Execute smart contract'),
+                ),
+              ),
+            ] else SizedBox(
               width: 200,
               child: OutlinedButton(
                 onPressed: () {
@@ -34,7 +71,11 @@ class _ExternalWalletPageState extends State<ExternalWalletPage> {
                     AuraSDK.instance.externalWallet
                         .connectWallet()
                         .then((value) {
-                      print(value.result);
+                      isConnect = value.result;
+
+                      setState(() {
+
+                      });
                     });
                   } catch (e) {
                     print(e.toString());
@@ -42,78 +83,7 @@ class _ExternalWalletPageState extends State<ExternalWalletPage> {
                 },
                 child: const Text('Connect C98'),
               ),
-            ),
-            SizedBox(
-              width: 200,
-              child: OutlinedButton(
-                onPressed: () {
-                  AuraSDK.instance.externalWallet.requestAccountInfo();
-                },
-                child: const Text('Get Account Info'),
-              ),
-            ),
-            SizedBox(
-              width: 200,
-              child: OutlinedButton(
-                onPressed: () {},
-                child: const Text('Check balance'),
-              ),
-            ),
-            SizedBox(
-              width: 200,
-              child: OutlinedButton(
-                onPressed: () async {
-                  try {
-                    if (data != null) {
-                      await AuraSDK.instance.externalWallet
-                          .broadcastTransaction(
-                        bytes: data!,
-                        signer: 'aura18dftkv07h76uhmxjkrp8da4ezlsdql5sudtuxn',
-                      );
-                      return;
-                    }
-                    data =
-                        await AuraSDK.instance.externalWallet.signTransaction(
-                      signer: 'aura18dftkv07h76uhmxjkrp8da4ezlsdql5sudtuxn',
-                      toAddress: 'aura176wt9d8zdg0dgrtvzxvplgdmv99j5yn3enpedl',
-                      amount: '5000',
-                      fee: '1000',
-                      memo: 'Auto memo for Dev',
-                    );
-                  } catch (e) {
-                    log('Received Error ${e.toString()}');
-                  }
-                },
-                child: const Text('Make transaction'),
-              ),
-            ),
-            SizedBox(
-              width: 200,
-              child: OutlinedButton(
-                onPressed: () async {
-                  try {
-                    final hash =
-                        await AuraSDK.instance.externalWallet.executeContract(
-                      signer: 'aura176wt9d8zdg0dgrtvzxvplgdmv99j5yn3enpedl',
-                      contractAddress:
-                          'aura1h3kn034nh4p8gwnuqya80rdhyvg3h775ukwul49qsugzk7v3qprs2nhgzh',
-                      executeMessage: {
-                        'transfer': {
-                          'amount': '250',
-                          'recipient':
-                              'aura1yukgemvxtr8fv6899ntd65qfyhwgx25d2nhvj6',
-                        },
-                      },
-                    );
-
-                    log('Received Hash = $hash');
-                  } catch (e) {
-                    log('Received Error ${e.toString()}');
-                  }
-                },
-                child: const Text('Execute smart contract'),
-              ),
-            ),
+            )
           ],
         ),
       ),
