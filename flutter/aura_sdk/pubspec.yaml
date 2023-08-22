@@ -15,12 +15,6 @@ dependencies:
     path: packages/aura_external_wallet
   aura_internal_wallet:
     path: packages/aura_internal_wallet
-
-  #private
-  local_auth: ^2.1.6
-  flutter_secure_storage: ^8.0.0
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

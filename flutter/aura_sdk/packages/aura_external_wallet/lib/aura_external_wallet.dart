@@ -1,8 +1,10 @@
 library aura_external_wallet;
 
+
 import 'src/aura_external_wallet_impl.dart';
-import 'src/core/type_data/aura_wallet_type_data.dart';
+import 'src/core/type_data/external_type_data.dart';
 export 'src/core/exceptions/aura_external_exception.dart';
+export 'src/core/type_data/external_type_data.dart';
 
 enum AuraExternalWalletEnvironment {
   mainNet,
@@ -28,9 +30,21 @@ abstract class AuraExternalWallet {
 
   Future<AuraConnectWalletInfoResult> requestAccountInfo();
 
-  Future sendTransaction();
+  Future<String> signAndBroadcast({
+    required String signer,
+    required String toAddress,
+    required String amount,
+    required String fee,
+    String? memo,
+  });
 
-  Future signContract();
+  Future<String> executeContract({
+    required String signer,
+    required String contractAddress,
+    required Map<String, dynamic> executeMessage,
+    List<int>? funds,
+    int? fee,
+  });
 
   void dispose();
 }

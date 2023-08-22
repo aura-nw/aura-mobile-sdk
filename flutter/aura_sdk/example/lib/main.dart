@@ -1,3 +1,6 @@
+import 'package:aura_connect_sdk_example/pages/external_wallet/execute_contract_page.dart';
+import 'package:aura_connect_sdk_example/pages/external_wallet/sign_and_broadcast_transaction.dart';
+
 import 'pages/internal_wallet/wallet_details/transaction_history.dart';
 import 'pages/internal_wallet/wallet_details/wallet_detail_screen.dart';
 
@@ -116,6 +119,18 @@ class _MyAppState extends State<MyApp> {
               const ExternalWalletPage(
                 title: "External Wallet Demo",
               ),
+              settings,
+            );
+          case '/external-wallet/sign-and-broadcast':
+            final account = settings.arguments as AuraConnectWalletInfoResult;
+            return _defaultRouter(
+              SignAndBroadCastTransaction(account: account),
+              settings,
+            );
+          case '/external-wallet/execute-contract':
+            final account = settings.arguments as AuraConnectWalletInfoResult;
+            return _defaultRouter(
+              ExecuteContractPage(account: account),
               settings,
             );
         }

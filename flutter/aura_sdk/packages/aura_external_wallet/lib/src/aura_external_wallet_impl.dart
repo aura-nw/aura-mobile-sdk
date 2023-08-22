@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
+import 'dart:developer' as dev;
+import 'package:alan/alan.dart' as alan;
 import 'package:aura_external_wallet/aura_external_wallet.dart';
+import 'package:aura_external_wallet/src/core/types/cosmos_type.dart';
 import 'package:aura_launcher/aura_launcher.dart';
 import 'package:uuid/data.dart';
 import 'package:uuid/rng.dart';
@@ -9,27 +13,7 @@ import 'core/aura_external_wallet_emitter.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:uuid/uuid.dart';
 
-import 'core/type_data/external_type_data.dart';
 import 'core/types/aura_server_event_type.dart';
-
-const crypto = [
-  0x10,
-  0x91,
-  0x56,
-  0xbe,
-  0xc4,
-  0xfb,
-  0xc1,
-  0xea,
-  0x71,
-  0xb4,
-  0xef,
-  0xe1,
-  0x67,
-  0x1c,
-  0x58,
-  0x36,
-];
 
 class AuraExternalWalletImpl implements AuraExternalWallet {
   final String appName;
@@ -53,6 +37,12 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
     _createSocket();
   }
 
+  String get _denom => environment == AuraExternalWalletEnvironment.testNet
+      ? 'uaura'
+      : environment == AuraExternalWalletEnvironment.euphoria
+          ? 'ueaura'
+          : 'uaura';
+
   void _createSocket() {
     if (_isSocketConnected) return;
 
@@ -61,9 +51,9 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
     } else {
       OptionBuilder otpBuilder = OptionBuilder()
         ..setTransports(
-          ['webSocket'],
+          ['websocket'],
         )
-        ..setTimeout(600000)
+        ..setTimeout(60000)
         ..enableAutoConnect()
         ..enableForceNew();
 
@@ -73,6 +63,8 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
         'https://socket.coin98.services/',
         options,
       );
+
+      _socketClient?.connect();
 
       _socketClient?.on('sdk_connect', (event) {
         if (event is Map<String, dynamic>) {
@@ -111,17 +103,202 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
   final AuraExternalWalletEmitter emitter = AuraExternalWalletEmitter();
 
   @override
-  Future sendTransaction() async {
-    throw UnimplementedError();
+  Future<String> signAndBroadcast({
+    required String signer,
+    required String toAddress,
+    required String amount,
+    required String fee,
+    String? memo,
+  }) async {
+    if (!_isSocketConnected) {
+      _createSocket();
+    }
+
+    try {
+      int.parse(amount);
+    } catch (e) {
+      throw AuraExternalError(
+          104, 'Format exception\nAmount has type not valid');
+    }
+    try {
+      int.parse(fee);
+    } catch (e) {
+      throw AuraExternalError(105, 'Format exception\nFee has type not valid');
+    }
+
+    String baseUrl = _getBaseUrl();
+    try {
+      HttpClient client = HttpClient();
+
+      final request = await client.getUrl(Uri.parse(
+          '$baseUrl/api/v1/account-info?address=$signer&chainId=$chainId'));
+
+      final HttpClientResponse response = await request.close();
+
+      final String dataString =
+      await (response.transform(utf8.decoder).join()).whenComplete(
+            () => client.close(),
+      );
+
+      Map<String, dynamic> account = jsonDecode(dataString);
+
+      if (account['code'] == null || account['code'] != 200) {
+        throw AuraExternalError(108, 'Can not get Account');
+      }
+
+      String? accountNumber =
+      account['data']['account_auth']['account']['account_number'];
+      String? sequence = account['data']['account_auth']['account']['sequence'];
+
+      if (accountNumber == null || sequence == null) {
+        throw AuraExternalError(108, 'Can not get Account');
+      }
+
+      StdSignDoc signDoc = StdSignDoc.makeSignDoc(
+        fee: StdFee(
+          coins: [
+            Coin(
+              amount: fee,
+              denom: _denom,
+            ),
+          ],
+        ),
+        chainId: chainId,
+        accountNumber: accountNumber,
+        sequence: sequence,
+        memo: memo ?? '',
+        msgs: [
+          AminoMessage(
+            urlType: '/cosmos.bank.v1beta1.MsgSend',
+            value: {
+              'fromAddress': signer,
+              'toAddress': toAddress,
+              'amount': [
+                {
+                  'denom': _denom,
+                  'amount': amount,
+                }
+              ],
+            },
+          ),
+        ],
+      );
+
+      final Map<String, dynamic> params = {
+        'method': 'cosmos_signAndBroadcast',
+        'params': [
+          {
+            'signer': signer,
+            'chainId': chainId,
+            'isDirect': false,
+            'signDoc': signDoc.toSignDoc(),
+          }
+        ],
+      };
+
+      dev.log(params.toString());
+
+      final AuraSocketServerEventTypeData data = await _requestCore(
+        _id,
+        param: params,
+      );
+
+      final Map<String, dynamic> result = data.result;
+
+      if (result.isEmpty ||
+          result['code'] != 0 ||
+          result['transactionHash'] == null) {
+        throw AuraExternalError(
+            152, result['rawLog']?.toString() ?? 'Send transaction error');
+      }
+
+      return result['transactionHash'] as String;
+    } catch (e) {
+      print(e.toString());
+      if (e is AuraExternalError) {
+        rethrow;
+      }
+      throw AuraExternalError(108, 'Can not get Account');
+    }
   }
 
   @override
-  Future signContract() async {
-    throw UnimplementedError();
+  Future<String> executeContract({
+    required String signer,
+    required String contractAddress,
+    required Map<String, dynamic> executeMessage,
+    List<int>? funds,
+    int? fee,
+  }) async {
+    if (!_isSocketConnected) {
+      _createSocket();
+    }
+
+    if (contractAddress.isEmpty) {
+      throw AuraExternalError(106, 'Contract address is not empty');
+    }
+
+    if (fee != null) {
+      if (fee < 200) {
+        throw AuraExternalError(107, 'Min fee is 200');
+      }
+    }
+
+    List<Map<String, dynamic>> coins = List.empty(growable: true);
+
+    if (funds != null) {
+      coins.addAll(
+        funds.map(
+          (e) => {
+            'denom': _denom,
+            'amount': e,
+          },
+        ),
+      );
+    }
+
+    final Map<String, dynamic> params = {
+      'method': 'cosmos_execute',
+      'params': [
+        {
+          'signer': signer,
+          'chainId': chainId,
+          'contractAddress': contractAddress,
+          'msg': executeMessage,
+          'memo': 'Auto for dev',
+          'fee': {
+            'gasPrice': [
+              {
+                'denom': _denom,
+                'amount': fee,
+              }
+            ],
+          },
+        }
+      ],
+    };
+
+    dev.log(params.toString());
+
+    final AuraSocketServerEventTypeData data = await _requestCore(
+      _id,
+      param: params,
+    );
+
+    final Map<String, dynamic> result = data.result;
+
+    if (result.isEmpty ||
+        result['code'] != 0 ||
+        result['transactionHash'] == null) {
+      throw AuraExternalError(
+          152, result['rawLog']?.toString() ?? 'Send transaction error');
+    }
+
+    return result['transactionHash'] as String;
   }
 
   Future<AuraSocketServerEventTypeData> _requestCore(
-    String connectionId, {
+    String? connectionId, {
     required Map<String, dynamic> param,
   }) async {
     if (!isConnected && param['method'] != 'connect') {
@@ -138,7 +315,7 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
       );
     }
 
-    if (connectionId.isEmpty) {
+    if ((connectionId ?? '').isEmpty) {
       throw AuraExternalError(103, 'Wait Id From Coin98');
     }
 
@@ -161,13 +338,38 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
 
     param['chain'] = chainId;
 
-    String url = _enCodeUrl('$id&request=${_enCodeRequestParam(
+    String url = _enCodeUrl('$connectionId&request=${_enCodeRequestParam(
       param,
     )}');
 
     AuraLauncher.instance.openUrl(url);
 
     Completer<AuraSocketServerEventTypeData> completer = Completer();
+
+    emitter.once(id, data: (data) {
+      final result = data?.result;
+
+      dev.log((data?.result).toString());
+
+      if (data == null || result == false || result == null) {
+        completer.completeError(
+          AuraExternalError(
+            150,
+            'Request ${data?.idConnection} Connect Wallet Sdk Error\nUser don\'t allow',
+          ),
+        );
+      } else if (result is Map<String, dynamic> &&
+          (result['error'] != null || result['errors'] != null)) {
+        completer.completeError(
+          AuraExternalError(
+            151,
+            'Request ${data.idConnection} Connect Wallet Sdk Error $result',
+          ),
+        );
+      } else {
+        completer.complete(data);
+      }
+    });
 
     return completer.future;
   }
@@ -192,10 +394,29 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
 
     final id = const Uuid().v4(
       config: V4Options(
-        crypto,
+        [
+          0x10,
+          0x91,
+          0x56,
+          0xbe,
+          0xc4,
+          0xfb,
+          0xc1,
+          0xea,
+          0x71,
+          0xb4,
+          0xef,
+          0xe1,
+          0x67,
+          0x1c,
+          0x58,
+          0x36,
+        ],
         CryptoRNG(),
       ),
     );
+
+    dev.log('Generate id =$id');
 
     final Map<String, dynamic> emitData = {
       "type": "connection_request",
@@ -209,47 +430,41 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
 
     _socketClient?.emitWithAck('coin98_connect', emitData,
         ack: (String connectionId) async {
+      dev.log('connection id = $connectionId');
       _id = connectionId;
-      await _sendTheRequestConnection(connectionId).then((data) {
+
+      if (!isConnected) {
+        Map<String, dynamic> connectionParams = {
+          'method': 'connect',
+          'params': [
+            {
+              'name': appName,
+              'callbackURL': callBackUrl,
+              'logo': appLogo,
+            }
+          ]
+        };
+        final result = await _requestCore(
+          connectionId,
+          param: connectionParams,
+        );
+
         isConnected = true;
 
         completer.complete(
           AuraWalletConnectionResult(
-            idConnection: data.idConnection,
+            idConnection: result.idConnection,
             result: true,
           ),
         );
-      }).catchError((error) {
-        completer.completeError(error);
-      });
+      } else {
+        completer.completeError(
+          'Wallet ready connection!',
+        );
+      }
     });
 
     return completer.future;
-  }
-
-  Future<AuraSocketServerEventTypeData> _sendTheRequestConnection(
-    String connectionId,
-  ) async {
-    if (!isConnected) {
-      Map<String, dynamic> connectionParams = {
-        'method': 'connect',
-        'params': [
-          {
-            'name': appName,
-            'callbackURL': callBackUrl,
-            'logo': appLogo,
-          }
-        ]
-      };
-      return await _requestCore(
-        connectionId,
-        param: connectionParams,
-      );
-    }
-
-    return Future.error(
-      'Wallet ready connection!',
-    );
   }
 
   @override
@@ -262,7 +477,7 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
     };
 
     final AuraSocketServerEventTypeData data = await _requestCore(
-      _id ?? '',
+      _id,
       param: requestParam,
     );
 
@@ -285,5 +500,21 @@ class AuraExternalWalletImpl implements AuraExternalWallet {
       _socketClient?.dispose();
     }
     emitter.close();
+  }
+
+  String _getBaseUrl() {
+    String baseUrl;
+    switch (environment) {
+      case AuraExternalWalletEnvironment.testNet:
+        baseUrl = 'https://indexer.dev.aurascan.io';
+        break;
+      case AuraExternalWalletEnvironment.euphoria:
+        baseUrl = 'https://indexer.staging.aurascan.io';
+        break;
+      case AuraExternalWalletEnvironment.mainNet:
+        baseUrl = 'https://horoscope.aura.network';
+        break;
+    }
+    return baseUrl;
   }
 }

@@ -18,9 +18,9 @@ Object channelCredentialsToJson(ChannelCredentials credentials) {
 
 ChannelCredentials channelOptionsFromJson(String value) {
   if (value == _channelCredentialInsecure) {
-    return ChannelCredentials.insecure();
+    return const ChannelCredentials.insecure();
   }
-  return ChannelCredentials.secure();
+  return const ChannelCredentials.secure();
 }
 
 /// Contains the information about the GRPC endpoint
@@ -48,7 +48,7 @@ class GRPCInfo extends Equatable {
   )
   final ChannelCredentials credentials;
 
-  GRPCInfo({
+  const GRPCInfo({
     required this.host,
     this.port = 9090,
     this.credentials = const ChannelCredentials.insecure(),
@@ -63,7 +63,7 @@ class GRPCInfo extends Equatable {
     return GrpcOrGrpcWebClientChannel.toSeparateEndpoints(
       grpcHost: host.replaceFirst(RegExp('http(s)?://'), ''),
       grpcPort: port,
-      grpcTransportSecure: credentials == ChannelCredentials.secure(),
+      grpcTransportSecure: credentials == const ChannelCredentials.secure(),
       grpcWebHost: finaleWebHost.replaceFirst(RegExp('http(s)?://'), ''),
       grpcWebPort: webPort,
       grpcWebTransportSecure: webTransportSecure,
@@ -111,7 +111,7 @@ class LCDInfo extends Equatable {
   @JsonKey(name: 'port', defaultValue: 1317)
   final int port;
 
-  LCDInfo({
+  const LCDInfo({
     required this.host,
     this.port = 1317,
   });
@@ -160,7 +160,7 @@ class NetworkInfo extends Equatable {
   @JsonKey(name: 'grpcInfo')
   final GRPCInfo grpcInfo;
 
-  NetworkInfo({
+  const NetworkInfo({
     required this.bech32Hrp,
     required this.lcdInfo,
     required this.grpcInfo,
