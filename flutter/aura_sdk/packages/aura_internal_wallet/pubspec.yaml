@@ -10,8 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_secure_storage: ^8.0.0
-  local_auth: ^2.1.6
+  flutter_secure_storage:
+    git:
+      path: flutter_secure_storage
+      url: https://github.com/aura-nw/flutter_secure_storage.git
+      ref: add_biometric_mobile
   alan:
     path: packages/alan
 

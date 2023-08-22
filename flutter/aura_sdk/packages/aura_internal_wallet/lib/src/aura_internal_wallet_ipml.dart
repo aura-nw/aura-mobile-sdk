@@ -6,7 +6,6 @@ import 'package:alan/proto/cosmwasm/wasm/v1/export.dart' as cosMWasm;
 import 'package:alan/proto/cosmos/tx/v1beta1/export.dart' as auraTx;
 import 'package:aura_internal_wallet/aura_internal_wallet.dart';
 import 'package:aura_internal_wallet/src/core/utils/aura_internal_storage.dart';
-import 'package:aura_internal_wallet/src/core/utils/aura_internal_verify_auth.dart';
 
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:flutter/services.dart';
@@ -23,7 +22,7 @@ class AuraInAppWalletImpl implements AuraInAppWallet {
   }) {
     switch (environment) {
       case AuraInternalWalletEnvironment.testNet:
-        networkInfo = NetworkInfo(
+        networkInfo = const NetworkInfo(
             bech32Hrp: 'aura',
             lcdInfo: LCDInfo(
               host: 'https://lcd.serenity.aura.network',
@@ -34,18 +33,19 @@ class AuraInAppWalletImpl implements AuraInAppWallet {
             ));
         break;
       case AuraInternalWalletEnvironment.euphoria:
-        networkInfo = NetworkInfo(
-            bech32Hrp: 'aura',
-            lcdInfo: LCDInfo(
-              host: 'https://lcd.euphoria.aura.network',
-            ),
-            grpcInfo: GRPCInfo(
-              host: 'http://grpc.euphoria.aura.network',
-              port: 9090,
-            ));
+        networkInfo = const NetworkInfo(
+          bech32Hrp: 'aura',
+          lcdInfo: LCDInfo(
+            host: 'https://lcd.euphoria.aura.network',
+          ),
+          grpcInfo: GRPCInfo(
+            host: 'http://grpc.euphoria.aura.network',
+            port: 9090,
+          ),
+        );
         break;
       case AuraInternalWalletEnvironment.mainNet:
-        networkInfo = NetworkInfo(
+        networkInfo = const NetworkInfo(
             bech32Hrp: 'aura',
             lcdInfo: LCDInfo(
               host: 'https://lcd.aura.network',
@@ -113,19 +113,6 @@ class AuraInAppWalletImpl implements AuraInAppWallet {
   @override
   Future<AuraWallet?> loadCurrentWallet() async {
     try {
-      bool hasCurrentWallet =
-          await AuraInternalStorage().checkExistsPrivateKey();
-
-      if (!hasCurrentWallet) {
-        return null;
-      }
-
-      bool isAuth = await AuraInternalVerifyAuth().authenticateWithBiometrics();
-
-      if (!isAuth) {
-        return null;
-      }
-
       String? key = await AuraInternalStorage().readPrivateKey();
 
       if (key == null) {
@@ -157,17 +144,13 @@ class AuraWalletImpl extends AuraWallet {
     // 4. Broadcast the transaction
     final txSender =
         TxSender.fromNetworkInfo(networkInfo, interceptors: [LogInter()]);
-    print('#5 txSender : ${txSender}');
 
     final response = await txSender.broadcastTx(signedTransaction);
-    print('#6 response : ${response.isSuccessful}');
 
     // Check the result
     if (response.isSuccessful) {
-      print('#6.0 Tx sent successfully. Response: ${response}');
       return true;
     } else {
-      print('#6.1 Tx errored: ${response}');
       return false;
     }
   }
@@ -296,12 +279,12 @@ class AuraWalletImpl extends AuraWallet {
     ///Validator
     ///
     if (contractAddress.isEmpty) {
-      throw AuraInternalError(4,'Contract address is not empty');
+      throw AuraInternalError(4, 'Contract address is not empty');
     }
 
     if (fee != null) {
       if (fee < 200) {
-        throw AuraInternalError(5,'Min fee is 200');
+        throw AuraInternalError(5, 'Min fee is 200');
       }
     }
 
@@ -352,18 +335,13 @@ class AuraWalletImpl extends AuraWallet {
     if (response.isSuccessful) {
       return response.txhash;
     }
-    throw AuraInternalError(150,'Broadcast transaction error\n${response.rawLog}');
+    throw AuraInternalError(
+        150, 'Broadcast transaction error\n${response.rawLog}');
   }
 
   @override
   Future<String?> getCurrentMnemonicOrPrivateKey() async {
     try {
-      bool isAuth = await AuraInternalVerifyAuth().authenticateWithBiometrics();
-
-      if (!isAuth) {
-        return null;
-      }
-
       return AuraInternalStorage().readPrivateKey();
     } catch (e) {
       String message =
@@ -454,11 +432,9 @@ class AuraWalletImpl extends AuraWallet {
   @override
   Future<bool> removeCurrentWallet() async {
     try {
-      bool isAuth = await AuraInternalVerifyAuth().authenticateWithBiometrics();
-      if (isAuth) {
         await AuraInternalStorage().removePrivateKey();
-      }
-      return isAuth;
+
+        return true;
     } catch (e) {
       String message =
           e is PlatformException ? '[${e.code}] ${e.message}' : e.toString();

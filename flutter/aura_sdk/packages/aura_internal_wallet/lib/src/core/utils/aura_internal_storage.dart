@@ -4,11 +4,25 @@ class AuraInternalStorage {
   late FlutterSecureStorage _storage;
 
   AuraInternalStorage._() {
-    AndroidOptions androidOptions =  const AndroidOptions(
+    AndroidOptions androidOptions = const AndroidOptions(
       encryptedSharedPreferences: true,
+      preferencesKeyPrefix: 'aura_sdk_prefix',
+      sharedPreferencesName: 'aura_sdk',
+      userAuthenticationRequiredAndroid: UserAuthenticationRequiredAndroid(
+        bioMetricTitle: 'Wallet Authentication',
+        bioMetricSubTitle: 'You need authentication to access your wallet',
+        userAuthenticationTimeout: 10,
+      ),
     );
     _storage = FlutterSecureStorage(
-        aOptions: androidOptions, iOptions: const IOSOptions());
+      aOptions: androidOptions,
+      iOptions: IOSOptions(
+        iosUserAuthenticationRequired: IOSUserAuthenticationRequired(
+          localizedReason: 'You need authentication to access your wallet',
+          userAuthenticationTimeout: 10,
+        ),
+      ),
+    );
   }
 
   static AuraInternalStorage? _internalStorage;
@@ -30,11 +44,11 @@ class AuraInternalStorage {
     return _storage.read(key: 'privateKey');
   }
 
-  Future<bool> checkExistsPrivateKey()async{
+  Future<bool> checkExistsPrivateKey() async {
     return _storage.containsKey(key: 'privateKey');
   }
 
-  Future<void> removePrivateKey()async{
+  Future<void> removePrivateKey() async {
     return _storage.delete(key: 'privateKey');
   }
 }
