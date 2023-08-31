@@ -76,7 +76,7 @@ class AuraInAppWalletImpl implements AuraInAppWallet {
   }
 
   @override
-  Future<AuraWallet> restoreHDWallet({required String key}) async {
+  Future<AuraWallet> restoreHDWallet({required String key, bool isNeedSave = true}) async {
     bool isMnemonic = AuraInAppWalletHelper.checkMnemonic(mnemonic: key);
     if (!isMnemonic) {
       List<int> privateKey = HEX.decode(key);
@@ -89,7 +89,9 @@ class AuraInAppWalletImpl implements AuraInAppWallet {
         throw AuraInternalError(1, 'key is not valid');
       }
 
-      await AuraInternalStorage().saveAuraMnemonicOrPrivateKey(key);
+      if(isNeedSave){
+        await AuraInternalStorage().saveAuraMnemonicOrPrivateKey(key);
+      }
 
       final wallet = Wallet.import(networkInfo, data);
 
@@ -101,7 +103,9 @@ class AuraInAppWalletImpl implements AuraInAppWallet {
       /// The [Wallet.derive] function take about 500 milisecond
       final wallet = Wallet.derive(key.split(' '), networkInfo);
 
-      await AuraInternalStorage().saveAuraMnemonicOrPrivateKey(key);
+      if(isNeedSave){
+        await AuraInternalStorage().saveAuraMnemonicOrPrivateKey(key);
+      }
 
       return AuraWalletImpl(
         wallet: wallet,
@@ -119,7 +123,7 @@ class AuraInAppWalletImpl implements AuraInAppWallet {
         return null;
       }
 
-      return await restoreHDWallet(key: key);
+      return await restoreHDWallet(key: key,isNeedSave: false,);
     } catch (e) {
       String message =
           e is PlatformException ? '[${e.code}] ${e.message}' : e.toString();
