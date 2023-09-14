@@ -1,4 +1,4 @@
-using System.Numerics;
+using Org.BouncyCastle.Math;
 using System.Linq;
 namespace AuraSDK{
     public static class BitSupporter {
@@ -12,7 +12,7 @@ namespace AuraSDK{
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
         public static BigInteger ToBigInteger(this string hexString){
-            return BigInteger.Parse("0" + hexString, System.Globalization.NumberStyles.HexNumber);
+            return new BigInteger("0" + hexString, 16);
         }
         public static byte[] ToByteArrayASCII(this string s){
             return System.Text.Encoding.ASCII.GetBytes(s);
