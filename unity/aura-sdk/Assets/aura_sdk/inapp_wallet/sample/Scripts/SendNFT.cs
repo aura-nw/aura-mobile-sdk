@@ -15,7 +15,7 @@ public class SendNFT : MonoBehaviour
         log.text += wheel_rewards_response.StatusCode + " " + wheel_rewards_response.Content;
         Logging.Verbose(wheel_rewards_response.StatusCode + " " + wheel_rewards_response.Content);
 
-        log.text += "Sending nft token 2 to aura1qye5hls3tnttxfhaa2klftrqcevcz02a4uzzy568nm5cgkqfvflqpu7plx";
+        log.text += "\nSending nft token 2 to aura1qye5hls3tnttxfhaa2klftrqcevcz02a4uzzy568nm5cgkqfvflqpu7plx";
         Tx tx = await DemoIAW.wallet.CreateExecuteContractTransaction(
             //contract address
             "aura1qye5hls3tnttxfhaa2klftrqcevcz02a4uzzy568nm5cgkqfvflqpu7plx",
