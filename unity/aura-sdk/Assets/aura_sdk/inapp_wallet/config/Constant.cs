@@ -23,6 +23,7 @@ namespace AuraSDK{
             public const string CHAIN_ID = "xstaxy-1";
         #endif
         public const string BECH32_HRP = "aura";
-        public const ulong GAS_LIMIT = 200000;
+        public const string DEFAULT_FEE_AMOUNT = "200";
+        public const ulong DEFAULT_GAS_LIMIT = 200000;
     }
 }
