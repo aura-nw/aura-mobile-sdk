@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.aura-nw.socketiounity": {
-      "version": "https://github.com/aura-nw/SocketIOUnity.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "45df4f36370dc741370ca2634903e69675a9f199"
-    },
     "com.github-glitchenzo.nugetforunity": {
       "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
       "depth": 0,
@@ -21,33 +14,12 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.editorcoroutines": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
-    },
-    "com.unity.feature.development": {
-      "version": "1.0.1",
-      "depth": 0,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.ide.visualstudio": "2.0.17",
-        "com.unity.ide.rider": "3.0.18",
-        "com.unity.ide.vscode": "1.2.5",
-        "com.unity.editorcoroutines": "1.0.0",
-        "com.unity.performance.profile-analyzer": "1.2.2",
-        "com.unity.test-framework": "1.1.31",
-        "com.unity.testtools.codecoverage": "1.2.2"
-      }
     },
     "com.unity.ide.rider": {
       "version": "3.0.18",
@@ -81,20 +53,6 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.performance.profile-analyzer": {
-      "version": "1.2.2",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.settings-manager": {
-      "version": "1.0.3",
-      "depth": 2,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
     "com.unity.test-framework": {
       "version": "1.1.31",
       "depth": 0,
@@ -103,16 +61,6 @@
         "com.unity.ext.nunit": "1.0.6",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.testtools.codecoverage": {
-      "version": "1.2.2",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.test-framework": "1.0.16",
-        "com.unity.settings-manager": "1.0.1"
       },
       "url": "https://packages.unity.com"
     },
@@ -161,7 +109,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "2758c4e1475fbb178735e545afaf4fca3013c765"
+      "hash": "ab2df41c2c03d8de2dd4b5ee628bf9f504a8c2e9"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

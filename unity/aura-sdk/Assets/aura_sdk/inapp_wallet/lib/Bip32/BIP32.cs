@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Numerics;
+using Org.BouncyCastle.Math;
 using AuraSDK;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Asn1.X9;
@@ -59,9 +59,13 @@ namespace dotnetstandard_bip32
 
                 BigInteger bKey = key.ToHexString().ToBigInteger();
                 BigInteger bLeft = il.ToHexString().ToBigInteger();
-                BigInteger newKey = (bKey + bLeft) % ECC_N;
+                BigInteger newKey = (bKey.Add(bLeft)).Mod(ECC_N);
+                
+                //return (Key: newKey.ToByteArray(isUnsigned: true, isBigEndian: true), ChainCode: ir);
+                //This line should return a 32-byte array in unsigned and big endian form.
+                //The original line is as above; however, due to the incompatibility with netstandard2.0, we had to use the below line.
 
-                return (Key: newKey.ToByteArray(isUnsigned: true, isBigEndian: true), ChainCode: ir);
+                return (Key: newKey.ToByteArrayUnsigned(), ChainCode: ir);
             }
         }
 

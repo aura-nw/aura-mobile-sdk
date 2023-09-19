@@ -2,6 +2,16 @@
 
 Aura SDK is a package that eases the process of connecting and communicating with Aura Network. The package supports using external wallet such as Coin98 Wallet and using in-app wallet.
 
+## Compatibility notes
+
+This SDK has been tested working with Unity 2020.3.30f1, Unity 2021.3.22f1, and Unity 2022.1.23f1. The settings are as below
+
+| Unity Version | Scripting Backend | API Compatibility Level | Notes |
+| ------------- | ----------------- | ----------------------- | ----- |
+| 2022.1.23f1   | IL2CPP            | Net Standard 2.1        |       |
+| 2021.3.22f1   | IL2CPP            | Net Standard 2.1        |       |
+| 2020.3.30f1   | IL2CPP            | Net Standard 2.0        | There are some incompatibility issues with Net Standard 2.0, addressed [here](#net-standard-20-incompatibility-issue) |
+
 ## Installation
 
 ### Installation Method 1: Download the project template
@@ -14,50 +24,39 @@ This method is the easiest way to install Aura SDK. We have all configured Nuget
 
 ### Installation Method 2: Download the unitypackage file
 
-This method suits installing Aura SDK to an existing project. It involves downloading and importing the ```.unitypackage``` file, adding package manager and Nuget dependencies, and configure custom Android manifest.
+This method suits installing Aura SDK to an existing project. It involves downloading and importing the ```.unitypackage``` file, adding package manager and Nuget dependencies.
 
 - Step 1: Download and import aura-sdk-unity.unitypackage file in the Releases folder.
-- Step 2: Install SocketIOUnity package using the github URL <https://github.com/aura-nw/SocketIOUnity.git>.
-- Step 3: Install NuGetForUnity package using the github URL <https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity>.
-- Step 4: Install AdvancedPlayerPrefs using the github URL <https://github.com/realphamanhtuan/unity-advanced-playerprefs.git>. This library is used for wallet information encryption.
-- Step 5: (Unity <=2021 only) Disable ```Assembly Version Validation``` in the ```Player Settings```. For Unity 2022 or later, this option is disabled by default.
-- Step 6: Append these NuGet dependencies into your Assets/packages.config file. If there is no packages.config file in the Assets folder, you can create one and use the content below.
+- Step 2: Install NuGetForUnity package using the github URL <https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity>.
+- Step 3: Install AdvancedPlayerPrefs using the github URL <https://github.com/realphamanhtuan/unity-advanced-playerprefs.git>. This library is used for wallet information encryption.
+- Step 4: (Unity <=2021 only) Disable ```Assembly Version Validation``` in the ```Player Settings```. For Unity 2022 or later, this option is disabled by default.
+- Step 5: Append these NuGet dependencies into your Assets/packages.config file. If there is no packages.config file in the Assets folder, you can create one and use the content below.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <packages>
     <!-- Only append the part below if the file already exists -->
     <package id="BouncyCastle.Cryptography" version="2.2.1" />
-    <package id="Microsoft.Bcl.AsyncInterfaces" version="7.0.0" />
-    <package id="Microsoft.Extensions.Logging.Abstractions" version="6.0.1" />
-    <package id="Microsoft.Extensions.ObjectPool" version="5.0.10" />
-    <package id="Microsoft.NETCore.App" version="2.1.0" />
-    <package id="NBitcoin.Secp256k1" version="1.0.1" />
-    <package id="Newtonsoft.Json" version="12.0.3" />
+    <package id="Microsoft.Extensions.Logging.Abstractions" version="1.0.0" />
+    <package id="NBitcoin" version="7.0.30" />
+    <package id="Newtonsoft.Json" version="13.0.1" />
     <package id="protobuf-net" version="2.3.17" />
-    <package id="System.Formats.Asn1" version="6.0.0" />
-    <package id="System.Private.ServiceModel" version="4.10.2" />
-    <package id="System.Reactive" version="6.0.0" />
+    <package id="System.Buffers" version="4.5.0" />
+    <package id="System.Private.ServiceModel" version="4.5.3" />
+    <package id="System.Reflection.DispatchProxy" version="4.5.0" />
+    <package id="System.Reflection.Emit" version="4.3.0" />
+    <package id="System.Reflection.Emit.ILGeneration" version="4.3.0" />
+    <package id="System.Reflection.Emit.Lightweight" version="4.3.0" />
     <package id="System.Reflection.TypeExtensions" version="4.4.0" />
-    <package id="System.Runtime.CompilerServices.Unsafe" version="6.0" />
-    <package id="System.Security.AccessControl" version="6.0.0" />
-    <package id="System.Security.Cryptography.Cng" version="5.0.0" />
-    <package id="System.Security.Cryptography.Pkcs" version="6.0.1" />
-    <package id="System.Security.Cryptography.Xml" version="6.0.1" />
-    <package id="System.Security.Principal.Windows" version="5.0.0" />
+    <package id="System.Security.Principal.Windows" version="4.5.0" />
     <package id="System.ServiceModel.Primitives" version="4.5.3" />
-    <package id="System.ServiceModel.Syndication" version="4.5.0" />
-    <package id="System.Text.Encoding.CodePages" version="4.5.1" />
-    <package id="System.Text.Encodings.Web" version="6.0" />
-    <package id="System.Text.Json" version="6.0" />
-    <package id="TaskTupleAwaiter" version="1.2.0" />
     <!-- Only append the part above if the file already exists -->
 </packages>
 ```
 
-- Step 7: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package managers for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
+- Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package managers for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
 
-- Step 8 (for WebGL builds): When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
+- Step 7 (for WebGL builds): When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
 
 
 ```xml
@@ -65,27 +64,6 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 <linker>
     <assembly fullname="protobuf-net"  preserve="all"/>
 </linker>
-```
-
-- Step 9: (for Android builds) Turn on Custom Main Manifest and use the content below as ```Assets/Plugins/Android/AndroidManifest.xml``` file
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.unity3d.player"
-    xmlns:tools="http://schemas.android.com/tools">
-    <application>
-        <activity android:name="com.DefaultCompany.AuraSDK.ExtendedUnityPlayer"
-                  android:theme="@style/UnityThemeSelector">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
-        </activity>
-    </application>
-</manifest>
 ```
 
 ## Usage
@@ -228,3 +206,29 @@ To verify if the SDK runs correctly or the transactions are performed according 
 ### Configuration
 
 Network configurations are defined in the configuration file ```inapp_wallet/config/Constant.cs```. We have previously defined three network profiles, including Serenity Testnet, Euphoria Staging Network, and Aura Mainnet. Change the #define directive to one of the followings to switch to corresponding profile: USE_NETWORK_EUPHORIA, USE_NETWORK_SERENITY, USE_NETWORK_MAINNET. By default, Euphoria is used.
+
+## Footnotes
+
+### Net Standard 2.0 incompatibility issue
+
+We have tested the SDK with net standard 2.0 compatibility level, and found some issues, described here.
+
+#### System.Reflection.Emit duplications
+
+We use a library called `protobuf-net`, whose net standard2.0 version depends on `System.Reflection.Emit`, `System.Reflection.Emit.ILGeneration`, and `System.Reflection.Emit.Lightweight` libraries. Those libraries have, unfortunately already included in Unity Building System. 
+
+Consequently, when you restore packages using `Nuget -> Restore Packages`, warnings on duplications will arise. This problem was caused by the fact that `Nuget` and `Unity` use different dependency configuration file. 
+
+The solution for this would be ***MANUALLY DELETE*** the duplications in `Asset/Packages` folder. The list below should show you the folders which you can delete.
+
+- `Assets/Packages/System.Reflection.Emit.x.x.x`
+- `Assets/Packages/System.Reflection.Emit.ILGeneration.x.x.x`
+- `Assets/Packages/System.Reflection.Emit.Lightweightx.x.x`
+
+#### System.ServiceModel.Primitives can't be loaded
+
+`protobuf-net` also depends on `System.ServiceModel.Primitives`, whose dependecies isn't compatible with `Net Standard 2.0`. You will see the warnings and build failure because the library could not be loaded.
+
+We don't use `System.ServiceModel.Primitives` library, so it is ***SAFE TO MANUALLY DELETE*** the folder. The path below should point you to the library.
+
+- `Assets/Packages/System.ServiceModel.Primitives.x.x.x`

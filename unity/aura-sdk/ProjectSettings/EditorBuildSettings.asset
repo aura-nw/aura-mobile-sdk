@@ -8,7 +8,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/aura_sdk/inapp_wallet/sample/Scenes/Demo-InAppWallet.unity
     guid: 0c928d47439f48e488b8f9701bf24bc0
-  - enabled: 1
-    path: Assets/aura_sdk/external_wallet/sample/Scenes/Demo-ExternalWallet.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

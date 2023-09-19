@@ -8,10 +8,7 @@ public class Logging : MonoBehaviour{
     static string ObjectToString(object x){
         if (x == null) return "null";
         if (!(x is string)){
-            if (x is KeyValuePair)
-            {
-                return $"{ObjectToString(((KeyValuePair<object, object>)x).Key)}: {ObjectToString(((KeyValuePair<object, object>)x).Value)}";
-            } else if (x is IEnumerable){
+            if (x is IEnumerable){
                 StringBuilder stringBuilder = new StringBuilder();
                 bool first = true;
                 if (x is ISet<object> || x is IDictionary<object, object>) stringBuilder.Append('{');

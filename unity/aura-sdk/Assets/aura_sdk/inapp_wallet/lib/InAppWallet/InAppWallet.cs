@@ -132,9 +132,9 @@ namespace AuraSDK{
 
         #region transaction
         ///<summary> Create a fee in Constant.AURA_DENOM. Note that the fee is always in Constant.AURA_DENOM denom, defined in the Constant class </summary>
-        private Fee CreateFee(string payer, string granter, string amount){
+        private Fee CreateFee(string payer, string granter, string amount, ulong gasLimit){
             Fee fee = new Fee() {
-                GasLimit = Constant.GAS_LIMIT,
+                GasLimit = gasLimit,
                 Payer = payer,
                 Granter = granter
             };
@@ -168,7 +168,7 @@ namespace AuraSDK{
         /// <param name="sendAmount">The amount of coin in sendDenom you are sending.</param>
         /// <param name="feeAmount">The amount of coins to be paid as a fee. Along with GAS_LIMIT, this yields an effective gasprice, which needs to be above some limit to be accepted into the mempool.</param>
         /// <returns>Tx object representing the just-created transaction.</returns>
-        public async Task<Tx> CreateSendTransaction(string toAddress, string sendDenom, string sendAmount, string feeAmount = "200"){
+        public async Task<Tx> CreateSendTransaction(string toAddress, string sendDenom, string sendAmount, string feeAmount = Constant.DEFAULT_FEE_AMOUNT, ulong gasLimit = Constant.DEFAULT_GAS_LIMIT){
             TxBody txBody = new TxBody(){
                 Memo = GenerateRandomMemo()
             };
@@ -185,7 +185,7 @@ namespace AuraSDK{
             );
 
             AuthInfo authInfo = new AuthInfo(){
-                Fee = CreateFee(address, address, feeAmount)
+                Fee = CreateFee(address, address, feeAmount, gasLimit)
             };
             authInfo.SignerInfos.Add(new SignerInfo() {
                 ModeInfo = new ModeInfo(){
@@ -234,7 +234,7 @@ namespace AuraSDK{
         /// <param name="fundsDenom">The denom of the funds you send along with the message to the smart contract.</param>
         /// <param name="feeAmount">The fund amount to send to the smart contract.</param>
         /// <returns>Tx object representing the just-created transaction.</returns>
-        public async Task<Tx> CreateExecuteContractTransaction(string contractAddress, string msgJson, string fundsDenom = null, string fundsAmount = null, string feeAmount = "200"){
+        public async Task<Tx> CreateExecuteContractTransaction(string contractAddress, string msgJson, string fundsDenom = null, string fundsAmount = null, string feeAmount = Constant.DEFAULT_FEE_AMOUNT, ulong gasLimit = Constant.DEFAULT_GAS_LIMIT){
             TxBody txBody = new TxBody(){
                 Memo = GenerateRandomMemo()
             };
@@ -251,7 +251,7 @@ namespace AuraSDK{
             );
 
             AuthInfo authInfo = new AuthInfo(){
-                Fee = CreateFee(address, address, feeAmount)
+                Fee = CreateFee(address, address, feeAmount, gasLimit)
             };
             authInfo.SignerInfos.Add(new SignerInfo() {
                 ModeInfo = new ModeInfo(){
