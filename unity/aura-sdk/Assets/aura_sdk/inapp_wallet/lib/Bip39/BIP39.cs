@@ -166,9 +166,13 @@ namespace dotnetstandard_bip39
         {
             var mnemonicBytes = Encoding.UTF8.GetBytes(mnemonic.Normalize(NormalizationForm.FormKD));
             var saltBytes = Encoding.UTF8.GetBytes(Salt(password.Normalize(NormalizationForm.FormKD)));
-
-            var rfc2898DerivedBytes = new Rfc2898DeriveBytes(mnemonicBytes, saltBytes, 2048);
-            var key = rfc2898DerivedBytes.GetBytes(64);
+            
+            // NetStandard2.1 has a RFC2898DeriveBytes class and it worked with the SDK
+            // However, in NetStandard2.0, there's no way for us to specify derivation algorithm to SHA512 (what we need). The default algorithm is always SHA1 (what we hate).
+            var hmac512 = new System.Security.Cryptography.HMACSHA512();
+            hmac512.Key = mnemonicBytes;
+            var rfc2898 = new NBitcoin.Crypto.Pbkdf2(hmac512, saltBytes, 2048);
+            var key = rfc2898.Read(64);
 
             return key;
         }
