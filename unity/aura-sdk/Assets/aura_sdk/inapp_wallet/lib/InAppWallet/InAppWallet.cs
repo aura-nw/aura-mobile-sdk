@@ -291,6 +291,38 @@ namespace AuraSDK{
             byte[] signature = SignatureProvider.Sign(bytesToSign, privateKey);
             tx.Signatures.Add(signature);
         }
+
+        /// <summary>
+        /// Produces base64 signature of an off-chain transaction complying with ADR-36. The specification is as follows: https://github.com/cosmos/cosmos-sdk/blob/main/docs/architecture/adr-036-arbitrary-signature.md.
+        /// </summary>
+        /// <param name="byte64Data">Data encoded into base64 format</param>
+        /// This is to comply with ADR-36 specification here https://github.com/cosmos/cosmos-sdk/blob/main/docs/architecture/adr-036-arbitrary-signature.md
+        /// You may notice that the order of parameters in the object returned below is somehow different from the order specified in the specification
+        /// That is to make it compatible with keplr wallet which serializes SignDoc after sorting the json keys.
+        public string SignArbitrary(string byte64Data){
+            var signDoc = new {
+                account_number = "0",
+                chain_id = "",
+                fee = new {
+                    amount = new string[]{},
+                    gas = "0"
+                },
+                memo = "",
+                msgs = new object[]{
+                    new {
+                        type = "sign/MsgSignData",
+                        value = new {
+                            data = byte64Data,
+                            signer = address
+                        }
+                    }
+                },
+                sequence = "0"
+            };
+
+            byte[] bytesToSign = signDoc.SerializeToString().ToByteArrayUTF8(); 
+            return SignatureProvider.Sign(bytesToSign, privateKey).ToBase64String();
+        }
         #endregion
     }
 }
