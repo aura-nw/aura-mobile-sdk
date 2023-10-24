@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Numerics;
 using AuraSDK.Serialization;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+
 namespace AuraSDK{
     public partial class InAppWallet{
         /// <summary>
@@ -32,29 +34,52 @@ namespace AuraSDK{
             return bIP39.ValidateMnemonic(mnemonic, Constant.BIP39_WORDLIST);
         }
 
-        public static async Task<BigInteger> CheckBalance(string address, string denom){
+        public static async Task<(bool success, System.Exception error, BigInteger balance)> CheckBalance(string address, string denom){
             try{
-                string balanceURL = $"{Constant.LCD_URL}/bank/balances/{address}";
-                QueryResponse<List<AuraSDK.Serialization.Coin>> response = await HttpRequest.Get<QueryResponse<List<AuraSDK.Serialization.Coin>>>(balanceURL);
-                var result = response.result;
-                Logging.Verbose("Balances", response.result.ToArray());
-                foreach (var resultItem in response.result){
-                    if (resultItem.denom.Equals(denom))
-                        return BigInteger.Parse(resultItem.amount);
+                string balanceURL = Constant.LCD_URL + string.Format(Constant.API_GET_BALANCE, address, denom);
+                HttpResponse response = await HttpRequest.Get(balanceURL);
+
+                if (response.StatusCode == 200){
+                    JObject resObj = JObject.Parse(response.Content);
+
+                    if (resObj.ContainsKey("balance")){
+                        JObject balance = (JObject) resObj["balance"];
+                        if (balance.ContainsKey("denom") && balance.ContainsKey("amount")){
+                            // balance["denom"].ToString() should be used instead of SerializeToString(), 
+                            // because SerializeToString() results in "ueaura" with quotes, while ToString() gives ueaura without quotes.
+
+                            if (balance["denom"].ToString().Equals(denom)){
+                                BigInteger ret = BigInteger.Parse(balance["amount"].ToString());
+                                return (success: true, error: null, balance: ret);
+                            }
+                        } 
+                    } 
+                    
+                    if (resObj.ContainsKey("balances")){
+                        JArray balances = (JArray) resObj["balances"];
+                        for (int i = 0; i < balances.Count; ++i){
+                            JObject balance = (JObject) balances[i];
+                            if (balance.ContainsKey("denom") && balance.ContainsKey("amount")){
+                                // balance["denom"].ToString() should be used instead of SerializeToString(), 
+                                // because SerializeToString() results in "ueaura" with quotes, while ToString() gives ueaura without quotes.
+                                
+                                if (balance["denom"].ToString().Equals(denom)){
+                                    BigInteger ret = BigInteger.Parse(balance["amount"].ToString());
+                                    return (success: true, error: null, balance: ret);
+                                }
+                            } 
+                        }
+                    }
+
+                    return (success: false, error: new System.Exception($"Can't find denom {denom} in the balance list."), balance: 0);
+                } else {
+                    return (success: false, error: new System.Exception($"Request failed for {balanceURL}"), balance: 0);
                 }
-                Logging.Warning($"Denom {denom} couldn't be found in the coin list. Zero default value was returned.");
-                return 0;
             } catch(System.Exception e){
-                Logging.Info("Cannot parse coin list with exception:", e);
-                return 0;
+                return (success: false, error: e, balance: 0);
             }
         }
-
-        [System.Serializable]
-        class LcdBroadcastedTx{
-            public string tx_bytes;
-            public BroadcastMode mode;
-        }
+        
         ///<summary>Broadcast a transaction to Aura LCD Endpoint. The transaction should be created and signed before sending; or otherwise, it will be rejected by the server. This function can be used for both SendTransaction and ExecuteContractTransaction</summary>
         /// <param name="signedTx">The Tx transaction that has gone through the creating and the signing process.</param>
         /// <returns>The HttpResponseMessage received from LCD after broadcastingTx.</returns>
@@ -62,23 +87,50 @@ namespace AuraSDK{
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
             ProtoBuf.Serializer.Serialize(memoryStream, signedTx);
             byte[] bytes = memoryStream.ToArray();
-            string broadcastURL = $"{Constant.LCD_URL}/cosmos/tx/v1beta1/txs";
-            LcdBroadcastedTx broadcastedTx = new LcdBroadcastedTx(){
-                tx_bytes = System.Convert.ToBase64String(bytes),
-                mode = BroadcastMode.BroadcastModeBlock
-            };
+            string broadcastURL = $"{Constant.LCD_URL}{Constant.API_BROADCAST_TX}";
+
             var response = await HttpRequest.Post(broadcastURL,
-                new LcdBroadcastedTx(){
+                new {
                     tx_bytes = System.Convert.ToBase64String(bytes),
-                    mode = BroadcastMode.BroadcastModeBlock
+                    mode = BroadcastMode.BroadcastModeSync
                 }
             );
             return response;
         }
+
+        ///<summary>Broadcast a transaction to Aura LCD Endpoint. The transaction should be created and signed before sending; or otherwise, it will be rejected by the server. This function can be used for both SendTransaction and ExecuteContractTransaction</summary>
+        /// <param name="signedTx">The Tx transaction that has gone through the creating and the signing process.</param>
+        /// <returns>The HttpResponseMessage received from LCD after broadcastingTx.</returns>
+        public static async Task<HttpResponse> SimulateTx(Tx signedTx){
+            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+            ProtoBuf.Serializer.Serialize(memoryStream, signedTx);
+            byte[] bytes = memoryStream.ToArray();
+            string broadcastURL = $"{Constant.LCD_URL}{Constant.API_SIMULATE_TX}";
+
+            var response = await HttpRequest.Post(broadcastURL,
+                new {
+                    tx_bytes = System.Convert.ToBase64String(bytes)
+                }
+            );
+            return response;
+        }
+
+        /// <summary>
+        /// Check the status of transaction after sending, using txHash
+        /// </summary>
+        /// <param name="txHash"></param>
+        /// <returns></returns>
+        public static async Task<HttpResponse> QueryTransactionDetails(string txHash){
+            string queryURL = Constant.LCD_URL + string.Format(Constant.API_QUERY_TX_DETAILS, txHash);
+            // Logging.Verbose(queryURL);
+            var response = await HttpRequest.Get(queryURL);
+            return response;
+        }
+
         public static async Task<HttpResponse> QuerySmartContract(string contractAddress, string queryJson){
             byte[] queryBytes = BitSupporter.ToByteArrayUTF8(queryJson);
             string queryBase64 = System.Convert.ToBase64String(queryBytes);
-            string queryURL = $"{Constant.LCD_URL}/cosmwasm/wasm/v1/contract/{contractAddress}/smart/{queryBase64}";
+            string queryURL = Constant.LCD_URL + string.Format(Constant.API_QUERY_SMART_CONTRACT, contractAddress, queryBase64);
             var response = await HttpRequest.Get(queryURL);
             return response;
         }

@@ -108,10 +108,16 @@ For more information on how password is used in generating seed and keys, refer 
 ### Check wallet balance
 
 ```csharp
-BigInteger balance = await wallet.CheckBalance();
+var balanceCheckResult = await wallet.CheckBalance(denom);
+
+if (balanceCheckResult.success) {
+    BigInteger balance = balanceCheckResult.balance;
+} else {
+    Debug.Log("Failed checking balance");
+}
 ```
 
-The balance returned is in the default Aura Denom (defined in Constant.cs), from which you can derive to aura unit by dividing it by 1e6.
+The balance returned is in specified Denom. You can also use the default Aura denom (used for transaction fee paying) by referencing `Constant.AURA_DENOM`.
 
 ### Make a transaction
 
@@ -125,8 +131,15 @@ var tx = await wallet.CreateSendTransaction(toAddress.text, amount.text);
 await wallet.SignTransaction(tx);
 
 /// BroadcastTx sends the transaction data to the lcd node of Aura Network and returns the http response, from which you can parse the transaction details.
-await AuraSDK.InAppWallet.BroadcastTx(tx);
+var broadcastResponse = await AuraSDK.InAppWallet.BroadcastTx(tx);
+
+if (broadcastResponse.StatusCode == 200){
+    JObject resObj = JObject.Parse(broadcastResponse.Content);
+    string txhash = resObj["tx_response"]["txhash"].ToString();
+}
 ```
+
+The Aura LCD **DOESN'T WAIT** for the transaction to be included in a block before returning a response. Therefore, after getting `txhash`, you have to periodically check for its completeness, using [this guide](#query-transaction-details).
 
 ### Interact with smart contract
 
@@ -155,6 +168,47 @@ await wallet.SignTransaction(tx);
 
 /// BroadcastTx sends the transaction data to the lcd node of Aura Network and returns the http response, from which you can parse the transaction details.
 await AuraSDK.InAppWallet.BroadcastTx(tx);
+```
+
+### Estimate transaction gas 
+
+Before sending the transaction, you can also simulate its running to check its estimated gas fee. The gas fee can be shown to end-users to pre-alert the fee required. The code below demonstrates this action.
+
+```csharp
+var tx = await DemoIAW.wallet.CreateSendTransaction(toAddress.text, AuraSDK.Constant.AURA_DENOM, amount.text);
+await DemoIAW.wallet.SignTransaction(tx);
+
+var simulateResponse = await AuraSDK.InAppWallet.SimulateTx(tx);
+JObject resObj = JObject.Parse(simulateResponse.Content);
+Debug.Log(resObj["gas_info"]["gas_used"].ToString());
+```
+
+### Query transaction details
+
+The code below demonstrates how you query a transaction's details. This function is useful in querying past transactions and checking ongoing transactions for their completeness.
+
+```csharp
+// Query transaction details using txhash
+var txCheckResponse = await AuraSDK.InAppWallet.QueryTransactionDetails(txhash);
+
+if (txCheckResponse.StatusCode == 200){
+    JObject txDetails = JObject.Parse(txCheckResponse.Content);
+
+    ulong height;
+    if (ulong.TryParse(txDetails["tx_response"]["height"].ToString(), out height) && height > 0){
+        // The transaction is now included in some block
+        ulong code;
+        if (ulong.TryParse(txDetails["tx_response"]["code"].ToString(), out code) && code > 0){
+            Logging.Error("Transaction failed. Code =", code);
+            break;
+        } else {
+            Logging.Info("Transaction successful. Height =", height);
+            break;
+        }
+    } else {
+        Debug.Log("Transaction is being processed. Try again later");
+    }
+} 
 ```
 
 ### View transaction history (deprecated)
