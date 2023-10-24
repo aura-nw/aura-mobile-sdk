@@ -11,20 +11,20 @@ namespace AuraSDK{
         /// <summary>
         /// Create a random HD Wallet using default strength as Constant.BIP39_STRENGTH and default wordlist as Constant.BIP39_WORDLIST
         /// </summary>
-        /// <param name="password">Password to be used along with mnemonic to generate the keys. Default value is an empty string.</param>
+        /// <param name="passphrase">Passphrase to be used along with mnemonic to generate the keys. Default value is an empty string.</param>
         /// <returns>InAppWallet object created by a random mnemonic</returns>
-        public static InAppWallet CreateRandomHDWallet(string password = ""){
+        public static InAppWallet CreateRandomHDWallet(string passphrase = ""){
             BIP39 bIP39 = new BIP39();
-            return new InAppWallet(bIP39.GenerateMnemonic(Constant.BIP39_STRENGTH, Constant.BIP39_WORDLIST), password);
+            return new InAppWallet(bIP39.GenerateMnemonic(Constant.BIP39_STRENGTH, Constant.BIP39_WORDLIST), passphrase);
         }
         /// <summary>
-        /// Restore HD Wallet using mnemonic phrase and a password (if you have one; otherwise, empty string "" will be used as password). It is the same as calling the InAppWallet constructor
+        /// Restore HD Wallet using mnemonic phrase and a passphrase (if you have one; otherwise, empty string "" will be used as passphrase). It is the same as calling the InAppWallet constructor
         /// </summary>
-        /// <param name="mnemonic">Mnemonic phrase that has been generated beforehand. Keys will be derived entirely from this mnemonic and password, along with the Aura derivation path.</param>
-        /// <param name="password">Password used along with mnemonic to generate the keys.</param>
-        /// <returns>InAppWallet object imported from the mnemonic and password.</returns>
-        public static InAppWallet RestoreHDWallet(string mnemonic, string password = ""){
-            return new InAppWallet(mnemonic, password);
+        /// <param name="mnemonic">Mnemonic phrase that has been generated beforehand. Keys will be derived entirely from this mnemonic and passphrase, along with the Aura derivation path.</param>
+        /// <param name="passphrase">Passphrase used along with mnemonic to generate the keys.</param>
+        /// <returns>InAppWallet object imported from the mnemonic and passphrase.</returns>
+        public static InAppWallet RestoreHDWallet(string mnemonic, string passphrase = ""){
+            return new InAppWallet(mnemonic, passphrase);
         }
         ///<summary>Check if the mnemonic is a valid BIP39 mnemonic in Constant.BIP39_WORDLIST wordlist</summary>
         /// <param name="mnemonic">Mnemonic phrase in English</param>

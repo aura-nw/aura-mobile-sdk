@@ -35,15 +35,15 @@ namespace AuraSDK{
         private BaseAccount accountInfo;
         
         /// <summary>
-        /// Constructor: Create an InAppWallet using mnemonic string and a password (if you have any). Mnemonic will be generated using RFC2898 standard using SHA512 function with the following parameters: password = GetBytes(mnemonic), salt = "mnemonic" + your_password, iterations = 2048. Public and Private Keys are generated using default "Aura derivation path" defined in Constant class.
+        /// Constructor: Create an InAppWallet using mnemonic string and a passphrase (if you have any). Private key will be generated using RFC2898 standard using SHA512 function with the following parameters: Key = GetBytes(mnemonic), salt = "mnemonic" + your_passphrase, iterations = 2048. Public and Private Keys are derived using default "Aura derivation path" defined in Constant class.
         /// </summary>
         /// <param name="mnemonic">A twelve-word phrase compatible with BIP39 specification.</param>
-        /// <param name="password">A password used along with mnemonic to generate the root key's seed. Empty string "" will be used as default.</param>
-        public InAppWallet(string mnemonic, string password = ""){
+        /// <param name="passphrase">A passphrase used along with mnemonic to generate the root key's seed. Empty string "" will be used as default.</param>
+        public InAppWallet(string mnemonic, string passphrase = ""){
             BIP32 bIP32 = new BIP32();
             BIP39 bIP39 = new BIP39();
             this.mnemonic = mnemonic;
-            (privateKey, chainCode) = bIP32.DerivePath(Constant.DERIVATION_PATH, bIP39.MnemonicToSeedHex(mnemonic, password));
+            (privateKey, chainCode) = bIP32.DerivePath(Constant.DERIVATION_PATH, bIP39.MnemonicToSeedHex(mnemonic, passphrase));
             publicKey = bIP32.GetPublicKey(privateKey);
             
             byte[] sha256DigestResult = SHA256.Create().ComputeHash(publicKey);

@@ -70,7 +70,7 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 
 ### Initialize an InApp Wallet
 
-To initialize an InApp wallet, you need a mnemonic phrase and a password (default to an empty string). The mnemonic should look like below.
+To initialize an InApp wallet, you need a mnemonic phrase and a passphrase (default to an empty string). The mnemonic should look like below.
 
 ```plain
 garage audit public frown ball tribe dragon outdoor rug point radio funny clean furnace range have hire second use taxi regular mutual other disease
@@ -84,14 +84,14 @@ The code below demonstrates the initialization of InApp wallet.
 #### Create a random HD Wallet
 
 ```csharp
-InAppWallet wallet = InAppWallet.CreateRandomHDWallet(password = "");
+InAppWallet wallet = InAppWallet.CreateRandomHDWallet(passphrase = "");
 
 // get mnemonic of the just-generated wallet
 Debug.Log(wallet.mnemonic);
 ```
 
-Note that if the password isn't specified, an empty string ```""``` will be used.
-For more information on how password is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
+Note that if the passphrase isn't specified, an empty string ```""``` will be used.
+For more information on how passphrase is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
 
 #### Restore HD Wallet using existing mnemonic
 
@@ -102,8 +102,8 @@ InAppWallet wallet = InAppWallet.RestoreHDWallet(mnemonic.text);
 Debug.Log(wallet.address);
 ```
 
-Note that if the password isn't specified, an empty string ```""``` will be used.
-For more information on how password is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
+Note that if the passphrase isn't specified, an empty string ```""``` will be used.
+For more information on how passphrase is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
 
 ### Check wallet balance
 
@@ -227,6 +227,7 @@ foreach(AuraTransaction transaction in transactionHistory){
 Aura SDK comes with a utility called InAppWalletManager, which is designed to simplify the process of securely save wallet information to the storage. InAppWalletManager can save multiple InAppWallet instances and manage them all at once.
 
 To use the InAppWalletManager, you first need your user to create a **password**. Then, you can initialize the InAppWalletManager as below.
+Note that this `password` differs from the `passphrase` used when creating an InAppWallet.
 
 ```csharp
 // InAppWalletManager can only be successfully initialized once. To change the password, call the ChangePassword function.
