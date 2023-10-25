@@ -141,6 +141,8 @@ if (broadcastResponse.StatusCode == 200){
 
 The Aura LCD **DOESN'T WAIT** for the transaction to be included in a block before returning a response. Therefore, after getting `txhash`, you have to periodically check for its completeness, using [this guide](#query-transaction-details).
 
+For blocking transaction send, use the function `BroadcastTxBlock`. This function is not recommended, so use it at your own risks.
+
 ### Interact with smart contract
 
 Firstly, let's query the state of a contract. The code below demonstrates how to do that.

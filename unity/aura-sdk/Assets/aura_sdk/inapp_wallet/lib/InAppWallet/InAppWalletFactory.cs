@@ -98,6 +98,54 @@ namespace AuraSDK{
             return response;
         }
 
+        /// <summary>Broadcast a transaction in Sync mode to get its txhash. This function then checks the transaction status every 5 seconds until it is processed. The function returns the final HTTP response, which contains the code produced by the network at 'httpResponse.tx_response.code'</summary>
+        /// <remarks>This function is not recommended. For more control over the process, use BroadcastTx which doesn't wait for transaction confirmation, and manually check transaction status.</remarks>
+        /// <param name="signedTx">The Tx transaction that has gone through the creating and the signing process.</param>
+        /// <returns>The HttpResponseMessage received from LCD after transaction confirmation</returns>
+        public static async Task<(bool success, System.Exception error, HttpResponse response)> BroadcastTxBlock(Tx signedTx, int checkDelayMs = 5000, int maxCheckRetries = 5){
+            var response = await BroadcastTx(signedTx);
+            if (response.StatusCode != 200) return (false, new System.Exception($"Cannot broadcast Tx. Response: {response.StatusCode}, {response.Content}"), response);
+            
+            try{
+                JObject resObj = JObject.Parse(response.Content);
+                string txhash = resObj["tx_response"]["txhash"].ToString();
+
+                int checkCount = 0;
+                while (checkCount < maxCheckRetries) {
+                    // Check if the transaction is completed or not
+                    var txCheckResponse = await AuraSDK.InAppWallet.QueryTransactionDetails(txhash);
+
+                    if (txCheckResponse.StatusCode == 200){
+                        JObject txDetails = JObject.Parse(txCheckResponse.Content);
+
+                        ulong height;
+                        if (ulong.TryParse(txDetails["tx_response"]["height"].ToString(), out height) && height > 0){
+                            //transaction included in some block
+                            ulong code;
+
+                            if (ulong.TryParse(txDetails["tx_response"]["code"].ToString(), out code) && code > 0){
+                                Logging.Error("Transaction failed. Code =", code);
+                                return (false, new System.Exception($"Transaction processing failed. Code: {code}"), txCheckResponse);
+                            } else {
+                                Logging.Info("Transaction successful. Height =", height);
+                                return (true, null, txCheckResponse);
+                            }
+                        }
+                    } 
+                    
+                    // increase the checkCount
+                    ++checkCount;
+                    
+                    // delay for checkDelayMs miliseconds before making the next call
+                    await System.Threading.Tasks.Task.Delay(checkDelayMs);
+                }
+
+                return (false, new System.Exception($"Transaction is yet to complete after {maxCheckRetries} tries."), response);
+            } catch (System.Exception e){
+                return (false, e, response);
+            }
+        }
+
         ///<summary>Broadcast a transaction to Aura LCD Endpoint. The transaction should be created and signed before sending; or otherwise, it will be rejected by the server. This function can be used for both SendTransaction and ExecuteContractTransaction</summary>
         /// <param name="signedTx">The Tx transaction that has gone through the creating and the signing process.</param>
         /// <returns>The HttpResponseMessage received from LCD after broadcastingTx.</returns>
