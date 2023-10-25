@@ -304,6 +304,11 @@ namespace AuraSDK{
 
             return tx;
         }
+
+        public void SetFee(Tx tx, string feeAmount, ulong gasLimit){
+            tx.AuthInfo.Fee = CreateFee(address, address, feeAmount, gasLimit);
+        }
+
         /// <summary>
         /// Sign existing transaction using the cosmos.tx.signing.v1beta1.SignMode.SignModeDirect mode. The signature will be appended directly to the passed-in Tx and the signing process will use existing account private key
         /// </summary>
@@ -318,6 +323,9 @@ namespace AuraSDK{
             };
             byte[] bytesToSign = Google.Protobuf.WellKnownTypes.Any.Pack(signDoc).Value;
             byte[] signature = SignatureProvider.Sign(bytesToSign, privateKey);
+
+            // This is to prevent double signing. For now, this SDK doesn't support multi-signature transaction; therefore, there's only one signature.
+            tx.Signatures.Clear();
             tx.Signatures.Add(signature);
         }
 

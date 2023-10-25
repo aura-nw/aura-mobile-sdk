@@ -39,8 +39,22 @@ public class MakeTransaction : MonoBehaviour
             var tx = await DemoIAW.wallet.CreateSendTransaction(toAddress.text, AuraSDK.Constant.AURA_DENOM, amount.text);
             await DemoIAW.wallet.SignTransaction(tx);
 
+            var simulateResponse = await AuraSDK.InAppWallet.SimulateTx(tx);
+            Logging.Verbose(simulateResponse.StatusCode, simulateResponse.Content);
+
+            if (simulateResponse.StatusCode == 200){
+                JObject resObj = JObject.Parse(simulateResponse.Content);
+
+                // set the new feeAmount to 300 uaura/ueaura and the gasLimit to (simulatedGasUsed + 10000)
+                DemoIAW.wallet.SetFee(tx, "300", ulong.Parse(resObj["gas_info"]["gas_used"].ToString()) + 10000);
+
+                // resign the transaction with new gas fee
+                await DemoIAW.wallet.SignTransaction(tx);
+            }
+
+            // Broadcast the transaction and wait for result
             var broadcastResponse = await AuraSDK.InAppWallet.BroadcastTxBlock(tx);
-            Logging.Info(broadcastResponse);
+            Logging.Info(broadcastResponse.success, broadcastResponse.error, broadcastResponse.response.StatusCode, broadcastResponse.response.Content);
 
             //
             // Alternatively, you can use the code below to take control over the process
