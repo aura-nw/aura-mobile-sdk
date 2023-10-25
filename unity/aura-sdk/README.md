@@ -177,12 +177,19 @@ await AuraSDK.InAppWallet.BroadcastTx(tx);
 Before sending the transaction, you can also simulate its running to check its estimated gas fee. The gas fee can be shown to end-users to pre-alert the fee required. The code below demonstrates this action.
 
 ```csharp
-var tx = await DemoIAW.wallet.CreateSendTransaction(toAddress.text, AuraSDK.Constant.AURA_DENOM, amount.text);
-await DemoIAW.wallet.SignTransaction(tx);
+var tx = await wallet.CreateSendTransaction(toAddress.text, AuraSDK.Constant.AURA_DENOM, amount.text);
+await wallet.SignTransaction(tx);
 
 var simulateResponse = await AuraSDK.InAppWallet.SimulateTx(tx);
 JObject resObj = JObject.Parse(simulateResponse.Content);
 Debug.Log(resObj["gas_info"]["gas_used"].ToString());
+```
+
+After simulation, set the gasLimit based on result and sign the transaction again. If not, when the fee changes, the signed signature will be invalid.
+
+```csharp
+wallet.SetFee(tx: tx, feeAmount: "200", gasLimit: simulatedGas + 10000);
+await wallet.SignTransaction(tx);
 ```
 
 ### Query transaction details
