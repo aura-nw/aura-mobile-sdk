@@ -1,6 +1,7 @@
 using UnityEngine;
 using AuraSDK;
 using cosmos.tx.v1beta1;
+using Newtonsoft.Json.Linq;
 
 public class SendNFT : MonoBehaviour
 {
@@ -26,5 +27,38 @@ public class SendNFT : MonoBehaviour
         var sendNFT_response = await InAppWallet.BroadcastTx(tx);
         log.text += "\nResult: " + sendNFT_response.Content;
         Logging.Verbose(sendNFT_response.Content);
+
+        if (sendNFT_response.StatusCode == 200){
+            JObject resObj = JObject.Parse(sendNFT_response.Content);
+            string txhash = resObj["tx_response"]["txhash"].ToString();
+
+            while (true) {
+                // Check if the transaction is completed or not
+                var txCheckResponse = await AuraSDK.InAppWallet.QueryTransactionDetails(txhash);
+                Logging.Verbose(txCheckResponse.StatusCode, txCheckResponse.Content);
+
+                if (txCheckResponse.StatusCode == 200){
+                    JObject txDetails = JObject.Parse(txCheckResponse.Content);
+
+                    ulong height;
+                    if (ulong.TryParse(txDetails["tx_response"]["height"].ToString(), out height) && height > 0){
+                        //transaction included in some block
+
+                        ulong code;
+                        if (ulong.TryParse(txDetails["tx_response"]["code"].ToString(), out code) && code > 0){
+                            Logging.Error("Transaction failed. Code =", code);
+                            break;
+                        } else {
+                            Logging.Info("Transaction successful. Height =", height);
+                            break;
+                        }
+                    }
+                } 
+                
+                Logging.Info("Transaction incomplete. Recheck the transaction details in 5 seconds...");
+                // delay for 5 seconds before making the next call
+                await System.Threading.Tasks.Task.Delay(5000);
+            }
+        }
     }
 }

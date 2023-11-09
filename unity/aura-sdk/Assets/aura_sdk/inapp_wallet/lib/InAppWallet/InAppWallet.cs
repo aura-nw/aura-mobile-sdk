@@ -5,9 +5,9 @@ using cosmos.crypto.secp256k1;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using AuraSDK.Serialization;
+using Newtonsoft.Json.Linq;
 using System.Numerics;
-using cosmos._base.v1beta1;
+using cosmos.auth.v1beta1;
 using cosmos.bank.v1beta1;
 using cosmwasm.wasm.v1;
 
@@ -35,15 +35,15 @@ namespace AuraSDK{
         private BaseAccount accountInfo;
         
         /// <summary>
-        /// Constructor: Create an InAppWallet using mnemonic string and a password (if you have any). Mnemonic will be generated using RFC2898 standard using SHA512 function with the following parameters: password = GetBytes(mnemonic), salt = "mnemonic" + your_password, iterations = 2048. Public and Private Keys are generated using default "Aura derivation path" defined in Constant class.
+        /// Constructor: Create an InAppWallet using mnemonic string and a passphrase (if you have any). Private key will be generated using RFC2898 standard using SHA512 function with the following parameters: Key = GetBytes(mnemonic), salt = "mnemonic" + your_passphrase, iterations = 2048. Public and Private Keys are derived using default "Aura derivation path" defined in Constant class.
         /// </summary>
         /// <param name="mnemonic">A twelve-word phrase compatible with BIP39 specification.</param>
-        /// <param name="password">A password used along with mnemonic to generate the root key's seed. Empty string "" will be used as default.</param>
-        public InAppWallet(string mnemonic, string password = ""){
+        /// <param name="passphrase">A passphrase used along with mnemonic to generate the root key's seed. Empty string "" will be used as default.</param>
+        public InAppWallet(string mnemonic, string passphrase = ""){
             BIP32 bIP32 = new BIP32();
             BIP39 bIP39 = new BIP39();
             this.mnemonic = mnemonic;
-            (privateKey, chainCode) = bIP32.DerivePath(Constant.DERIVATION_PATH, bIP39.MnemonicToSeedHex(mnemonic, password));
+            (privateKey, chainCode) = bIP32.DerivePath(Constant.DERIVATION_PATH, bIP39.MnemonicToSeedHex(mnemonic, passphrase));
             publicKey = bIP32.GetPublicKey(privateKey);
             
             byte[] sha256DigestResult = SHA256.Create().ComputeHash(publicKey);
@@ -56,10 +56,34 @@ namespace AuraSDK{
             address = Bech32.Bech32Engine.Encode(Constant.BECH32_HRP, ripeMD160DigestResult);
         }
         private async Task<BaseAccount> GetAccountInfo(){
-            string getAccountInfoURL = $"{Constant.LCD_URL}/auth/accounts/{address}";
-            BaseAccount accountInfo = (await 
-                                    HttpRequest.Get<QueryResponse<TypeValue<BaseAccount>>>(getAccountInfoURL))
-                                    .result.value;
+            BaseAccount accountInfo = null;
+
+            string getAccountInfoURL = Constant.LCD_URL + string.Format(Constant.API_GET_ACCOUNT, address);
+            HttpResponse response = await HttpRequest.Get(getAccountInfoURL);
+            
+            try{
+                if (response.StatusCode == 200){
+                    JObject resObj = JObject.Parse(response.Content);
+                    if (resObj.ContainsKey("account")){
+                        JObject account = (JObject) resObj["account"];
+                        if (
+                            account.ContainsKey("@type") &&
+                            account["@type"].ToString().Equals("/cosmos.auth.v1beta1.BaseAccount")
+                        ) {
+                            accountInfo = new BaseAccount(){
+                                Address = account["address"].ToString(),
+                                AccountNumber = ulong.Parse(account["account_number"].ToString()),
+                                Sequence = ulong.Parse(account["sequence"].ToString())
+                            };
+
+                            // Logging.Verbose("Account Number:", accountInfo.AccountNumber);
+                            // Logging.Verbose("Sequence:", accountInfo.Sequence);
+                        }
+                    }
+                }
+            } catch (System.Exception e){
+                Logging.Verbose("Error fetching account info:", e);
+            }
 
             if (accountInfo == null)
                 Logging.Warning("Cannot fetch account info, using cached data.");
@@ -69,20 +93,25 @@ namespace AuraSDK{
         }
         private async Task<ulong> GetAccountSequence(){
             BaseAccount accountInfo = await GetAccountInfo();
-            return accountInfo.sequence;
+            if (accountInfo == null) return 0;
+            return accountInfo.Sequence;
         }
         private async Task<ulong> GetAccountNumber(){
             BaseAccount accountInfo = await GetAccountInfo();
-            return accountInfo.accountNumber;
+            if (accountInfo == null) return 0;
+            return accountInfo.AccountNumber;
         }
         /// <summary>
         /// Get Balance for the this.address address. This is an awaitable function and will return 0 if error occurs
         /// </summary>
         /// <param name="denom">The denom in which you want to get balance, for example, "uaura".</param>
         /// <returns>Balance in denom as a BigInteger</returns>
-        public async Task<BigInteger> CheckBalance(string denom){
+        #pragma warning disable
+        public async Task<(bool success, System.Exception error, BigInteger balance)> CheckBalance(string denom){
             return await InAppWallet.CheckBalance(address, denom);
         }
+        #pragma warning restore
+
         private async Task<Serialization.TransactionList> SearchTransaction(string events, int limit){
             string searchURL =  $"{Constant.LCD_URL}/cosmos/tx/v1beta1/txs" + 
                                 $"?events={events}" +
@@ -275,6 +304,11 @@ namespace AuraSDK{
 
             return tx;
         }
+
+        public void SetFee(Tx tx, string feeAmount, ulong gasLimit){
+            tx.AuthInfo.Fee = CreateFee(address, address, feeAmount, gasLimit);
+        }
+
         /// <summary>
         /// Sign existing transaction using the cosmos.tx.signing.v1beta1.SignMode.SignModeDirect mode. The signature will be appended directly to the passed-in Tx and the signing process will use existing account private key
         /// </summary>
@@ -289,6 +323,9 @@ namespace AuraSDK{
             };
             byte[] bytesToSign = Google.Protobuf.WellKnownTypes.Any.Pack(signDoc).Value;
             byte[] signature = SignatureProvider.Sign(bytesToSign, privateKey);
+
+            // This is to prevent double signing. For now, this SDK doesn't support multi-signature transaction; therefore, there's only one signature.
+            tx.Signatures.Clear();
             tx.Signatures.Add(signature);
         }
 

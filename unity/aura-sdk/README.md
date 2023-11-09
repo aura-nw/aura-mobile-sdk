@@ -56,7 +56,7 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 
 - Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package managers for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
 
-- Step 7 (for WebGL builds): When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
+- Step 7: When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
 
 
 ```xml
@@ -70,7 +70,7 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 
 ### Initialize an InApp Wallet
 
-To initialize an InApp wallet, you need a mnemonic phrase and a password (default to an empty string). The mnemonic should look like below.
+To initialize an InApp wallet, you need a mnemonic phrase and a passphrase (default to an empty string). The mnemonic should look like below.
 
 ```plain
 garage audit public frown ball tribe dragon outdoor rug point radio funny clean furnace range have hire second use taxi regular mutual other disease
@@ -84,14 +84,14 @@ The code below demonstrates the initialization of InApp wallet.
 #### Create a random HD Wallet
 
 ```csharp
-InAppWallet wallet = InAppWallet.CreateRandomHDWallet(password = "");
+InAppWallet wallet = InAppWallet.CreateRandomHDWallet(passphrase = "");
 
 // get mnemonic of the just-generated wallet
 Debug.Log(wallet.mnemonic);
 ```
 
-Note that if the password isn't specified, an empty string ```""``` will be used.
-For more information on how password is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
+Note that if the passphrase isn't specified, an empty string ```""``` will be used.
+For more information on how passphrase is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
 
 #### Restore HD Wallet using existing mnemonic
 
@@ -102,16 +102,22 @@ InAppWallet wallet = InAppWallet.RestoreHDWallet(mnemonic.text);
 Debug.Log(wallet.address);
 ```
 
-Note that if the password isn't specified, an empty string ```""``` will be used.
-For more information on how password is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
+Note that if the passphrase isn't specified, an empty string ```""``` will be used.
+For more information on how passphrase is used in generating seed and keys, refer to <https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#user-content-From_mnemonic_to_seed>.
 
 ### Check wallet balance
 
 ```csharp
-BigInteger balance = await wallet.CheckBalance();
+var balanceCheckResult = await wallet.CheckBalance(denom);
+
+if (balanceCheckResult.success) {
+    BigInteger balance = balanceCheckResult.balance;
+} else {
+    Debug.Log("Failed checking balance");
+}
 ```
 
-The balance returned is in the default Aura Denom (defined in Constant.cs), from which you can derive to aura unit by dividing it by 1e6.
+The balance returned is in specified Denom. You can also use the default Aura denom (used for transaction fee paying) by referencing `Constant.AURA_DENOM`.
 
 ### Make a transaction
 
@@ -125,8 +131,17 @@ var tx = await wallet.CreateSendTransaction(toAddress.text, amount.text);
 await wallet.SignTransaction(tx);
 
 /// BroadcastTx sends the transaction data to the lcd node of Aura Network and returns the http response, from which you can parse the transaction details.
-await AuraSDK.InAppWallet.BroadcastTx(tx);
+var broadcastResponse = await AuraSDK.InAppWallet.BroadcastTx(tx);
+
+if (broadcastResponse.StatusCode == 200){
+    JObject resObj = JObject.Parse(broadcastResponse.Content);
+    string txhash = resObj["tx_response"]["txhash"].ToString();
+}
 ```
+
+The Aura LCD **DOESN'T WAIT** for the transaction to be included in a block before returning a response. Therefore, after getting `txhash`, you have to periodically check for its completeness, using [this guide](#query-transaction-details).
+
+For blocking transaction send, use the function `BroadcastTxBlock`. This function is not recommended, so use it at your own risks.
 
 ### Interact with smart contract
 
@@ -157,6 +172,54 @@ await wallet.SignTransaction(tx);
 await AuraSDK.InAppWallet.BroadcastTx(tx);
 ```
 
+### Estimate transaction gas 
+
+Before sending the transaction, you can also simulate its running to check its estimated gas fee. The gas fee can be shown to end-users to pre-alert the fee required. The code below demonstrates this action.
+
+```csharp
+var tx = await wallet.CreateSendTransaction(toAddress.text, AuraSDK.Constant.AURA_DENOM, amount.text);
+await wallet.SignTransaction(tx);
+
+var simulateResponse = await AuraSDK.InAppWallet.SimulateTx(tx);
+JObject resObj = JObject.Parse(simulateResponse.Content);
+Debug.Log(resObj["gas_info"]["gas_used"].ToString());
+```
+
+After simulation, set the gasLimit based on result and sign the transaction again. If not, when the fee changes, the signed signature will be invalid.
+
+```csharp
+wallet.SetFee(tx: tx, feeAmount: "200", gasLimit: simulatedGas + 10000);
+await wallet.SignTransaction(tx);
+```
+
+### Query transaction details
+
+The code below demonstrates how you query a transaction's details. This function is useful in querying past transactions and checking ongoing transactions for their completeness.
+
+```csharp
+// Query transaction details using txhash
+var txCheckResponse = await AuraSDK.InAppWallet.QueryTransactionDetails(txhash);
+
+if (txCheckResponse.StatusCode == 200){
+    JObject txDetails = JObject.Parse(txCheckResponse.Content);
+
+    ulong height;
+    if (ulong.TryParse(txDetails["tx_response"]["height"].ToString(), out height) && height > 0){
+        // The transaction is now included in some block
+        ulong code;
+        if (ulong.TryParse(txDetails["tx_response"]["code"].ToString(), out code) && code > 0){
+            Logging.Error("Transaction failed. Code =", code);
+            break;
+        } else {
+            Logging.Info("Transaction successful. Height =", height);
+            break;
+        }
+    } else {
+        Debug.Log("Transaction is being processed. Try again later");
+    }
+} 
+```
+
 ### View transaction history (deprecated)
 
 The code below shows how you can query transaction history and print it out to the log.
@@ -173,6 +236,7 @@ foreach(AuraTransaction transaction in transactionHistory){
 Aura SDK comes with a utility called InAppWalletManager, which is designed to simplify the process of securely save wallet information to the storage. InAppWalletManager can save multiple InAppWallet instances and manage them all at once.
 
 To use the InAppWalletManager, you first need your user to create a **password**. Then, you can initialize the InAppWalletManager as below.
+Note that this `password` differs from the `passphrase` used when creating an InAppWallet.
 
 ```csharp
 // InAppWalletManager can only be successfully initialized once. To change the password, call the ChangePassword function.

@@ -157,15 +157,15 @@ namespace dotnetstandard_bip39
                 throw new FormatException(InvalidEntropy);
         }
 
-        private string Salt(string password)
+        private string Salt(string passphrase)
         {
-            return "mnemonic" + (!string.IsNullOrEmpty(password) ? password : "");
+            return "mnemonic" + (!string.IsNullOrEmpty(passphrase) ? passphrase : "");
         }
 
-        private byte[] MnemonicToSeed(string mnemonic, string password)
+        private byte[] MnemonicToSeed(string mnemonic, string passphrase)
         {
             var mnemonicBytes = Encoding.UTF8.GetBytes(mnemonic.Normalize(NormalizationForm.FormKD));
-            var saltBytes = Encoding.UTF8.GetBytes(Salt(password.Normalize(NormalizationForm.FormKD)));
+            var saltBytes = Encoding.UTF8.GetBytes(Salt(passphrase.Normalize(NormalizationForm.FormKD)));
             
             // NetStandard2.1 has a RFC2898DeriveBytes class and it worked with the SDK
             // However, in NetStandard2.0, there's no way for us to specify derivation algorithm to SHA512 (what we need). The default algorithm is always SHA1 (what we hate).
@@ -177,9 +177,9 @@ namespace dotnetstandard_bip39
             return key;
         }
 
-        public string MnemonicToSeedHex(string mnemonic, string password)
+        public string MnemonicToSeedHex(string mnemonic, string passphrase)
         {
-            var key = MnemonicToSeed(mnemonic, password);
+            var key = MnemonicToSeed(mnemonic, passphrase);
             var hex = BitConverter
                 .ToString(key)
                 .Replace("-", "")
