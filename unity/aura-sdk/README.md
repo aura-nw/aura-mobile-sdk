@@ -56,7 +56,7 @@ This method suits installing Aura SDK to an existing project. It involves downlo
 
 - Step 6: Select ```NuGet -> Restore Packages``` to resolve NuGet dependencies. Despite being one of the best NuGet package managers for Unity, NuGetForUnity sometimes poses issues in restoring packages. If ```Restore Packages``` doesn't work for you, try ***restarting your Unity Editor***.
 
-- Step 7 (for WebGL builds): When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
+- Step 7: When building a package, Unity automatically strips unused managed code for faster loading and running time. For more information on this matter, learn more [here](https://docs.unity3d.com/Manual/ManagedCodeStripping.html). In our SDK, proto-generated files get stripped out when building for WebGL platform. To prevent that from happening, you should either set the ```Managed Stripping Level``` to ```Minimal``` or append (or create if not exists) the ```link.xml``` file in the Assets folder with the content below:
 
 
 ```xml
